@@ -1,33 +1,53 @@
 <?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
+/**
+ * Check User Permission
+ * Hooked via action admin_menu
+ * @since   1.0.0
+ */
 function lfb_user_permission_check(){
+
     $user = get_userdata(get_current_user_id());
 
     $user = wp_get_current_user();
     $allowed_roles = array('editor', 'administrator', 'lfb_role');
     return array_intersect($allowed_roles, $user->roles);
+
 }
 
-// File Upload functions
+/**
+ * File Upload Dir
+ * @since   1.0.0
+ */
 function lfb_upload_dir($dirs){
+
     $dirs['subdir'] = '/lfb_uploads';
     $dirs['path'] = $dirs['basedir'] . '/lfb_uploads';
     $dirs['url'] = $dirs['baseurl'] . '/lfb_uploads';
+
     return $dirs;
+
 }
 
+/**
+ * File Upload Process
+ * Hooked via action wp_ajax_fileupload
+ * @since   1.0.0
+ */
 function lfb_fileupload(){
+
     add_filter('upload_dir', 'lfb_upload_dir');
+
     $fileErrors = array(
-        0 => __("There is no error, the file uploaded with success", "lead-form-builder"),
-        1 => __("The uploaded file exceeds the upload_max_files in server settings", "lead-form-builder"),
-        2 => __("The uploaded file exceeds the MAX_FILE_SIZE from html form", "lead-form-builder"),
-        3 => __("The uploaded file uploaded only partially", "lead-form-builder"),
-        4 => __("No file was uploaded", "lead-form-builder"),
-        6 => __("Missing a temporary folder", "lead-form-builder"),
-        7 => __("Failed to write file to disk", "lead-form-builder"),
-        8 => __("A PHP extension stoped file to upload", "lead-form-builder")
+        0 => __("There is no error, the file uploaded with success", "sejoli-lead-form"),
+        1 => __("The uploaded file exceeds the upload_max_files in server settings", "sejoli-lead-form"),
+        2 => __("The uploaded file exceeds the MAX_FILE_SIZE from html form", "sejoli-lead-form"),
+        3 => __("The uploaded file uploaded only partially", "sejoli-lead-form"),
+        4 => __("No file was uploaded", "sejoli-lead-form"),
+        6 => __("Missing a temporary folder", "sejoli-lead-form"),
+        7 => __("Failed to write file to disk", "sejoli-lead-form"),
+        8 => __("A PHP extension stoped file to upload", "sejoli-lead-form")
     );
 
     $file_data = isset($_FILES) ? $_FILES : array();
@@ -38,12 +58,12 @@ function lfb_fileupload(){
         $uploaded_file = wp_handle_upload($file, $overrides);
 
         if ($uploaded_file && !isset($uploaded_file['error'])) {
-            $response[$key]['response'] = __('SUCCESS', 'lead-form-builder');
+            $response[$key]['response'] = __('SUCCESS', 'sejoli-lead-form');
             $response[$key]['filename'] = basename($uploaded_file['url']);
             $response[$key]['url'] = $uploaded_file['url'];
             $response[$key]['type'] = $uploaded_file['type'];
         } else {
-            $response[$key]['response'] = esc_html__("ERROR", 'lead-form-builder');
+            $response[$key]['response'] = esc_html__("ERROR", 'sejoli-lead-form');
             $response[$key]['error'] = $uploaded_file['error'];
         }
     }
@@ -51,15 +71,20 @@ function lfb_fileupload(){
     $parse = http_build_query($response);
 
     remove_filter('upload_dir', 'lfb_upload_dir');
+
     die();
+
 }
 add_action('wp_ajax_fileupload', 'lfb_fileupload');
 add_action('wp_ajax_nopriv_fileupload', 'lfb_fileupload');
 
-/*
+/**
  * Save Lead collecting method
+ * Hooked via action wp_ajax_SaveLeadSettings
+ * @since   1.0.0
  */
 function lfb_save_lead_settings(){
+
     $nonce = $_REQUEST['lrv_nonce_verify'];
     // Get all the user roles as an array.
     if (isset($_POST['action-lead-setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'lrv-nonce')) {
@@ -72,20 +97,23 @@ function lfb_save_lead_settings(){
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
         if ($update_leads) {
-            esc_html_e('updated', 'lead-form-builder');
+            esc_html_e('updated', 'sejoli-lead-form');
         }
 
         die();
 
     }
+
 }
 add_action('wp_ajax_SaveLeadSettings', 'lfb_save_lead_settings');
 
-/*
+/**
  * Save Email Settings
+ * Hooked via action wp_ajax_SaveEmailSettings
+ * @since   1.0.0
  */
-
 function lfb_save_email_settings(){
+
     $nonce = $_REQUEST['aes_nonce'];
     // Get all the user roles as an array.
     if (isset($_POST['email_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'aes-nonce')) {
@@ -99,19 +127,283 @@ function lfb_save_email_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set mail_setting='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
-            esc_html_e('updated', 'lead-form-builder');
+            esc_html_e('updated', 'sejoli-lead-form');
         }
         die();
     }
+
 }
 add_action('wp_ajax_SaveEmailSettings', 'lfb_save_email_settings');
 
-/*
- * Save captcha Keys
+/**
+ * Save User Email Settings
+ * Hooked via action wp_ajax_SaveUserEmailSettings
+ * @since   1.0.0
  */
+function lfb_SaveUserEmailSettings(){
 
+    unset($_POST['action']);
+    $mailArr = array();
+
+    $nonce = $_REQUEST['ues_nonce'];
+    // Get all the user roles as an array.
+    if (isset($_POST['user_email_setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'ues-nonce')) {
+
+        $mailArr['user_email_setting'] = lfb_emailsettings_sanitize($_POST['user_email_setting']);
+
+        $email_setting = maybe_serialize($mailArr);
+        $this_form_id = intval($_POST['user_email_setting']['form-id']);
+        global $wpdb;
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set usermail_setting='" . $email_setting . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        error_log(print_r($email_setting, true));
+        if ($update_leads) {
+            echo esc_html("updated");
+        }
+    }
+
+    die();
+
+}
+add_action('wp_ajax_SaveUserEmailSettings', 'lfb_SaveUserEmailSettings');
+
+/**
+ * Save Affiliate Email Settings
+ * Hooked via action wp_ajax_SaveAffiliateEmailSettings
+ * @since   1.0.0
+ */
+function lfb_SaveAffiliateEmailSettings(){
+
+    unset($_POST['action']);
+    $mailArr = array();
+
+    $nonce = $_REQUEST['affes_nonce'];
+    // Get all the user roles as an array.
+    if (isset($_POST['affiliate_email_setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'affes-nonce')) {
+
+        $mailArr['affiliate_email_setting'] = lfb_emailsettings_sanitize($_POST['affiliate_email_setting']);
+
+        $email_setting = maybe_serialize($mailArr);
+        $this_form_id = intval($_POST['affiliate_email_setting']['form-id']);
+        global $wpdb;
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set affiliatemail_setting='" . $email_setting . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            echo esc_html("updated");
+        }
+    }
+
+    die();
+
+}
+add_action('wp_ajax_SaveAffiliateEmailSettings', 'lfb_SaveAffiliateEmailSettings');
+
+/**
+ * Save Admin WhatsApp Settings
+ * Hooked via action wp_ajax_SaveWaSettings
+ * @since   1.0.0
+ */
+function lfb_save_wa_settings(){
+
+    $nonce = $_REQUEST['awas_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['whatsapp_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'awas-nonce')) {
+
+        global $wpdb;
+        $whatsapp_setting = array();
+        $this_form_id = intval($_POST['whatsapp_setting']['form-id']);
+        $whatsapp_setting['whatsapp_setting'] = isset($_POST['whatsapp_setting']) ? $_POST['whatsapp_setting'] : '';
+        $serialize = maybe_serialize($whatsapp_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set wa_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveWaSettings', 'lfb_save_wa_settings');
+
+/**
+ * Save User WhatsApp Settings
+ * Hooked via action wp_ajax_SaveUserWaSettings
+ * @since   1.0.0
+ */
+function lfb_save_user_wa_settings(){
+
+    $nonce = $_REQUEST['uwas_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['user_wa_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'uwas-nonce')) {
+
+        global $wpdb;
+
+        $user_wa_setting = array();
+        $this_form_id = intval($_POST['user_wa_setting']['form-id']);
+        $user_wa_setting['user_wa_setting'] = isset($_POST['user_wa_setting']) ? $_POST['user_wa_setting'] : '';
+        $serialize = maybe_serialize($user_wa_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set userwa_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveUserWaSettings', 'lfb_save_user_wa_settings');
+
+/**
+ * Save Affiliate WhatsApp Settings
+ * Hooked via action wp_ajax_SaveAffiliateWaSettings
+ * @since   1.0.0
+ */
+function lfb_save_affiliate_wa_settings(){
+
+    $nonce = $_REQUEST['affwas_nonce'];
+    // Get all the user roles as an array.
+    if (isset($_POST['affiliate_wa_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'affwas-nonce')) {
+
+        global $wpdb;
+        $affiliate_wa_setting = array();
+        $this_form_id = intval($_POST['affiliate_wa_setting']['form-id']);
+        $affiliate_wa_setting['affiliate_wa_setting'] = isset($_POST['affiliate_wa_setting']) ? $_POST['affiliate_wa_setting'] : '';
+        $serialize = maybe_serialize($affiliate_wa_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set affiliatewa_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveAffiliateWaSettings', 'lfb_save_affiliate_wa_settings');
+
+/**
+ * Save Admin SMS Settings
+ * Hooked via action wp_ajax_SaveSMSSettings
+ * @since   1.0.0
+ */
+function lfb_save_sms_settings(){
+
+    $nonce = $_REQUEST['asmss_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['sms_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'asmss-nonce')) {
+
+        global $wpdb;
+        $sms_setting = array();
+        $this_form_id = intval($_POST['sms_setting']['form-id']);
+        $sms_setting['sms_setting'] = isset($_POST['sms_setting']) ? $_POST['sms_setting'] : '';
+        $serialize = maybe_serialize($sms_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set sms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveSMSSettings', 'lfb_save_sms_settings');
+
+/**
+ * Save User SMS Settings
+ * Hooked via action wp_ajax_SaveUserSMSSettings
+ * @since   1.0.0
+ */
+function lfb_save_user_sms_settings(){
+
+    $nonce = $_REQUEST['usmss_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['user_sms_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'usmss-nonce')) {
+
+        global $wpdb;
+        $user_sms_setting = array();
+        $this_form_id = intval($_POST['user_sms_setting']['form-id']);
+        $user_sms_setting['user_sms_setting'] = isset($_POST['user_sms_setting']) ? $_POST['user_sms_setting'] : '';
+        $serialize = maybe_serialize($user_sms_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set usersms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveUserSMSSettings', 'lfb_save_user_sms_settings');
+
+/**
+ * Save Affiliate SMS Settings
+ * Hooked via action wp_ajax_SaveAffiliateSMSSettings
+ * @since   1.0.0
+ */
+function lfb_save_affiliate_sms_settings(){
+
+    $nonce = $_REQUEST['affsmss_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['affiliate_sms_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'affsmss-nonce')) {
+
+        global $wpdb;
+        $affiliate_sms_setting = array();
+        $this_form_id = intval($_POST['affiliate_sms_setting']['form-id']);
+        $affiliate_sms_setting['affiliate_sms_setting'] = isset($_POST['affiliate_sms_setting']) ? $_POST['affiliate_sms_setting'] : '';
+        $serialize = maybe_serialize($affiliate_sms_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set affiliatesms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveAffiliateSMSSettings', 'lfb_save_affiliate_sms_settings');
+
+/**
+ * Save Captcha Keys
+ * Hooked via action wp_ajax_SaveCaptchaSettings
+ * @since   1.0.0
+ */
 function lfb_save_captcha_settings(){
+
     $nonce = $_POST['captcha_nonce'];
 
     if (isset($_POST['captcha-keys'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'captcha-nonce')) {
@@ -127,14 +419,49 @@ function lfb_save_captcha_settings(){
             add_option('captcha-setting-secret', $captcha_setting_secret);
         }
     }
+
     die();
+
 }
 add_action('wp_ajax_SaveCaptchaSettings', 'lfb_save_captcha_settings');
 
-/*
- * Delete Leads From Back-end
+/**
+ * Save Autoresponder Settings
+ * Hooked via action wp_ajax_SaveAutoresponderSettings
+ * @since   1.0.0
+ */
+function lfb_save_autoresponder_settings(){
+
+    $nonce = $_REQUEST['aaress_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['autoresponder_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'aaress-nonce')) {
+
+        global $wpdb;
+        $autoresponder_setting = isset($_POST['autoresponder_setting']['code']) ? $_POST['autoresponder_setting']['code'] : '';
+        $this_form_id = intval($_POST['autoresponder_setting']['form-id']);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set autoresponder_setting='" . $autoresponder_setting . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveAutoresponderSettings', 'lfb_save_autoresponder_settings');
+
+/**
+ * Delete Leads from Backend
+ * Hooked via action wp_ajax_delete_leads_backend
+ * @since   1.0.0
  */
 function lfb_delete_leads_backend(){
+
     $nonce = $_REQUEST['_lfbnonce'];
     // Get all the user roles as an array.
 
@@ -154,13 +481,17 @@ function lfb_delete_leads_backend(){
     }
 
     echo $check;
+
 }
 add_action('wp_ajax_delete_leads_backend', 'lfb_delete_leads_backend');
 
-/*
+/**
  * Save captcha status for form ON/OFF
+ * Hooked via action wp_ajax_SaveCaptchaOption
+ * @since   1.0.0
  */
 function lfb_save_captcha_option(){
+
     $nonce = $_POST['captcha_nonce'];
     if (isset($_POST['captcha_on_off_form_id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'captcha-nonce')) {
 
@@ -172,16 +503,24 @@ function lfb_save_captcha_option(){
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
         if ($update_leads) {
-            esc_html_e('updated', 'lead-form-builder');
+            esc_html_e('updated', 'sejoli-lead-form');
         }
     }
+
     die();
+
 }
 add_action('wp_ajax_SaveCaptchaOption', 'lfb_save_captcha_option');
 
+/**
+ * Save Thankyou Settings
+ * Hooked via action wp_ajax_SaveThankyouSettings
+ * @since   1.0.0
+ */
 function lfb_save_thankyou_settings(){
+
     $nonce = $_REQUEST['thankyou-nonce'];
-    error_log(print_r($_POST['thankyou_settings']['form-id'], true));
+
     // Get all the user roles as an array.
     if (isset($_POST['thankyou_settings']['form-id']) && wp_verify_nonce($nonce, 'thankyou-nonce')) {
 
@@ -198,17 +537,23 @@ function lfb_save_thankyou_settings(){
         error_log(print_r($nonce, true));
 
         if ($update_leads) {
-            esc_html_e('updated', 'lead-form-builder');
+            esc_html_e('updated', 'sejoli-lead-form');
         }
+
         die();
+
     }
+
 }
 add_action('wp_ajax_SaveThankyouSettings', 'lfb_save_thankyou_settings');
 
-/*
+/**
  * Show all Leads column on Lead Page Based on form selection
+ * Hooked via action wp_ajax_ShowAllLeadThisForm
+ * @since   1.0.0
  */
 function lfb_ShowAllLeadThisForm(){
+
     if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
         global $wpdb, $wp;
         $table_name = LFB_FORM_DATA_TBL;
@@ -389,14 +734,22 @@ function lfb_ShowAllLeadThisForm(){
                 echo '</ul>';
             }
         } else {
-            esc_html_e('No leads..!', 'lead-form-builder');
+            esc_html_e('No leads..!', 'sejoli-lead-form');
         }
+
         die();
     }
+
 }
 add_action('wp_ajax_ShowAllLeadThisForm', 'lfb_ShowAllLeadThisForm');
 
+/**
+ * Show Leads Page
+ * Hooked via action wp_ajax_ShowALeadPagi
+ * @since   1.0.0
+ */
 function lfb_ShowLeadPagi(){
+
     if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
         global $wpdb;
         $table_name = LFB_FORM_DATA_TBL;
@@ -533,17 +886,21 @@ function lfb_ShowLeadPagi(){
             }
             echo '</ul>';
         } else {
-            esc_html_e('No leads..!', 'lead-form-builder');
+            esc_html_e('No leads..!', 'sejoli-lead-form');
         }
         die();
     }
+
 }
 add_action('wp_ajax_ShowLeadPagi', 'lfb_ShowLeadPagi');
 
-/*
+/**
  * Show Leads on Lead Page Based on form selection
+ * Hooked via action wp_ajax_ShowAllLeadThisFormDate
+ * @since   1.0.0
  */
 function lfb_ShowAllLeadThisFormDate(){
+   
     if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
         global $wpdb;
         $nonce = wp_create_nonce('lfb-nonce-rm');
@@ -668,17 +1025,20 @@ function lfb_ShowAllLeadThisFormDate(){
             }
             echo '</ul>';
         } else {
-            esc_html_e('No leads..!', 'lead-form-builder');
+            esc_html_e('No leads..!', 'sejoli-lead-form');
         }
         die();
     }
+
 }
 add_action('wp_ajax_ShowAllLeadThisFormDate', 'lfb_ShowAllLeadThisFormDate');
 
-/*
+/**
  * Save from Data from front-end
+ * @since   1.0.0
  */
 function lfb_form_name_email_filter($form_data){
+   
     $name_email = array();
     $e = false;
     $n = false;
@@ -696,11 +1056,19 @@ function lfb_form_name_email_filter($form_data){
             break;
         }
     }
+
     return $name_email;
+
 }
 
+/**
+ * Show Leads Sanitize
+ * @since   1.0.0
+ */
 function lfb_lead_sanitize($leads){
+
     if (is_array($leads)) {
+
         foreach ($leads as $key => $value) {
             $rKey = preg_replace("/[^a-zA-Z]+/", "", $key);
             if ($rKey === 'name' || $rKey === 'text' || $rKey === 'radio' || $rKey === 'option') {
@@ -724,11 +1092,20 @@ function lfb_lead_sanitize($leads){
         } // end foreach
 
         return $leads;
+
     }
+
 }
 
+/**
+ * Save Form Data
+ * Hooked via action wp_ajax_Save_Form_Data, wp_ajax_nopriv_Save_Form_Data
+ * @since   1.0.0
+ */
 function lfb_Save_Form_Data(){
+
     if (isset($_POST['fdata'])) {
+
         wp_parse_str($_POST['fdata'], $fromData);
 
         $form_id = intval($fromData['hidden_field']);
@@ -746,7 +1123,7 @@ function lfb_Save_Form_Data(){
         if ((isset($en['email'])) && ($en['email'] != '')) {
             $user_emailid = sanitize_email($en['email']);
         } else {
-            $user_emailid = esc_html__('invalid_email', 'lead-form-builder');
+            $user_emailid = esc_html__('invalid_email', 'sejoli-lead-form');
         }
         $sanitize_leads =  lfb_lead_sanitize($fromData);
         $form_data = maybe_serialize($sanitize_leads);
@@ -755,13 +1132,106 @@ function lfb_Save_Form_Data(){
         $th_save_db = new LFB_SAVE_DB();
 
         $lf_store->lfb_mail_type($form_id, $form_product, $form_affiliate, $form_data, $th_save_db, $user_emailid);
+        
+        lfb_register_autoresponder($form_id, $form_product, $form_data);
+
     }
+
     die();
+
 }
 add_action('wp_ajax_Save_Form_Data', 'lfb_Save_Form_Data');
 add_action('wp_ajax_nopriv_Save_Form_Data', 'lfb_Save_Form_Data');
 
+/**
+ * Register buyer to selected autoresponder setup.
+ * @param  array  $order_data [description]
+ * @return [type]             [description]
+ */
+function lfb_register_autoresponder($form_id, $product, $form_data) {
+
+    $product = sejolisa_get_product( intval($product) );
+
+    $th_save_db = new LFB_SAVE_DB();
+    $posts = $th_save_db->lfb_get_form_data($form_id);
+
+    $code          = $posts[0]->autoresponder_setting;
+    $autoresponder = sejolisa_parsing_form_html_code( $code );
+
+    if( false !== $autoresponder['valid'] ) :
+
+        $body_fields = [];
+
+        $form = $th_save_db->lfb_get_form_data($form_id);
+        $form_datas = maybe_unserialize($form[0]->form_data);
+
+        $form_field = $th_save_db->lfb_admin_email_send($form_id);
+        $form_data = maybe_unserialize($form_data);
+
+        foreach ($form_datas as $results) {
+
+            $type = $results['field_type']['type'];
+            $field_id = $results['field_id'];
+
+            $default_phonenumber = isset($results['default_phonenumber']) ? $results['default_phonenumber'] : 0;
+
+            if ($type === 'email') { 
+                $data_email = $form_data['email_'.$field_id];
+            } elseif($type === 'number') { 
+                $data_phone = '+62'.$form_data['number_'.$field_id];
+            } elseif($type === 'name') { 
+                $data_name = $form_data['name_'.$field_id];
+            }
+
+            if ( $default_phonenumber !== 0 ) {
+                if ($type === 'text') { 
+                    $data_phone = $form_data['text_'.$field_id];
+                } else {
+                    $data_phone = '+62'.$form_data['number_'.$field_id];
+                }
+            }
+
+        }
+
+        foreach($autoresponder['fields'] as $field) :
+
+            if('email' === $field['type']) :
+                $body_fields[$field['name']] = 'asd@gmail.com';//$data_email;
+            elseif('name' === $field['type']) :
+                $body_fields[$field['name']] = $data_name;
+            else :
+                $body_fields[$field['name']] = $field['value'];
+            endif;
+
+        endforeach;
+
+        $response = wp_remote_post( $autoresponder['form']['action'][0], [
+            'method'  => 'POST',
+            'timeout' => 30,
+            'headers' => array(
+                'Referer'    => site_url(),
+                'User-Agent' => $_SERVER['HTTP_USER_AGENT']
+            ),
+            'body'    => $body_fields
+        ]);
+
+        do_action('sejoli/log/write', 'response autoresponder subscription', [
+            'url'         => $autoresponder['form']['action'][0],
+            'body_fields' => $body_fields,
+            'response'    => strip_tags(wp_remote_retrieve_body($response))
+        ]);
+
+    endif;
+
+}
+
+/**
+ * Verify Form Captcha
+ * Hooked via action wp_ajax_verifyFormCaptcha, wp_ajax_nopriv_verifyFormCaptcha
+ * @since   1.0.0
+ */
 function lfb_verifyFormCaptcha(){
+    
     if ((isset($_POST['captcha_res'])) && (!empty($_POST['captcha_res']))) {
         $captcha = stripslashes($_POST['captcha_res']);
         $secret_key = get_option('captcha-setting-secret');
@@ -775,71 +1245,63 @@ function lfb_verifyFormCaptcha(){
                 )
             )
         );
+        
         $reply_obj = json_decode(wp_remote_retrieve_body($response));
         if (isset($reply_obj->success) && $reply_obj->success == 1) {
-            esc_html_e('Yes', 'lead-form-builder');
+            esc_html_e('Yes', 'sejoli-lead-form');
         } else {
-            esc_html_e('No', 'lead-form-builder');
+            esc_html_e('No', 'sejoli-lead-form');
         }
     } else {
-        esc_html_e('Invalid', 'lead-form-builder');
+        esc_html_e('Invalid', 'sejoli-lead-form');
     }
+
     die();
+
 }
 add_action('wp_ajax_verifyFormCaptcha', 'lfb_verifyFormCaptcha');
 add_action('wp_ajax_nopriv_verifyFormCaptcha', 'lfb_verifyFormCaptcha');
 
+/**
+ * Remember This Form
+ * Hooked via action wp_ajax_RememberMeThisForm
+ * @since   1.0.0
+ */
 function lfb_RememberMeThisForm(){
+
     $nonce = $_POST['rem_nonce'];
 
     if (isset($_POST['form_id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'rem-nonce')) {
 
         $remember_me = intval($_POST['form_id']);
+
         if (get_option('lf-remember-me-show-lead') !== false) {
             update_option('lf-remember-me-show-lead', $remember_me);
         } else {
             add_option('lf-remember-me-show-lead', $remember_me);
         }
         echo esc_html(get_option('lf-remember-me-show-lead'));
+
         die();
     }
+
 }
 add_action('wp_ajax_RememberMeThisForm', 'lfb_RememberMeThisForm');
 
-/*
+/**
  * Save Email Settings
+ * @since   1.0.0
  */
 function lfb_emailsettings_sanitize($email_settings){
+
     $email_settings['from'] = sanitize_email($email_settings['from']);
     $email_settings['header'] = sanitize_text_field($email_settings['header']);
     $email_settings['subject'] = sanitize_text_field($email_settings['subject']);
     $email_settings['message'] = sanitize_textarea_field($email_settings['message']);
     $email_settings['user-email-setting-option'] = sanitize_text_field($email_settings['user-email-setting-option']);
+    $email_settings['affiliate-email-setting-option'] = sanitize_text_field($email_settings['affiliate-email-setting-option']);
     $email_settings['form-id'] = intval($email_settings['form-id']);
+
     return $email_settings;
+
 }
-
-function lfb_SaveUserEmailSettings(){
-    unset($_POST['action']);
-    $mailArr = array();
-
-    $nonce = $_REQUEST['ues_nonce'];
-    // Get all the user roles as an array.
-    if (isset($_POST['user_email_setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'ues-nonce')) {
-
-        $mailArr['user_email_setting'] = lfb_emailsettings_sanitize($_POST['user_email_setting']);
-
-        $email_setting = maybe_serialize($mailArr);
-        $this_form_id = intval($_POST['user_email_setting']['form-id']);
-        global $wpdb;
-        $table_name = LFB_FORM_FIELD_TBL;
-        $update_query = "update " . LFB_FORM_FIELD_TBL . " set usermail_setting='" . $email_setting . "' where id='" . $this_form_id . "'";
-        $th_save_db = new LFB_SAVE_DB($wpdb);
-        $update_leads = $th_save_db->lfb_update_form_data($update_query);
-        if ($update_leads) {
-            echo esc_html("updated");
-        }
-    }
-    die();
-}
-add_action('wp_ajax_SaveUserEmailSettings', 'lfb_SaveUserEmailSettings');

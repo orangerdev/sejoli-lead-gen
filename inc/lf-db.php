@@ -3,9 +3,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if (!function_exists('lfb_plugin_activate')) {
 
+    /**
+     * Create Table on Plugin Activate
+     * Hooked via action admin_init
+     * @since   1.0.0
+     */
     function lfb_plugin_activate() {
-        $default_form = 0;
+
         global $wpdb;
+
+        $default_form = 0;
         $lead_form = $wpdb->prefix . 'lead_form';
         $lead_form_data = $wpdb->prefix . 'lead_form_data';
         $lead_form_extension = $wpdb->prefix . 'lead_form_extension';
@@ -21,6 +28,14 @@ if (!function_exists('lfb_plugin_activate')) {
                 date datetime NOT NULL,
                 mail_setting text NOT NULL,
                 usermail_setting text NOT NULL,
+                affiliatemail_setting text NOT NULL,
+                wa_setting text NOT NULL,
+                userwa_setting text NOT NULL,
+                affiliatewa_setting text NOT NULL,
+                sms_setting text NOT NULL,
+                usersms_setting text NOT NULL,
+                affiliatesms_setting text NOT NULL,
+                autoresponder_setting text NOT NULL,
                 multiData text NOT NULL,
                 form_url text,
                 form_skin VARCHAR(255) DEFAULT 'default' NOT NULL,
@@ -97,159 +112,279 @@ if (!function_exists('lfb_plugin_activate')) {
         if (!in_array("track_path", $column)) {
             $wpdb->query("ALTER TABLE $lead_form_data ADD track_path varchar(200) NOT NULL");
         }
+
     }
     add_action( 'admin_init', 'lfb_plugin_activate' );
+
 } 
 
 // database classs
 Class LFB_SAVE_DB{
+
     private $thdb;
     private  $leadform = 'lead_form';
     private  $lf_ext = 'lead_form_extension';
     private  $lfb_options = 'lead_form_options';
 
+    /**
+     * Construct
+     * @since   1.0.0
+     */
     function __construct($nwpdb=''){
+
         global $wpdb;
+
         $this->thdb = $wpdb;
-        $this->tbl_leadform =  $this->thdb->prefix.$this->leadform; 
-        $this->tbl_extension =  $this->thdb->prefix.$this->lf_ext; 
-        $this->tbl_options =  $this->thdb->prefix.$this->lfb_options; 
+        $this->tbl_leadform = $this->thdb->prefix.$this->leadform; 
+        $this->tbl_extension = $this->thdb->prefix.$this->lf_ext; 
+        $this->tbl_options = $this->thdb->prefix.$this->lfb_options; 
+
     }
 
+    /**
+     * Get form content
+     * @since   1.0.0
+     */
     function lfb_get_form_content($get_form_query){
+
         return $this->thdb->get_results($get_form_query);
+
     }
 
+    /**
+     * Delete form
+     * @since   1.0.0
+     */
     function lfb_delete_form($deletequery){
+
         return $this->thdb->query($deletequery); 
         //return $this->thdb->query($this->thdb->prepare($deletequery)); 
+        
     }
 
+    /**
+     * Update form
+     * @since   1.0.0
+     */
     function lfb_update_form_data($updatequery){
+
         $update_data = $this->thdb->query($updatequery);
         //$update_data = $this->thdb->query($this->thdb->prepare($updatequery));
+        
         return $update_data;
+
     }
 
+    /**
+     * Insert form data
+     * @since   1.0.0
+     */
     function lfb_insert_form_data($insertquery){
+
         //$this->thdb->query($this->thdb->prepare($insertquery));
+        
         $this->thdb->query($insertquery);
+
     }
 
-    // get form data
+    /**
+     * Get form data
+     * @since   1.0.0
+     */
     function lfb_get_form_data($formid){
+
         $query = $this->thdb->prepare("SELECT * FROM $this->tbl_leadform WHERE id = %d and form_status = %s LIMIT 1",$formid, 'ACTIVE' );
         $form = $this->lfb_get_form_content($query);
+
         return $form;
+
     }
 
+    /**
+     * Get form title
+     * @since   1.0.0
+     */
     public function lfb_get_all_form_title(){
+
         $return = $this->thdb->prepare("SELECT id,form_title FROM $this->tbl_leadform WHERE form_status = %s ",'ACTIVE');
+
         return $this->thdb->get_results($return);
+
     }
 
+    /**
+     * Get extension data
+     * @since   1.0.0
+     */
     public function lfb_get_ext_data($fid,$ext){
+
         $return = $this->thdb->prepare("SELECT * FROM $this->tbl_extension WHERE form_id = %d AND ext_type = %d ",$fid,$ext);
+        
         return $this->thdb->get_results($return);
+
     }
 
-    //get lead form
+    /**
+     * Get lead form
+     * @since   1.0.0
+     */
     function get_lead_form(){  
+
         $query = $this->thdb->prepare("SELECT * FROM $this->tbl_leadform WHERE form_status = %s ORDER BY id DESC ", 'ACTIVE' );
         $return = $this->lfb_get_form_content($query);
 
         return $return;
+
     }
 
-    /*
-    * Mailchimp api update
-    */
+    /**
+     * Mailchimp api update
+     * @since   1.0.0
+     */
     public function lfb_mcpi_insert_update_api($fid,$api,$ext){
+
         $get_data = $this->lfb_get_ext_data($fid,$ext);
+
         if(empty($get_data)):
             $this->lfb_mcpi_insert_extension($fid,$api,$ext);
         else:
             $this->lfb_mcpi_update_api($fid,$api,$ext);
         endif; 
+
     }
 
+    /**
+     * Insert extension data
+     * @since   1.0.0
+     */
     public function lfb_mcpi_insert_extension($fid,$api,$ext){
+
         $insert_leads = $this->thdb->query( $this->thdb->prepare( 
          "INSERT INTO $this->tbl_extension ( form_id, ext_api, ext_type, edate ) 
          VALUES ( %d, %s,%d,  %s)",
-          $fid, $api, $ext, date('Y-m-d g:i:s') ) );
+         $fid, $api, $ext, date('Y-m-d g:i:s') ) );
+
     }
 
+    /**
+     * Update mailchimp api
+     * @since   1.0.0
+     */
     public function lfb_mcpi_update_api($fid,$api,$ext){
+
         $this->thdb->query( $this->thdb->prepare( " UPDATE $this->tbl_extension 
         SET ext_api = %s WHERE form_id = %d AND ext_type = %d ",$api,$fid,$ext ) );
+
     }
 
-    /*
+    /**
      * Mailchimp list update
+     * @since   1.0.0
      */
     public function lfb_mcpi_update_lists($fid,$list,$ext){
+
         $get_data = $this->lfb_get_ext_data($fid,$ext);
+
         if(!empty($get_data)):
             $this->lfb_mcpi_update_db_list($fid,$list,$ext);
         endif;
+
     }
 
+    /**
+     * Extension update
+     * @since   1.0.0
+     */
     public function lfb_mcpi_update_db_list($fid,$list,$ext){
+
         $this->thdb->query( $this->thdb->prepare( " UPDATE $this->tbl_extension 
         SET ext_map = %s, active = %d  WHERE form_id = %d AND ext_type = %d ",$list,1,$fid,$ext ) );
+
     }
 
-    /*
+    /**
      * Mailchimp on/off update
+     * @since   1.0.0
      */
     public function lfb_mcpi_update_onoff($fid,$extname,$onoff){
+
         $query = $this->thdb->query( $this->thdb->prepare( " UPDATE $this->tbl_extension 
         SET active = %s WHERE form_id = %d AND ext_type = %d ",$onoff,$fid,$extname ) );
+
         return $fid;
+
     }
 
-    /*
-     * Color Options
+    /**
+     * Color options
+     * @since   1.0.0
      */
     public function lfb_colors_insert_update($fid,$data){
+
         $return = false;
+
         $color_stting = $this->lfb_get_colors_data($fid);
         if(empty($color_stting)):
             $return = $this->lfb_colors_insert($fid,$data);
         else:
             $return =  $this->lfb_colors_update($fid,$data);
         endif;
-        return $return; 
+
+        return $return;
+
     }
 
+    /**
+     * Get colors data
+     * @since   1.0.0
+     */
     public function lfb_get_colors_data($fid){
+
         $return = $this->thdb->prepare(" SELECT * FROM $this->tbl_options WHERE fid = %d ",$fid);
+
         return $this->thdb->get_results($return);
+
     }
 
+    /**
+     * Insert colors data
+     * @since   1.0.0
+     */
     public function lfb_colors_insert($fid,$data){
+
         return $insert_leads = $this->thdb->query( $this->thdb->prepare( 
          "INSERT INTO $this->tbl_options ( fid, colorData ) 
          VALUES ( %d, %s)",
           $fid, $data ) );
+
     }
 
+    /**
+     * Update colors data
+     * @since   1.0.0
+     */
     public function lfb_colors_update($fid,$data){
+
         return $this->thdb->query( $this->thdb->prepare( "UPDATE $this->tbl_options 
         SET colorData = %s WHERE fid = %d ", $data,$fid ) );
+
     }
 
+    /**
+     * Reset colors data
+     * @since   1.0.0
+     */
     public function lfb_reset_colors_data($fid){
         $this->thdb->query( $this->thdb->prepare( "UPDATE $this->tbl_options 
         SET colorData = %s WHERE fid = %d ", '',$fid ) );
     }
 
-    /*
-    * next,previous lead show and show all leads
-    *
-    */
+   /**
+     * next,previous lead show and show all leads
+     * @since   1.0.0
+     */
     function lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,$leadscount){
+
         $i = 0;
         $table_row = '';
         $table_popup = '';
@@ -285,9 +420,15 @@ Class LFB_SAVE_DB{
         $return = array('table_row'=>$table_row, 'table_popup' => $table_popup);
         
         return $return;
+
     }
 
+    /**
+     * Form filter
+     * @since   1.0.0
+     */
     function lfb_form_field_filter($form_data){
+
         $filterForm  = maybe_unserialize($form_data[0]->form_data);
         $arrayForm = array();
         foreach($filterForm as $field){
@@ -300,19 +441,33 @@ Class LFB_SAVE_DB{
         }
 
         return $arrayForm;
+
     }
 
+    /**
+     * Post count
+     * @since   1.0.0
+     */
     function lfb_post_count($form_id){
+
         global $wpdb;
+
         $table_name = LFB_FORM_DATA_TBL;
 
         $rows = $wpdb->get_var(" SELECT COUNT(*) FROM $table_name WHERE form_id =  $form_id");
 
         return $rows;
+
     }
 
+    /**
+     * Get all view leads
+     * @since   1.0.0
+     */
     function lfb_get_all_view_leads_db($form_id,$start){
+
         global $wpdb, $wp;
+
         $table_name = LFB_FORM_DATA_TBL;
         $limit = 10;
 
@@ -332,10 +487,17 @@ Class LFB_SAVE_DB{
         $return = array('posts'=>$posts,'rows'=>$rows,'limit' => $limit, 'fieldId'=> $fieldArr);
         
         return $return;
+
     }
 
+    /**
+     * Get affiliate view leads
+     * @since   1.0.0
+     */
     function lfb_get_affiliate_view_leads_db($form_id,$user_id,$start){
+
         global $wpdb, $wp;
+
         $table_name = LFB_FORM_DATA_TBL;
         $limit = 10;
 
@@ -354,10 +516,17 @@ Class LFB_SAVE_DB{
         $return = array('posts'=>$posts,'rows'=>$rows,'limit' => $limit, 'fieldId'=> $fieldArr);
         
         return $return;
+
     }
 
+    /**
+     * Get all view date leads
+     * @since   1.0.0
+     */
     function lfb_get_all_view_date_leads_db($form_id,$leadtype,$start=0){
+
         global $wpdb;
+
         $table_name = LFB_FORM_DATA_TBL;
         $limit = 10;
 
@@ -382,34 +551,60 @@ Class LFB_SAVE_DB{
         $return = array('posts'=>$posts,'rows'=>$rows,'limit' => $limit, 'fieldId'=> $fieldArr);
         
         return $return;
+
     }
 
+    /**
+     * Admin email send
+     * @since   1.0.0
+     */
     function lfb_admin_email_send($form_id){
+
         // form field filter
-        $form_data  = $this->lfb_get_form_data($form_id);
+        $form_data = $this->lfb_get_form_data($form_id);
         $fieldArr = $this->lfb_form_field_filter($form_data);
         
-        return $fieldArr; 
+        return $fieldArr;
+
     } 
 
+    /**
+     * Mail store type
+     * @since   1.0.0
+     */
     function lfb_mail_store_type($form_id){
+
         $table_name = LFB_FORM_FIELD_TBL;
-        $query =  $this->thdb->prepare( "SELECT storeType, mail_setting, usermail_setting FROM $table_name WHERE id= %d LIMIT 1",$form_id );
+        $query = $this->thdb->prepare( "SELECT storeType, mail_setting, usermail_setting , affiliatemail_setting, wa_setting, userwa_setting, affiliatewa_setting, sms_setting, usersms_setting, affiliatesms_setting, autoresponder_setting FROM $table_name WHERE id= %d LIMIT 1",$form_id );
         $posts = $this->lfb_get_form_content($query);
 
         return $posts;
+
     }
 
-    // xml form data and color options import
+    /**
+     * Xml form data and color options import
+     * Hooked via action wp_ajax_SaveUserEmailSettings
+     * @since   1.0.0
+     */
     function lfb_save_xml_formdata($form){
+
         $query = $this->thdb->query( $this->thdb->prepare( 
         "INSERT INTO $this->tbl_leadform ( form_title, form_data, date, multiData, storeType ) VALUES ( %s, %s, %s, %s, %d  )",
         $form['form_title'], $form['form_data'] ,date('Y-m-d g:i:s'), $form['multiData'], $form['storeType']));
 
         return $this->thdb->insert_id;
+
     }
 
+    /**
+     * Save xml color data
+     * @since   1.0.0
+     */
     function lfb_save_xml_colordata($formid,$colorData){
+
         $query = $this->thdb->query( $this->thdb->prepare( "INSERT INTO $this->tbl_options ( fid, colorData) VALUES ( %d, %s )",$formid,$colorData));
+    
     }
+
 }

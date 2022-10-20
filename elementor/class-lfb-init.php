@@ -97,7 +97,7 @@ final class LFB_Addon_Init {
     */
    public function i18n() {
 
-      load_plugin_textdomain( 'lead-form-builder' );
+      load_plugin_textdomain( 'sejoli-lead-form' );
 
    }
 
@@ -142,7 +142,7 @@ function lfb_elementor_widget_categories( $elements_manager ) {
   $elements_manager->add_category(
     'lfb-category',
     [
-      'title' => __( 'Lead Form Styler', 'lead-form-builder' ),
+      'title' => __( 'Lead Form Styler', 'sejoli-lead-form' ),
       'icon' => 'eicon-pro-icon',
     ]
   );

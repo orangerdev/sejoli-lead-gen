@@ -37,7 +37,7 @@ class Lead_Form_Styler extends Widget_Base {
 	 * @return string Widget Title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Lead Form Styler', 'lead-form-builder' );
+		return esc_html__( 'Lead Form Styler', 'sejoli-lead-form' );
 	}
 
 	/**
@@ -95,7 +95,7 @@ class Lead_Form_Styler extends Widget_Base {
 	$this->start_controls_section(
       'general_settings_section',
       [
-        'label' => __( 'Lead Form', 'lead-form-builder' ),
+        'label' => __( 'Lead Form', 'sejoli-lead-form' ),
         'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
       ]
     );
@@ -103,7 +103,7 @@ class Lead_Form_Styler extends Widget_Base {
 		$this->add_control(
 			'lf_form', // id
 			[
-				'label' => __( 'Select Form', 'lead-form-builder' ),
+				'label' => __( 'Select Form', 'sejoli-lead-form' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => 
 					$this->lfb_get_lf_forms()	
@@ -119,7 +119,7 @@ class Lead_Form_Styler extends Widget_Base {
 		$this->start_controls_section(
 	      'general_style_settings_section',
 	      [
-	        'label' => __( 'Lead Form General Style', 'lead-form-builder' ),
+	        'label' => __( 'Lead Form General Style', 'sejoli-lead-form' ),
 	        'tab' => \Elementor\Controls_Manager::TAB_STYLE,
 	      ]
 	    );
@@ -127,7 +127,7 @@ class Lead_Form_Styler extends Widget_Base {
         $this->add_control(
 			'lfb_module_size',
 			[
-				'label' => __( 'Form Container Size', 'lead-form-builder' ),
+				'label' => __( 'Form Container Size', 'sejoli-lead-form' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%' ],
 				'range' => [
@@ -154,20 +154,20 @@ class Lead_Form_Styler extends Widget_Base {
 		$this->add_responsive_control(
 	      'lfb_styler_alignment',
 	      [
-	        'label'        => __( 'Form Container Alignment', 'lead-form-builder' ),
+	        'label'        => __( 'Form Container Alignment', 'sejoli-lead-form' ),
 	        'type'         => Controls_Manager::CHOOSE,
 	        'label_block'  => true,
 	        'options'      => [
 	          'flex-start'   => [
-	            'title' => __( 'Left', 'lead-form-builder' ),
+	            'title' => __( 'Left', 'sejoli-lead-form' ),
 	            'icon'  => 'eicon-h-align-left',
 	          ],
 	          'center' => [
-	            'title' => __( 'Center', 'lead-form-builder' ),
+	            'title' => __( 'Center', 'sejoli-lead-form' ),
 	            'icon'  => 'eicon-h-align-center',
 	          ],
 	          'flex-end'  => [
-	            'title' => __( 'Right', 'lead-form-builder' ),
+	            'title' => __( 'Right', 'sejoli-lead-form' ),
 	            'icon'  => 'eicon-h-align-right',
 	          ],
 	        ],
@@ -187,14 +187,14 @@ class Lead_Form_Styler extends Widget_Base {
 			$this->start_controls_section(
 				'lf_field_label',
 				[
-					'label' => __( 'Label &amp; Title Styling', 'lead-form-builder' ),
+					'label' => __( 'Label &amp; Title Styling', 'sejoli-lead-form' ),
 					'tab' => Controls_Manager::TAB_STYLE,
 				]
 			);
 			$this->add_control(
 				'lf_form_label_color',
 				[
-					'label' => __( 'Label Color', 'lead-form-builder' ),
+					'label' => __( 'Label Color', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'scheme' => [
 						'type' => Scheme_Color::get_type(),
@@ -209,7 +209,7 @@ class Lead_Form_Styler extends Widget_Base {
 				Group_Control_Typography::get_type(),
 				[
 					'name' => 'lf_form_labels_typography',
-					'label'=> __( 'Label Typography', 'lead-form-builder' ),
+					'label'=> __( 'Label Typography', 'sejoli-lead-form' ),
 					'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 					'default' => [
 						'font_weight' => [
@@ -227,10 +227,10 @@ class Lead_Form_Styler extends Widget_Base {
 		$this->add_control(
             'lf_hide_input_label',
             [
-                'label'                 => __( 'Hide All Fields Labels', 'lead-form-builder' ),
+                'label'                 => __( 'Hide All Fields Labels', 'sejoli-lead-form' ),
                 'type'                  => Controls_Manager::SWITCHER,
-                'label_on'              => __( 'Yes', 'lead-form-builder' ),
-                'label_off'             => __( 'No', 'lead-form-builder' ),
+                'label_on'              => __( 'Yes', 'sejoli-lead-form' ),
+                'label_off'             => __( 'No', 'sejoli-lead-form' ),
                 'default'				=> 'no',
                 'return_value'          => 'yes',
             ]
@@ -239,10 +239,10 @@ class Lead_Form_Styler extends Widget_Base {
 		$this->add_control(
             'lf_hide_radio_checkbox_label',
             [
-                'label'                 => __( 'Hide Radio &amp; Checkbox Labels', 'lead-form-builder' ),
+                'label'                 => __( 'Hide Radio &amp; Checkbox Labels', 'sejoli-lead-form' ),
                 'type'                  => Controls_Manager::SWITCHER,
-                'label_on'              => __( 'Yes', 'lead-form-builder' ),
-                'label_off'             => __( 'No', 'lead-form-builder' ),
+                'label_on'              => __( 'Yes', 'sejoli-lead-form' ),
+                'label_off'             => __( 'No', 'sejoli-lead-form' ),
                 'default'				=> 'no',
                 'return_value'          => 'yes',
             ]
@@ -251,10 +251,10 @@ class Lead_Form_Styler extends Widget_Base {
 		$this->add_control(
             'lf_hide_form_title',
             [
-                'label'                 => __( 'Hide Form Title', 'lead-form-builder' ),
+                'label'                 => __( 'Hide Form Title', 'sejoli-lead-form' ),
                 'type'                  => Controls_Manager::SWITCHER,
-                'label_on'              => __( 'Yes', 'lead-form-builder' ),
-                'label_off'             => __( 'No', 'lead-form-builder' ),
+                'label_on'              => __( 'Yes', 'sejoli-lead-form' ),
+                'label_off'             => __( 'No', 'sejoli-lead-form' ),
                 'default'				=> 'no',
                 'return_value'          => 'yes',
                 'default'      			=> 'no',
@@ -264,7 +264,7 @@ class Lead_Form_Styler extends Widget_Base {
         $this->add_control(
 				'lf_form_title_color',
 				[
-					'label' => __( 'Form Title Color', 'lead-form-builder' ),
+					'label' => __( 'Form Title Color', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'scheme' => [
 						'type' => Scheme_Color::get_type(),
@@ -282,7 +282,7 @@ class Lead_Form_Styler extends Widget_Base {
 				Group_Control_Typography::get_type(),
 				[
 					'name' => 'lf_form_title_typography',
-					'label'=> __( 'Form Title Typography', 'lead-form-builder' ),
+					'label'=> __( 'Form Title Typography', 'sejoli-lead-form' ),
 					'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 					'default' => [
 						'font_weight' => [
@@ -308,7 +308,7 @@ protected function lf_field_style_controls() {
 	$this->start_controls_section(
 		'form_inputs',
 		[
-			'label' => __( 'Field Styling', 'lead-form-builder' ),
+			'label' => __( 'Field Styling', 'sejoli-lead-form' ),
 			'tab' => Controls_Manager::TAB_STYLE,
 		]
 	);
@@ -320,14 +320,14 @@ protected function lf_field_style_controls() {
 		$this->start_controls_tab(
 			'form_inputs_color_typo_tab',
 			[
-				'label' => __( 'Color', 'lead-form-builder' ),
+				'label' => __( 'Color', 'sejoli-lead-form' ),
 			]
 		);
 
 		$this->add_control(
 				'lf_field_color_heading',
 				[
-					'label'     => __( 'Choose Color', 'lead-form-builder' ),
+					'label'     => __( 'Choose Color', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -336,7 +336,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'form_inputs_bg',
 				[
-					'label' => __( 'Field Background', 'lead-form-builder' ),
+					'label' => __( 'Field Background', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'default' => '#f9f9f9',
 					'scheme' => [
@@ -352,7 +352,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'form_inputs_txt_color',
 				[
-					'label' => __( 'Input Text', 'lead-form-builder' ),
+					'label' => __( 'Input Text', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'scheme' => [
 						'type' => Scheme_Color::get_type(),
@@ -369,7 +369,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'form_inputs_placeholder_color',
 				[
-					'label' => __( 'Placeholder Text', 'lead-form-builder' ),
+					'label' => __( 'Placeholder Text', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'scheme' => [
 						'type' => Scheme_Color::get_type(),
@@ -385,7 +385,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'form_select_input_text_color',
 				[
-					'label' => __( 'Select Drop Down Text', 'lead-form-builder' ),
+					'label' => __( 'Select Drop Down Text', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'scheme' => [
 						'type' => Scheme_Color::get_type(),
@@ -400,7 +400,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'form_select_inputs_bg',
 				[
-					'label' => __( 'Select Drop Down Background', 'lead-form-builder' ),
+					'label' => __( 'Select Drop Down Background', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::COLOR,
 					'default' => '#fff',
 					'scheme' => [
@@ -416,7 +416,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_field_typography_heading',
 				[
-					'label'     => __( 'Typography', 'lead-form-builder' ),
+					'label'     => __( 'Typography', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -425,7 +425,7 @@ protected function lf_field_style_controls() {
 			$this->add_group_control(
 				Group_Control_Typography::get_type(),
 				[
-					'label' => __( 'Field Text', 'lead-form-builder' ),
+					'label' => __( 'Field Text', 'sejoli-lead-form' ),
 					'name' => 'form_field_typography',
 					'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 					'selector' => '{{WRAPPER}} .lf-field input:not([type=submit]), {{WRAPPER}} .lf-field textarea'
@@ -435,7 +435,7 @@ protected function lf_field_style_controls() {
 			$this->add_group_control(
 				Group_Control_Typography::get_type(),
 				[
-					'label' => __( 'Field Placeholder Text', 'lead-form-builder' ),
+					'label' => __( 'Field Placeholder Text', 'sejoli-lead-form' ),
 					'name' => 'form_field_placeholder_typography',
 					'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 					'selector' => '{{WRAPPER}} .lf-field ::placeholder'
@@ -445,7 +445,7 @@ protected function lf_field_style_controls() {
 			$this->add_group_control(
 				Group_Control_Typography::get_type(),
 				[	
-					'label' => __( 'Select Drop Down Text', 'lead-form-builder' ),
+					'label' => __( 'Select Drop Down Text', 'sejoli-lead-form' ),
 					'name' => 'form_drop_down_typography',
 					'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 					'selector' => '{{WRAPPER}} .lf-field select',
@@ -456,7 +456,7 @@ protected function lf_field_style_controls() {
 		$this->add_control(
 				'lf_field_border_heading',
 				[
-					'label'     => __( 'Border', 'lead-form-builder' ),
+					'label'     => __( 'Border', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -466,7 +466,7 @@ protected function lf_field_style_controls() {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'form_inputs_border',
-				'label' => __( 'Border', 'lead-form-builder' ),
+				'label' => __( 'Border', 'sejoli-lead-form' ),
 				'selector' => '{{WRAPPER}} .lf-field input:not([type=submit]):not([type="checkbox"]):not([type="radio"]),
 						   {{WRAPPER}} .lf-field textarea'
 			]
@@ -477,7 +477,7 @@ protected function lf_field_style_controls() {
 		$this->start_controls_tab(
 			'form_inputs_dimensions_tab',
 			[
-				'label' => __( 'Dimensions', 'lead-form-builder' ),
+				'label' => __( 'Dimensions', 'sejoli-lead-form' ),
 			]
 		);
 
@@ -485,20 +485,20 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'lf_text_align',
 				[
-					'label'     => __( 'Field Alignment', 'lead-form-builder' ),
+					'label'     => __( 'Field Alignment', 'sejoli-lead-form' ),
 					'separator' => 'before',
 					'type'      => Controls_Manager::CHOOSE,
 					'options'   => [
 						'left'   => [
-							'title' => __( 'Left', 'lead-form-builder' ),
+							'title' => __( 'Left', 'sejoli-lead-form' ),
 							'icon'  => 'eicon-h-align-left',
 						],
 						'center' => [
-							'title' => __( 'Center', 'lead-form-builder' ),
+							'title' => __( 'Center', 'sejoli-lead-form' ),
 							'icon'  => 'eicon-h-align-center',
 						],
 						'right'  => [
-							'title' => __( 'Right', 'lead-form-builder' ),
+							'title' => __( 'Right', 'sejoli-lead-form' ),
 							'icon'  => 'eicon-h-align-right',
 						],
 					],
@@ -512,14 +512,14 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_field_spacing_heading',
 				[
-					'label'     => __( 'Spacing', 'lead-form-builder' ),
+					'label'     => __( 'Spacing', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 				]
 			);
 			$this->add_responsive_control(
 				'lf_input_margin_top',
 				[
-					'label'      => __( 'Between Label &amp; Fields', 'lead-form-builder' ),
+					'label'      => __( 'Between Label &amp; Fields', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'size_units' => [ 'px', 'em', 'rem' ],
 					'range'      => [
@@ -541,7 +541,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'lf_input_margin_bottom',
 				[
-					'label'      => __( 'Between Fields', 'lead-form-builder' ),
+					'label'      => __( 'Between Fields', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'size_units' => [ 'px', 'em', 'rem' ],
 					'range'      => [
@@ -563,7 +563,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'date_icon_alignment_heading',
 				[
-					'label'     => __( 'Calendar Icon Alignment', 'lead-form-builder' ),
+					'label'     => __( 'Calendar Icon Alignment', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -572,7 +572,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'input_date_icon_alignment',
 				[
-					'label' => __( 'Bottom to Top', 'lead-form-builder' ),
+					'label' => __( 'Bottom to Top', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', '%' ],
 				'range' => [
@@ -599,7 +599,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'input_date_icon_left_alignment',
 				[
-					'label' => __( 'Right to Left', 'lead-form-builder' ),
+					'label' => __( 'Right to Left', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', '%' ],
 				'range' => [
@@ -631,7 +631,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_field_dimensions_heading',
 				[
-					'label'     => __( 'Field Dimensions', 'lead-form-builder' ),
+					'label'     => __( 'Field Dimensions', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -640,7 +640,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'form_text_inputs_width',
 				[
-					'label' => __( 'Input Field Width', 'lead-form-builder' ),
+					'label' => __( 'Input Field Width', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', '%' ],
 				'range' => [
@@ -666,7 +666,7 @@ protected function lf_field_style_controls() {
 		$this->add_responsive_control(
   			'form_text_inputs_height',
   			[
-  				'label' => __( 'Input Field Height', 'lead-form-builder' ),
+  				'label' => __( 'Input Field Height', 'sejoli-lead-form' ),
   				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em' ],
 				'range' => [
@@ -688,7 +688,7 @@ protected function lf_field_style_controls() {
 		$this->add_responsive_control(
 			'form_textarea_inputs_width',
 			[
-				'label' => __( 'Textarea Width', 'lead-form-builder' ),
+				'label' => __( 'Textarea Width', 'sejoli-lead-form' ),
 				'type' => Controls_Manager::SLIDER,
 			'size_units' => [ 'px', 'em', '%' ],
 			'range' => [
@@ -714,7 +714,7 @@ protected function lf_field_style_controls() {
 		$this->add_responsive_control(
 			'form_textarea_inputs_height',
 			[
-				'label' => __( 'Textarea Height', 'lead-form-builder' ),
+				'label' => __( 'Textarea Height', 'sejoli-lead-form' ),
 				'type' => Controls_Manager::SLIDER,
 			'size_units' => [ 'px', 'em', '%' ],
 			'range' => [
@@ -737,7 +737,7 @@ protected function lf_field_style_controls() {
 	       $this->add_control(
 				'form_inputs_border_radius',
 				[
-					'label' => __( 'Border Radius', 'lead-form-builder' ),
+					'label' => __( 'Border Radius', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%' ],
 					'selectors' => [
@@ -750,7 +750,7 @@ protected function lf_field_style_controls() {
 	       $this->add_control(
 				'lf_field_padding_heading',
 				[
-					'label'     => __( 'Padding', 'lead-form-builder' ),
+					'label'     => __( 'Padding', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -759,9 +759,9 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'form_select_inputs_padding',
 				[
-					'label' => __( 'Drop-Down Select Text', 'lead-form-builder' ),
+					'label' => __( 'Drop-Down Select Text', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::DIMENSIONS,
-					'description' => __( 'Padding Around Text', 'lead-form-builder' ),
+					'description' => __( 'Padding Around Text', 'sejoli-lead-form' ),
 					'size_units' => [ 'px', '%' ],
 					'selectors'  => [
 						'{{WRAPPER}} .lf-field select' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
@@ -772,7 +772,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_field_margin_padding_heading',
 				[
-					'label'      => __( 'Fields Margin', 'lead-form-builder' ),
+					'label'      => __( 'Fields Margin', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -781,7 +781,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'lf_field_margin',
 				[
-					'label' => __( 'Margin', 'lead-form-builder' ),
+					'label' => __( 'Margin', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%' ],
 					'selectors' => [
@@ -803,7 +803,7 @@ protected function lf_field_style_controls() {
 			$this->start_controls_section(
 				'form_btn',
 				[
-					'label' => __( 'Button Styling', 'lead-form-builder' ),
+					'label' => __( 'Button Styling', 'sejoli-lead-form' ),
 					'tab' => Controls_Manager::TAB_STYLE,
 				]
 			);
@@ -811,7 +811,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'form_btn_padding',
 				[
-					'label' => __( 'Padding', 'lead-form-builder' ),
+					'label' => __( 'Padding', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%' ],
 					'selectors' => [
@@ -822,7 +822,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'form_btn_margin',
 				[
-					'label' => __( 'Margin', 'lead-form-builder' ),
+					'label' => __( 'Margin', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::DIMENSIONS,
 					'size_units' => [ 'px', '%' ],
 					'default' => [
@@ -850,7 +850,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_button_dimensions_heading',
 				[
-					'label'     => __( 'Button Dimensions', 'lead-form-builder' ),
+					'label'     => __( 'Button Dimensions', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -859,7 +859,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'form_btn_width',
 				[
-					'label' => __( 'Button Width', 'lead-form-builder' ),
+					'label' => __( 'Button Width', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::SLIDER,
 					'default' => [
 						'size' => 125,
@@ -891,7 +891,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'form_btn_height',
 				[
-					'label' => __( 'Button Height', 'lead-form-builder' ),
+					'label' => __( 'Button Height', 'sejoli-lead-form' ),
 					'type' => Controls_Manager::SLIDER,
 					'tablet_default' => [
 						'unit' => 'px',
@@ -919,21 +919,21 @@ protected function lf_field_style_controls() {
 		$this->add_responsive_control(
 	      'lfb_button_alignment',
 	      [
-	        'label'        => __( 'Button Alignment', 'lead-form-builder' ),
+	        'label'        => __( 'Button Alignment', 'sejoli-lead-form' ),
 	        'type'         => Controls_Manager::CHOOSE,
 	        'label_block'  => true,
 	        'separator' => 'after',
 			'options'      => [
 	          'left'   => [
-	            'title' => __( 'Left', 'lead-form-builder' ),
+	            'title' => __( 'Left', 'sejoli-lead-form' ),
 	            'icon'  => 'eicon-h-align-left',
 	          ],
 	          'center' => [
-	            'title' => __( 'Center', 'lead-form-builder' ),
+	            'title' => __( 'Center', 'sejoli-lead-form' ),
 	            'icon'  => 'eicon-h-align-center',
 	          ],
 	          'right'  => [
-	            'title' => __( 'Right', 'lead-form-builder' ),
+	            'title' => __( 'Right', 'sejoli-lead-form' ),
 	            'icon'  => 'eicon-h-align-right',
 	          ],
 	        ],
@@ -947,7 +947,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_button_color_heading',
 				[
-					'label'      => __( 'Button Color Options', 'lead-form-builder' ),
+					'label'      => __( 'Button Color Options', 'sejoli-lead-form' ),
 					'type'      => Controls_Manager::HEADING,
 					'separator' => 'before',
 				]
@@ -958,14 +958,14 @@ protected function lf_field_style_controls() {
 			$this->start_controls_tab(
 				'tab_button_normal',
 				[
-					'label' => __( 'Normal', 'lead-form-builder' ),
+					'label' => __( 'Normal', 'sejoli-lead-form' ),
 				]
 			);
 
 				$this->add_control(
 					'button_text_color',
 					[
-						'label'     => __( 'Text Color', 'lead-form-builder' ),
+						'label'     => __( 'Text Color', 'sejoli-lead-form' ),
 						'type'      => Controls_Manager::COLOR,
 						'default'   => '',
 						'selectors' => [
@@ -978,7 +978,7 @@ protected function lf_field_style_controls() {
 					Group_Control_Background::get_type(),
 					[
 						'name'           => 'btn_background_color',
-						'label'          => __( 'Background Color', 'lead-form-builder' ),
+						'label'          => __( 'Background Color', 'sejoli-lead-form' ),
 						'types'          => [ 'classic', 'gradient' ],
 						'fields_options' => [
 							'color' => [
@@ -997,7 +997,7 @@ protected function lf_field_style_controls() {
 					Group_Control_Border::get_type(),
 					[
 						'name'        => 'btn_border',
-						'label'       => __( 'Border', 'lead-form-builder' ),
+						'label'       => __( 'Border', 'sejoli-lead-form' ),
 						'fields_options' => [
 							'border' => [
 								'default' => 'none',
@@ -1022,7 +1022,7 @@ protected function lf_field_style_controls() {
 				$this->add_responsive_control(
 					'btn_border_radius',
 					[
-						'label'      => __( 'Border Radius', 'lead-form-builder' ),
+						'label'      => __( 'Border Radius', 'sejoli-lead-form' ),
 						'type'       => Controls_Manager::DIMENSIONS,
 						'size_units' => [ 'px', '%' ],
 						'selectors'  => [
@@ -1044,14 +1044,14 @@ protected function lf_field_style_controls() {
 			$this->start_controls_tab(
 				'tab_button_hover',
 				[
-					'label' => __( 'Hover', 'lead-form-builder' ),
+					'label' => __( 'Hover', 'sejoli-lead-form' ),
 				]
 			);
 
 				$this->add_control(
 					'btn_hover_color',
 					[
-						'label'     => __( 'Text Color', 'lead-form-builder' ),
+						'label'     => __( 'Text Color', 'sejoli-lead-form' ),
 						'type'      => Controls_Manager::COLOR,
 						'selectors' => [
 							'{{WRAPPER}} .lf-field input[type="submit"]:hover' => 'color: {{VALUE}};',
@@ -1062,7 +1062,7 @@ protected function lf_field_style_controls() {
 				$this->add_control(
 					'button_hover_border_color',
 					[
-						'label'     => __( 'Border Hover Color', 'lead-form-builder' ),
+						'label'     => __( 'Border Hover Color', 'sejoli-lead-form' ),
 						'type'      => Controls_Manager::COLOR,
 						'selectors' => [
 							'{{WRAPPER}} .lf-field input[type="submit"]:hover' => 'border-color: {{VALUE}};',
@@ -1074,7 +1074,7 @@ protected function lf_field_style_controls() {
 					Group_Control_Background::get_type(),
 					[
 						'name'     => 'button_background_hover_color',
-						'label'    => __( 'Background Color', 'lead-form-builder' ),
+						'label'    => __( 'Background Color', 'sejoli-lead-form' ),
 						'types'    => [ 'classic', 'gradient' ],
 						'selector' => '{{WRAPPER}} .lf-field input[type="submit"]:hover',
 					]
@@ -1092,7 +1092,7 @@ protected function lf_field_style_controls() {
 		$this->start_controls_section(
 			'lf_radio_checkbox_style',
 			[
-				'label' => __( 'Radio &amp; Checkbox Styling', 'lead-form-builder' ),
+				'label' => __( 'Radio &amp; Checkbox Styling', 'sejoli-lead-form' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -1100,10 +1100,10 @@ protected function lf_field_style_controls() {
 		$this->add_control(
             'lf_custom_radio_checkbox',
             [
-                'label'                 => __( 'Change Default Style', 'lead-form-builder' ),
+                'label'                 => __( 'Change Default Style', 'sejoli-lead-form' ),
                 'type'                  => Controls_Manager::SWITCHER,
-                'label_on'              => __( 'Yes', 'lead-form-builder' ),
-                'label_off'             => __( 'No', 'lead-form-builder' ),
+                'label_on'              => __( 'Yes', 'sejoli-lead-form' ),
+                'label_off'             => __( 'No', 'sejoli-lead-form' ),
                 'return_value'          => 'yes',
                 'default'      			=> 'no',
             ]
@@ -1112,7 +1112,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_radio_checkbox_size',
 				[
-					'label'      => __( 'Size', 'lead-form-builder' ),
+					'label'      => __( 'Size', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'size_units' => [ 'px', 'em', 'rem' ],
 					'default'    => [
@@ -1138,7 +1138,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_checkbox_check_size',
 				[
-					'label'      => __( 'Checkbox Check Size', 'lead-form-builder' ),
+					'label'      => __( 'Checkbox Check Size', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'size_units' => [ 'px', 'em', 'rem' ],
 					'default'    => [
@@ -1163,7 +1163,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
 				'lf_radio_dot_size',
 				[
-					'label'      => __( 'Radio Button Dot Size', 'lead-form-builder' ),
+					'label'      => __( 'Radio Button Dot Size', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'size_units' => [ 'px', 'em', 'rem' ],
 					'default'    => [
@@ -1188,7 +1188,7 @@ protected function lf_field_style_controls() {
 			$this->add_control(
             'lf_radio_checkbox_spacing',
             [
-                'label'                 => __( 'Spacing', 'lead-form-builder' ),
+                'label'                 => __( 'Spacing', 'sejoli-lead-form' ),
                 'type'                  => Controls_Manager::HEADING,
                 'separator'             => 'before',
 				'condition'             => [
@@ -1200,7 +1200,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'lf_radio_checkbox_spacing_left',
 				[
-					'label'      => __( 'Between Label &amp; Radio or Checkbox', 'lead-form-builder' ),
+					'label'      => __( 'Between Label &amp; Radio or Checkbox', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'size_units' => [ 'px', 'em', 'rem' ],
 					'default'    => [
@@ -1235,7 +1235,7 @@ protected function lf_field_style_controls() {
 			$this->add_responsive_control(
 				'lf_radio_checkbox_spacing_label_left',
 				[
-					'label'      => __( 'Between Fields', 'lead-form-builder' ),
+					'label'      => __( 'Between Fields', 'sejoli-lead-form' ),
 					'type'       => Controls_Manager::SLIDER,
 					'separator'  => 'after',
 					'size_units' => [ 'px', 'em', 'rem' ],
@@ -1271,7 +1271,7 @@ protected function lf_field_style_controls() {
 		$this->add_control(
             'checkbox_heading',
             [
-                'label'                 => __( 'Border Radius', 'lead-form-builder' ),
+                'label'                 => __( 'Border Radius', 'sejoli-lead-form' ),
                 'type'                  => Controls_Manager::HEADING,
 				'condition'             => [
 					'lf_custom_radio_checkbox' => 'yes',
@@ -1282,7 +1282,7 @@ protected function lf_field_style_controls() {
 		$this->add_control(
 			'checkbox_border_radius',
 			[
-				'label'                 => __( 'Checkbox', 'lead-form-builder' ),
+				'label'                 => __( 'Checkbox', 'sejoli-lead-form' ),
 				'type'                  => Controls_Manager::DIMENSIONS,
 				'size_units'            => [ 'px', 'em', '%' ],
 				'selectors'             => [
@@ -1298,7 +1298,7 @@ protected function lf_field_style_controls() {
 		$this->add_control(
 			'radio_border_radius',
 			[
-				'label'                 => __( 'Radio', 'lead-form-builder' ),
+				'label'                 => __( 'Radio', 'sejoli-lead-form' ),
 				'type'                  => Controls_Manager::DIMENSIONS,
 				'size_units'            => [ 'px', 'em', '%' ],
 				'selectors'             => [

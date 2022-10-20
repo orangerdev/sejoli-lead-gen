@@ -2,22 +2,6 @@
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
- * Set lead forms
- * Hooked via action wp_loaded, priority 1010
- * @since 	1.0.0
- */
-// function set_lead_forms() {
-
-// 	if(current_user_can('manage_options')) :
-
-// 		$products = (array) get_user_meta( get_current_user_id(), 'sejoli_jv_data', true);
-
-// 	endif;
-
-// }
-// add_action( 'wp_loaded', 'set_lead_forms', 1010);
-
-/**
  * Set local js variables
  * Hooked via action wp_enqueue_scripts, priority 1111
  * @since   1.0.0
@@ -191,14 +175,7 @@ add_filter( 'sejoli/member-area/menu-link', 'display_link_list_in_menu', 11, 4);
  */
 function set_template_file(string $file, string $view_request) {
 
-
     if( in_array( $view_request, array('lead-affiliasi', 'lead-entries') ) ) :
-
-        // if( !current_user_can('manage_options') ) :
-
-        //     return LFB_PLUGIN_DIR . 'template/no-lead-form.php';
-
-        // endif;
 
         if( 'lead-affiliasi' === $view_request ) :
 

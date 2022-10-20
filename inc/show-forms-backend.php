@@ -2,13 +2,25 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 Class LFB_SHOW_FORMS {
+
+    /**
+     * Form Nonce
+     * @since   1.0.0
+     */
     function lfb_show_form_nonce(){
+
         $nonce = wp_create_nonce( '_nonce_verify' );
         
         return $nonce;
+        
     }
 
+    /**
+     * Show All Forms
+     * @since   1.0.0
+     */
     function lfb_show_all_forms($id) {
+
         $lfb_admin_url = admin_url();
         echo '<div class="wrap show-all-form">';
         include_once( plugin_dir_path(__FILE__) . 'header.php' );
@@ -16,12 +28,12 @@ Class LFB_SHOW_FORMS {
             <table class="wp-list-table widefat fixed striped posts ">
         	<thead>
         	<tr>
-        		<th scope="col" id="title" class="manage-column column-title column-primary sortable asc">'.esc_html__('Form Name','lead-form-builder').'</th>
-        		<th scope="col" id="product" class="manage-column column-product">'.esc_html__('Product','lead-form-builder').'</th>
-                <th scope="col" id="shortcode" class="manage-column column-shortcode">'.esc_html__('Shortcode','lead-form-builder').'</th>
-        		<th scope="col" id="today_count" class="manage-column column-form-count sortable desc">'.esc_html__("Today's Lead",'lead-form-builder').' </th>
-        		<th scope="col" id="total_count" class="manage-column column-form-count sortable desc">'.esc_html__('Total Lead','lead-form-builder').' </th>
-                <th scope="col" id="date" class="manage-column column-form-date sortable desc">'.esc_html__('Date','lead-form-builder').' </th>
+        		<th scope="col" id="title" class="manage-column column-title column-primary sortable asc">'.esc_html__('Form Name','sejoli-lead-form').'</th>
+        		<th scope="col" id="product" class="manage-column column-product">'.esc_html__('Product','sejoli-lead-form').'</th>
+                <th scope="col" id="shortcode" class="manage-column column-shortcode">'.esc_html__('Shortcode','sejoli-lead-form').'</th>
+        		<th scope="col" id="today_count" class="manage-column column-form-count sortable desc">'.esc_html__("Today's Lead",'sejoli-lead-form').' </th>
+        		<th scope="col" id="total_count" class="manage-column column-form-count sortable desc">'.esc_html__('Total Lead','sejoli-lead-form').' </th>
+                <th scope="col" id="date" class="manage-column column-form-date sortable desc">'.esc_html__('Date','sejoli-lead-form').' </th>
         		</tr>
         	</thead>
         	<tbody id="the-list" data-wp-lists="list:post">';
@@ -64,8 +76,8 @@ Class LFB_SHOW_FORMS {
                 echo '<tr><td class="title column-title has-row-actions column-primary" data-colname="Title"><strong><a class="row-title" href="'.esc_url($edit_url_nonce).'" title="Edit “' . esc_html($form_title) . '”">' . esc_html($form_title) . '</a></strong>
             		<div class="row-actions"><span class="edit"><a href="' . esc_url($edit_url_nonce). '">Edit</a></span>|<span class="edit"><a href="' . esc_url($lfb_admin_url) . 'admin.php?page=wplf-plugin-menu&action=delete&page_id='.$id.'&formid=' . $form_id . '">Delete</a></span>|<span class="edit"><a href="'.esc_url($form_color).'" target="_blank" >View Form</a></span>
             		</div>
-            		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','lead-form-builder').' </span></button>
-            		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','lead-form-builder').' </span></button>
+            		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','sejoli-lead-form').' </span></button>
+            		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','sejoli-lead-form').' </span></button>
             		</td>
                     <td class="product column-product" data-colname="Shortcode"><span class="product">
                     <strong>'.$product->post_title.'</strong>
@@ -109,5 +121,7 @@ Class LFB_SHOW_FORMS {
         }
         echo '</ul>';
         echo '</div> </div></div>';
+
     }
+
 }

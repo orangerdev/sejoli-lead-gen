@@ -506,6 +506,9 @@ a.lead-remove i {
 }
  .nav-tab.edit-lead-form:before,
  .nav-tab.lead-form-email-setting:before,
+ .nav-tab.lead-form-wa-setting:before,
+ .nav-tab.lead-form-sms-setting:before,
+ .nav-tab.lead-form-autoresponder-setting:before,
  .nav-tab.lead-form-captcha-setting:before,
  .nav-tab.lead-form-setting:before,
  .nav-tab.lead-form-create-form:before {
@@ -516,6 +519,15 @@ a.lead-remove i {
   content: "\f044";
 }
  .nav-tab.lead-form-email-setting:before {
+  content: "\f003";
+}
+ .nav-tab.lead-form-wa-setting:before {
+  content: "\f232";
+}
+ .nav-tab.lead-form-sms-setting:before {
+  content: "\f075";
+}
+ .nav-tab.lead-form-autoresponder-setting:before {
   content: "\f003";
 }
  .nav-tab.lead-form-captcha-setting:before {
@@ -777,7 +789,14 @@ div#form-leads-show::-webkit-scrollbar-thumb {
 }
 /***Email Settings Start***/
 #form-email-setting,
-#form-user-email-setting {
+#form-user-email-setting,
+#form-affiliate-email-setting,
+#form-wa-setting,
+#form-user-wa-setting,
+#form-affiliate-wa-setting,
+#form-sms-setting,
+#form-user-sms-setting,
+#form-affiliate-sms-setting {
   display: inline-block;
   width: 45%;
   float: left;
@@ -804,7 +823,109 @@ div#form-leads-show::-webkit-scrollbar-thumb {
 #form-user-email-setting .form-table td input[type="password"],
 #form-user-email-setting .form-table td input[type="email"],
 #form-user-email-setting .form-table td select,
-#form-user-email-setting .form-table td textarea {
+#form-user-email-setting .form-table td textarea,
+#form-affiliate-email-setting .form-table textarea,
+#form-affiliate-email-setting .form-table span.description,
+#form-affiliate-email-setting .form-table td input[type="text"],
+#form-affiliate-email-setting .form-table td input[type="password"],
+#form-affiliate-email-setting .form-table td input[type="email"],
+#form-affiliate-email-setting .form-table td select,
+#form-affiliate-email-setting .form-table td textarea {
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.5;
+  display: block;
+}
+
+#form-sms-setting b.lfb-required {
+  color: #f11f1f;
+}
+#form-sms-setting {
+  padding-right: 2%;
+}
+#form-sms-setting .sms_setting_section {
+  border-right: 1px solid rgba(173, 175, 173, 0.19);
+}
+#form-sms-setting .form-table textarea,
+#form-sms-setting .form-table span.description,
+#form-sms-setting .form-table td input[type="text"],
+.form-table td input[type="password"],
+#form-sms-setting .form-table td input[type="email"],
+#form-sms-setting .form-table td select,
+#form-sms-setting .form-table td textarea,
+#form-user-sms-setting .form-table textarea,
+#form-user-sms-setting .form-table span.description,
+#form-user-sms-setting .form-table td input[type="text"],
+#form-user-sms-setting .form-table td input[type="password"],
+#form-user-sms-setting .form-table td input[type="email"],
+#form-user-sms-setting .form-table td select,
+#form-user-sms-setting .form-table td textarea,
+#form-affiliate-sms-setting .form-table textarea,
+#form-affiliate-sms-setting .form-table span.description,
+#form-affiliate-sms-setting .form-table td input[type="text"],
+#form-affiliate-sms-setting .form-table td input[type="password"],
+#form-affiliate-sms-setting .form-table td input[type="email"],
+#form-affiliate-sms-setting .form-table td select,
+#form-affiliate-sms-setting .form-table td textarea {
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.5;
+  display: block;
+}
+
+
+#form-wa-setting b.lfb-required {
+  color: #f11f1f;
+}
+#form-wa-setting {
+  padding-right: 2%;
+}
+#form-wa-setting .wa_setting_section {
+  border-right: 1px solid rgba(173, 175, 173, 0.19);
+}
+
+#form-autoresponder-setting b.lfb-required {
+  color: #f11f1f;
+}
+#form-autoresponder-setting {
+  padding-right: 2%;
+}
+#form-autoresponder-setting .autoresponder_setting_section {
+  border-right: 1px solid rgba(173, 175, 173, 0.19);
+}
+#form-sms-setting b.lfb-required {
+  color: #f11f1f;
+}
+#form-sms-setting {
+  padding-right: 2%;
+}
+#form-sms-setting .sms_setting_section {
+  border-right: 1px solid rgba(173, 175, 173, 0.19);
+}
+#form-wa-setting .form-table textarea,
+#form-wa-setting .form-table span.description,
+#form-wa-setting .form-table td input[type="text"],
+.form-table td input[type="password"],
+#form-wa-setting .form-table td input[type="email"],
+#form-wa-setting .form-table td select,
+#form-wa-setting .form-table td textarea,
+#form-user-wa-setting .form-table textarea,
+#form-user-wa-setting .form-table span.description,
+#form-user-wa-setting .form-table td input[type="text"],
+#form-user-wa-setting .form-table td input[type="password"],
+#form-user-wa-setting .form-table td input[type="email"],
+#form-user-wa-setting .form-table td select,
+#form-user-wa-setting .form-table td textarea,
+#form-affiliate-wa-setting .form-table textarea,
+#form-affiliate-wa-setting .form-table span.description,
+#form-affiliate-wa-setting .form-table td input[type="text"],
+#form-affiliate-wa-setting .form-table td input[type="password"],
+#form-affiliate-wa-setting .form-table td input[type="email"],
+#form-affiliate-wa-setting .form-table td select,
+#form-affiliate-wa-setting .form-table td textarea,
+#form-autoresponder-setting .form-table td input[type="email"],
+#form-autoresponder-setting .form-table td select,
+#form-autoresponder-setting .form-table td textarea, {
   width: 100%;
   font-size: 16px;
   line-height: 1.5;
@@ -2005,6 +2126,7 @@ table.widefat {
 #error-message-email-setting .success p,
 #error-thankyou-message-setting .success p,
 #error-message-user-email-setting p,
+#error-message-affiliate-email-setting p,,
 #thpopup_add .success p,
 .add-thpopup .success p {
   font-size: 14px;
@@ -2022,6 +2144,7 @@ table.widefat {
 #error-message-email-setting .success p::before,
 #error-thankyou-message-setting.success p::before,
 #error-message-user-email-setting .success p::before,
+#error-message-affiliate-email-setting .success p::before,
 #thpopup_add .success p::before,
 .add-thpopup .success p::before {
   content: "\f00c";
@@ -2036,6 +2159,7 @@ table.widefat {
 #error-message-captcha-key .error p,
 #error-message-captcha-option .error p,
 #error-message-user-email-setting .error p,
+#error-message-affiliate-email-setting .error p,
 #error-thankyou-message-setting.error p,
 #thpopup_add .error p,
 .add-thpopup .error p {
@@ -2052,6 +2176,89 @@ table.widefat {
 #error-message-captcha-key .error p::before,
 #error-message-captcha-option .error p::before,
 #error-message-user-email-setting .error p::before,
+#error-message-affiliate-email-setting .error p::before,
+#thpopup_add .error p::before,
+.add-thpopup .error p::before {
+  font-size: 14px;
+  padding: 6px 10px;
+  background: #f2dede;
+  display: block;
+  color: #d8000c;
+  position: relative;
+}
+
+#error-message-lead-store .success p,
+#lfb-error-message-form-success .success p,
+#error-message-captcha-key .success p,
+#error-message-captcha-option .success p,
+#error-message-wa-setting .success p,
+#error-message-autoresponder-setting .success p,
+#error-message-sms-setting .success p,
+#error-thankyou-message-setting .success p,
+#error-message-user-wa-setting p,
+#error-message-affiliate-wa-setting p,
+#error-message-user-sms-setting p,
+#error-message-affiliate-sms-setting p,
+#thpopup_add .success p,
+.add-thpopup .success p {
+  font-size: 14px;
+  padding: 6px 10px;
+  background: #dff2bf;
+  display: block;
+  color: #4f8a10;
+  position: relative;
+  margin: 0;
+}
+#error-message-lead-store .success p::before,
+#lfb-error-message-form-success .success p::before,
+#error-message-captcha-key .success p::before,
+#error-message-captcha-option .success p::before,
+#error-message-wa-setting .success p::before,
+#error-message-autoresponder-setting .success p::before,
+#error-message-sms-setting .success p::before,
+#error-thankyou-message-setting.success p::before,
+#error-message-user-wa-setting .success p::before,
+#error-message-affiliate-wa-setting .success p::before,
+#thpopup_add .success p::before,
+.add-thpopup .success p::before {
+  content: "\f00c";
+  font-family: fontawesome;
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+}
+/*error///*/
+#error-message-lead-store .error p,
+#lfb-error-message-form-success .error p,
+#error-message-captcha-key .error p,
+#error-message-captcha-option .error p,
+#error-message-autoresponder-setting .error p,
+#error-message-wa-setting .error p,
+#error-message-user-wa-setting .error p,
+#error-message-affiliate-wa-setting .error p,
+#error-message-user-sms-setting .error p,
+#error-message-affiliate-sms-setting .error p,
+#error-thankyou-message-setting.error p,
+#thpopup_add .error p,
+.add-thpopup .error p {
+  font-size: 14px;
+  padding: 6px 10px;
+  background: #f2dede;
+  display: block;
+  color: #d8000c;
+  position: relative;
+  margin: 0;
+}
+#error-message-lead-store .error p::before,
+#lfb-error-message-form-success .error p::before,
+#error-message-captcha-key .error p::before,
+#error-message-captcha-option .error p::before,
+#error-message-autoresponder-setting .error p::before,
+#error-message-wa-setting .error p::before,
+#error-message-user-wa-setting .error p::before,
+#error-message-affiliate-wa-setting .error p::before,
+#error-message-user-sms-setting .error p::before,
+#error-message-affiliate-sms-setting .error p::before,
 #thpopup_add .error p::before,
 .add-thpopup .error p::before {
   font-size: 14px;
@@ -2293,7 +2500,12 @@ form#thpopup_add .th_popup_header_image img {
     font-size: 14px;
   }
   #form-email-setting,
-  #form-user-email-setting {
+  #form-user-email-setting,
+  #form-affiliate-email-setting,
+  #form-wa-setting,
+  #form-user-wa-setting,
+  #form-affiliate-wa-setting,
+  #form-autoresponder-setting, {
     display: inline-block;
     width: 100%;
     float: none;

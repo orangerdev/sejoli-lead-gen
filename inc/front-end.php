@@ -2,33 +2,58 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 Class LFB_Front_end_FORMS {
+
+    /**
+     * Success Message
+     * @since   1.0.0
+     */
     function lfb_success_msg($posts){
+
         $multiData = '';
-        $msg= __('Thank You ...','lead-form-builder');
+        $msg= __('Thank You ...','sejoli-lead-form');
          if(isset($posts[0]->multiData)){
             $multiData =  unserialize($posts[0]->multiData);
         }
         $return = (isset($multiData['thankyou_settings']['success-msg']))?$multiData['thankyou_settings']['success-msg']:$msg;
         
         return  $return;
+
     }   
 
+    /**
+     * Redirect After Submitted Form
+     * @since   1.0.0
+     */
     function lfb_redirect_url($posts){
+
         $multiData = '';
-        $redirect= '';
+        $redirect = '';
+
          if(isset($posts[0]->multiData)){
             $multiData =  unserialize($posts[0]->multiData);
         }
         $return = (isset($multiData['thankyou_settings']['redirect-url']))?$multiData['thankyou_settings']['redirect-url']:$redirect;
         
         return  $return;
+
     }      
 
+    /**
+     * Captcha
+     * @since   1.0.0
+     */
     function lfb_captcha_on(){
+
         wp_enqueue_script('lfb-captcha','https://www.google.com/recaptcha/api.js?onload=CaptchaCallback&render=explicit');
+
     }
 
+    /**
+     * Show Form in Front End
+     * @since   1.0.0
+     */
     function lfb_show_front_end_forms($this_form_id){
+
         $form_elemets = '';
         $submit_button = '';
 
@@ -204,10 +229,17 @@ Class LFB_Front_end_FORMS {
                 <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p></div>';
 
             return $return;
+
         }
+
     }
 
+    /**
+     * Form Field Type Text
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_text($data_array){
+
         $fieldType = $data_array['field_type'];
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
         $text_email_url_number ='<div class="text-type lf-field"><label>' . $data_array['field_name'] . '</label>
@@ -215,9 +247,15 @@ Class LFB_Front_end_FORMS {
         </span></div>';
         
         return $text_email_url_number;
+
     }
 
+    /**
+     * Form Field Type Object
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_date_dob($data_array){
+
         $fieldType = $data_array['field_type'];
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
@@ -227,19 +265,31 @@ Class LFB_Front_end_FORMS {
         // <span class="lfb-date-icon"><i class="fa fa-calendar"></i></span>
         
         return $text_email_url_number;
+
     }
 
+    /**
+     * Form Field Type Name
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_name($data_array){
+
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
-        $name  ='<div class="name-type lf-field"><label>' . $data_array['field_name'] . '</label>
+        $name ='<div class="name-type lf-field"><label>' . $data_array['field_name'] . '</label>
         <span><input id="' . $fieldIdName . '" type="text" name="' . $fieldIdName . '" class="lf-form-name" value="' . ($data_array['default_phonenumber'] == 1 ? "" : $data_array['default_value'] ) . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" />
         </span></div>';
         
         return $name;
+
     }
 
+    /**
+     * Form Field Type Textarea
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_textarea($data_array){
+
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
         $textbox ='<div class="textarea-type lf-field"><label>' . $data_array['field_name'] . '</label>
@@ -247,9 +297,15 @@ Class LFB_Front_end_FORMS {
         </span></div>';
         
         return $textbox;
+
     }
 
+    /**
+     * Form Field Type Terms Checkbox
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_terms($data_array){
+
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
         $is_required = ($data_array['is_required'] == 1 ? 'term_accept' : "term_accepts" );
         $textbox ='<div class="html-fieldtype lf-field lfb-terms">
@@ -257,9 +313,15 @@ Class LFB_Front_end_FORMS {
         </div>';
         
         return $textbox;
+
     }
 
+    /**
+     * Form Field Type HTML
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_htmlfield($data_array){
+
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
         $textbox ='<div class="html-fieldtype lf-field">
@@ -267,9 +329,15 @@ Class LFB_Front_end_FORMS {
         '.$data_array['default_value'].' </div>';
         
         return $textbox;
+
     }
 
+    /**
+     * Form Field Type File Upload
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_upload($data_array){
+
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
         $uploadfield = $fieldIdName.'_'.$data_array['fid'];
 
@@ -285,13 +353,19 @@ Class LFB_Front_end_FORMS {
         </div>';
 
         return $upload;
+
     }
 
+    /**
+     * Form Field Type Radio
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_radio($data_array){
-        $field_type_array= $data_array['field_type_array'];
-        $default_value=$data_array['default_value'];
-        $field_name=$data_array['field_name'];
-        $radio_fields='';
+
+        $field_type_array = $data_array['field_type_array'];
+        $default_value = $data_array['default_value'];
+        $field_name = $data_array['field_name'];
+        $radio_fields = '';
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
         foreach ($field_type_array as $field_type_array_element => $radio_options) {
@@ -304,16 +378,23 @@ Class LFB_Front_end_FORMS {
         }
         $radio ='<div class="radio-type lf-field"><label>' . $field_name . '</label><span><ul>' . $radio_fields . '</ul></span></div>';
         
-        return $radio;           
+        return $radio;  
+
     }
 
+    /**
+     * Form Field Type Select Option
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_option($data_array){
-        $field_type_array= $data_array['field_type_array'];
-        $default_value=$data_array['default_value'];
-        $field_name=$data_array['field_name'];
-        $option_fields='';
+
+        $field_type_array = $data_array['field_type_array'];
+        $default_value = $data_array['default_value'];
+        $field_name = $data_array['field_name'];
+        $option_fields = '';
         
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
+
         foreach ($field_type_array as $field_type_array_element => $option_options) {
             $field_type_array_element_id = str_replace("field_", "", $field_type_array_element);
             if (($field_type_array_element_id == $default_value) && ($default_value > 0)) {
@@ -325,14 +406,20 @@ Class LFB_Front_end_FORMS {
         $option ='<div class="select-type lf-field"><label>' . $field_name . '</label>
         <span><select id="' . $fieldIdName . '" name="' . $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' ><option value="">none</option>' . $option_fields . '</select></span></div>';
             
-        return $option;        
+        return $option;     
+
     }
 
+    /**
+     * Form Field Type Checkbox
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_checkbox($data_array){
-        $field_type_array= $data_array['field_type_array'];
-        $default_value=$data_array['default_value'];
-        $field_name=$data_array['field_name'];
-        $checkbox_fields='';
+
+        $field_type_array = $data_array['field_type_array'];
+        $default_value = $data_array['default_value'];
+        $field_name = $data_array['field_name'];
+        $checkbox_fields = '';
         
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
         foreach ($field_type_array as $field_type_array_element => $checkbox_options) {
@@ -354,21 +441,31 @@ Class LFB_Front_end_FORMS {
         $checkbox ='<div class="checkbox-type lf-field"><label>' . $field_name . '</label><span><ul>' . $checkbox_fields . '</ul></span></div>';
         
         return $checkbox;
+
     }
 
+    /**
+     * Form Field Type Submit Button
+     * @since   1.0.0
+     */
     function lfb_front_end_field_type_submit($data_array,$captcha_option){
+
         $captcha_field = '';
         $submit = '';
+
         //captch on/off
         if ($captcha_option == 'ON') {
             $captcha_field = '<div class="g-recaptcha" data-sitekey="' . esc_html(get_option('captcha-setting-sitekey')) . '"></div><br/>';
             $submit ='<div class="captcha-type lf-field"><label>' . $captcha_field . '</label></div>';
         }
+
         // submit button
         $submit_button = ($data_array['default_value']=='')?'Submit':$data_array['default_value'];
         $submit .= '<div class="submit-type lf-field"><label><input id="' . $data_array['field_id'] . '" class="lf-form-submit" type="submit" name="' . $data_array['field_name'] . '" value="' . $submit_button . '"/>
         </label></div>';
 
-        return $submit;        
+        return $submit;   
+             
     }
+    
 }

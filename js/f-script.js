@@ -83,7 +83,7 @@ function lfbInserForm(element,form_id,uploaddata=''){
             element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
                 grecaptcha.reset();
 
-            } else if (jQuery.trim(response) == 'inserted') {
+            } else if (jQuery.trim(response) > 0) {
                 var redirect = jQuery(".successmsg_"+form_id).attr('redirect');
                     element.siblings(".successmsg_"+form_id).css('display','block');
                     jQuery('#lfb-submit').trigger('click');

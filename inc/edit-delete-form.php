@@ -3,6 +3,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 require_once('lf-db.php');
 
 Class LFB_EDIT_DEL_FORM {
+
+    /**
+     * Allowed Tags
+     * @since   1.0.0
+     */
     function _alowed_tags() {
         $allowed = wp_kses_allowed_html( 'post' );
     
@@ -46,7 +51,12 @@ Class LFB_EDIT_DEL_FORM {
         return $allowed;
     }
 
+    /**
+     * Get Product Lead
+     * @since   1.0.0
+     */
     function sejoli_lead_get_product($product_id) {
+
         $html = '';
 
         if( $product_id > 0 ) {
@@ -59,10 +69,17 @@ Class LFB_EDIT_DEL_FORM {
         }
 
         return $html;
+
     }
 
+    /**
+     * Edit Form Content
+     * @since   1.0.0
+     */
     function lfb_edit_form_content($form_action, $this_form_id) {
+
         global $wpdb;
+
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $table_name = LFB_FORM_FIELD_TBL;
         $prepare_8 = $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d LIMIT 1", $this_form_id  );
@@ -74,6 +91,14 @@ Class LFB_EDIT_DEL_FORM {
             $form_data_result = maybe_unserialize($posts[0]->form_data);
             $mail_setting_result = $posts[0]->mail_setting;
             $usermail_setting_result = $posts[0]->usermail_setting;
+            $affiliatemail_setting_result = $posts[0]->affiliatemail_setting;
+            $autoresponder_setting_result = $posts[0]->autoresponder_setting;
+            $wa_setting_result = $posts[0]->wa_setting;
+            $userwa_setting_result = $posts[0]->userwa_setting;
+            $affiliatewa_setting_result = $posts[0]->affiliatewa_setting;
+            $sms_setting_result = $posts[0]->sms_setting;
+            $usersms_setting_result = $posts[0]->usersms_setting;
+            $affiliatesms_setting_result = $posts[0]->affiliatesms_setting;
             $captcha_option = $posts[0]->captcha_status;
             $lead_store_option = esc_html($posts[0]->storeType);
 
@@ -84,17 +109,17 @@ Class LFB_EDIT_DEL_FORM {
         if(isset($_GET['redirect'])){
             $redirect_value= esc_html($_GET['redirect']);
             if($redirect_value=='create'){
-                $form_message='<div id="message" class="updated notice is-dismissible"><p>Form<strong>Saved</strong>.</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__("Dismiss this notice.","lead-form-builder").'</span></button></div>';
+                $form_message='<div id="message" class="updated notice is-dismissible"><p>Form<strong>Saved</strong>.</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__("Dismiss this notice.","sejoli-lead-form").'</span></button></div>';
             }
             
             if($redirect_value=='update'){
-                $form_message='<div id="message" class="updated notice is-dismissible"><p>Form <strong>Updated</strong>.</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__("Dismiss this notice.","lead-form-builder").'</span></button></div>';
+                $form_message='<div id="message" class="updated notice is-dismissible"><p>Form <strong>Updated</strong>.</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__("Dismiss this notice.","sejoli-lead-form").'</span></button></div>';
             }
         }
 
         $nonce = wp_create_nonce( '_nonce_verify' );
         $update_url = "admin.php?page=add-new-form&action=edit&redirect=update&formid=".$this_form_id.'&_wpnonce='.$nonce;
-        $email_active = $captcha_active = $form_active = $_active = '';
+        $email_active = $wa_active = $autoresponder_active = $sms_active = $captcha_active = $form_active = $_active = '';
         
         if(isset($_GET['email-setting'])){
             $email_active = 'nav-tab-active';
@@ -110,15 +135,18 @@ Class LFB_EDIT_DEL_FORM {
         include_once( plugin_dir_path(__FILE__) . 'header.php' );
         echo wp_kses($form_message,$this->_alowed_tags());
         echo '<div class="nav-tab-wrapper">
-            <a class="nav-tab edit-lead-form '.esc_attr($_active).'" href="#">'.esc_html__("Edit Form","lead-form-builder").'</a>
-            <a class="nav-tab lead-form-email-setting  '.esc_attr($email_active).'" href="#">'.esc_html__("Email Setting","lead-form-builder").'</a>
-            <a class="nav-tab lead-form-captcha-setting  '.esc_attr($captcha_active).'" href="#">'.esc_html__("Captcha Setting","lead-form-builder").'</a>
-            <a class="nav-tab lead-form-setting  '.esc_attr($form_active).'" href="#">'.esc_html__("Setting","lead-form-builder").'</a>
+            <a class="nav-tab edit-lead-form '.esc_attr($_active).'" href="#">'.esc_html__("Edit Form","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-email-setting  '.esc_attr($email_active).'" href="#">'.esc_html__("Email Setting","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-wa-setting  '.esc_attr($wa_active).'" href="#">'.esc_html__("WhatsApp Setting","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-sms-setting  '.esc_attr($sms_active).'" href="#">'.esc_html__("SMS Setting","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-autoresponder-setting  '.esc_attr($autoresponder_active).'" href="#">'.esc_html__("Autoresponder Setting","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-captcha-setting  '.esc_attr($captcha_active).'" href="#">'.esc_html__("Captcha Setting","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-setting  '.esc_attr($form_active).'" href="#">'.esc_html__("Setting","sejoli-lead-form").'</a>
             </div>
             <div id="sections">
             <span class="back-arrow"><a href="'.admin_url('admin.php?page=wplf-plugin-menu').'" ><img width ="18" src="'.LFB_FORM_BACK_SVG.'" ></a></span>
             <section><div class="wrap">
-            <h2>'.esc_html__('Edit From','lead-form-builder').'</h2>
+            <h2>'.esc_html__('Edit From','sejoli-lead-form').'</h2>
             <form method="post" action="'.esc_url($update_url).'" id="new_lead_form">
             <div id="poststuff">
                 <div id="post-body">
@@ -130,7 +158,7 @@ Class LFB_EDIT_DEL_FORM {
                             '.$this->sejoli_lead_get_product($product).'
                             </br>
                             <div id="titlewrap">
-                            <input type="text" class="new_form_heading" name="form_page_url" placeholder="'.esc_html__('Enter form page url here','lead-form-builder').'" value="' . $form_url . '" size="30" id="title" spellcheck="true" autocomplete="off"></div><!-- #titlewrap -->
+                            <input type="text" class="new_form_heading" name="form_page_url" placeholder="'.esc_html__('Enter form page url here','sejoli-lead-form').'" value="' . $form_url . '" size="30" id="title" spellcheck="true" autocomplete="off"></div><!-- #titlewrap -->
                             </br>
                             <div class="inside">
                             </div>
@@ -149,87 +177,142 @@ Class LFB_EDIT_DEL_FORM {
             </div>
             </section>
             <section>';
-        if (is_admin()) {
-            $lf_email_setting_form = new LFB_EmailSettingForm($this_form_id);
-            $lf_email_setting_form->lfb_email_setting_form($this_form_id,$mail_setting_result,$usermail_setting_result);
-        }
+            if (is_admin()) {
+                $lf_email_setting_form = new LFB_EmailSettingForm($this_form_id);
+                $lf_email_setting_form->lfb_email_setting_form($this_form_id,$mail_setting_result,$usermail_setting_result,$affiliatemail_setting_result);
+            }
         echo '</section>
             <section>';
-        if (is_admin()) {
+            if (is_admin()) {
+                $lf_wa_setting_form = new LFB_WhatsAppSettingForm($this_form_id);
+                $lf_wa_setting_form->lfb_whatsapp_setting_form($this_form_id,$wa_setting_result,$userwa_setting_result,$affiliatewa_setting_result);
+            }
+        echo '</section>
+            <section>';
+            if (is_admin()) {
+                $lf_sms_setting_form = new LFB_SMSSettingForm($this_form_id);
+                $lf_sms_setting_form->lfb_sms_setting_form($this_form_id,$sms_setting_result,$usersms_setting_result,$affiliatesms_setting_result);
+            }
+        echo '</section>
+            <section>';
+            if (is_admin()) {
+                $lf_autoresponder_setting_form = new LFB_AutoresponderSettingForm($this_form_id);
+                $lf_autoresponder_setting_form->lfb_autoresponder_setting_form($this_form_id, $autoresponder_setting_result);
+            }
+        echo '</section>
+            <section>';
+            if (is_admin()) {
                 $lf_email_setting_form = new LFB_EmailSettingForm($this_form_id);
                 $lf_email_setting_form->lfb_captcha_setting_form($this_form_id, $captcha_option);
             }
         echo '</section><section>';
-        if (is_admin()) {
+            if (is_admin()) {
                 $lf_email_setting_form = new LFB_EmailSettingForm($this_form_id);
                 $lf_email_setting_form->lfb_lead_setting_form($this_form_id, $lead_store_option);
             }
         echo '</section></div>
             </div>';
+
     }
     
+    /**
+     * Delete Form Content
+     * @since   1.0.0
+     */
     function lfb_delete_form_content($form_action, $this_form_id, $page_id) {
+
         global $wpdb;
+
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $table_name = LFB_FORM_FIELD_TBL;
+
         $update_leads = $wpdb->update( 
         $table_name,
         array( 
             'form_status' => esc_html('Disable')
         ), 
         array( 'id' =>$this_form_id));
+
         if($update_leads){    
             $th_show_forms = new LFB_SHOW_FORMS();
             $th_show_forms->lfb_show_all_forms($page_id);
         }
+
     }
 
+    /**
+     * Register Basic Form
+     * @since   1.0.0
+     */
     function lfb_basic_form() {
+
         echo "<div class='inside spth_setting_section'  id='wpth_add_form'>
-            <h2 class='sec_head'>".esc_html__('Form Fields','lead-form-builder')."</h2>
+            <h2 class='sec_head'>".esc_html__('Form Fields','sejoli-lead-form')."</h2>
             <table class='widefat' id='sortable'>          
             <thead>
             <tr>
-            <th>".esc_html__('Field name','lead-form-builder')."</th>
-            <th>".esc_html__('Field Type','lead-form-builder')."</th>
-            <th>".esc_html__('Default Value','lead-form-builder')."</th>
-            <th>".esc_html__('Use as Phone Number','lead-form-builder')."</th>
-            <th>".esc_html__('Required','lead-form-builder')."</th>
-            <th>".esc_html__('Action','lead-form-builder')."</th>
+            <th>".esc_html__('Field name','sejoli-lead-form')."</th>
+            <th>".esc_html__('Field Type','sejoli-lead-form')."</th>
+            <th>".esc_html__('Default Value','sejoli-lead-form')."</th>
+            <th>".esc_html__('Use as Phone Number','sejoli-lead-form')."</th>
+            <th>".esc_html__('Required','sejoli-lead-form')."</th>
+            <th>".esc_html__('Action','sejoli-lead-form')."</th>
             </tr></thead>";
-            // <th>S.N.</th>
+
     }
 
+    /**
+     * Initial Form Field
+     * @since   1.0.0
+     */
     function lfbFormField($key){
+
         $fields =  array('name'=>'Name','email'=>'Email','message'=>'Message','dob'=>'DOB(Date of Birth)','date'=>'Date','text'=>'Text (Single Line Text)','textarea'=>'Textarea (Multiple Line Text)','htmlfield'=>'Content Area (Read only Text)','url'=>'Link (Website Url)','number'=>'Number (Only Numeric 0-9)','upload'=>'File Upload','radio'=>'Radio (Choose Single Option)','option'=>'Option (Choose Single Option)','checkbox'=>'Checkbox (Choose Multiple Option)','terms'=>'Checkbox (Terms & condition)');
         $return = isset($fields[$key])?$fields[$key]:'';
         
         return $return;
+
     }
 
-    // field name
+    /**
+     * Form Field Name
+     * @since   1.0.0
+     */
     function lfbFieldName($fieldv,$fieldID){
+
         $fieldName = isset($fieldv['field_name'])?$fieldv['field_name']:'';
         $return = '<td><input type="text" name="lfb_form[form_field_' . $fieldID . '][field_name]" id="field_name_' . $fieldID . '" value="' . $fieldName . '"></td>';
         
         return $return;
+
     }
 
+    /**
+     * Form Field Default
+     * @since   1.0.0
+     */
     function lfbFieldTypeDefault($fieldtype,$name,$fieldID){
+
         $return = '<td><select class="form_field_select" name="lfb_form[form_field_' . $fieldID . '][field_type][type]" id="field_type_' . $fieldID . '">
             <option value="'.$fieldtype.'" selected="selected">'.$name.'</option>
             </select></td>';
         
         return $return;
+
     }
 
-    // field default value
+    /**
+     * Field Default Value
+     * @since   1.0.0
+     */
     function lfbFieldDefaultValue($fieldv,$fieldID,$fieldtype=''){
+
         $defaultValue = isset($fieldv['default_value'])?$fieldv['default_value']:'';
         $hide = ($fieldtype=='terms')?'style=display:none;':'';
         $return = '<td><input '.$hide.' type="text" class="default_value" name="lfb_form[form_field_' . $fieldID . '][default_value]" id="default_value_' . $fieldID . '" value="'.$defaultValue.'">';
 
         return $return;
+
     }
 
     function lfbHtmlFieldValue($fieldv,$fieldID){
@@ -239,8 +322,12 @@ Class LFB_EDIT_DEL_FORM {
         return $return;  
     }
 
-    // field placeholder
+    /**
+     * Field Placeholder
+     * @since   1.0.0
+     */
     function lfbFieldPlaceholder($fieldv,$fieldID,$fieldtype){
+
         $fieldPlaceholder = isset($fieldv['default_phonenumber'])?$fieldv['default_phonenumber']:'';
         $isRequired = ($fieldPlaceholder == 1 ? 'checked' : "" );
         $hide = ($fieldtype=='terms')?'style=display:none;':'';
@@ -248,28 +335,45 @@ Class LFB_EDIT_DEL_FORM {
         $return = '<td><input '.$hide.' type="checkbox" class="default_phonenumber" name="lfb_form[form_field_' . $fieldID . '][default_phonenumber]" id="default_phonenumber_' . $fieldID . '" value="1" '.$isRequired.'></td>';
         
         return $return;
+
     }
 
-    // field is required
+    /**
+     * Field Required
+     * @since   1.0.0
+     */
     function lfbFieldIsRequired($fieldv,$fieldID){
+
         $fieldRequired = isset($fieldv['is_required'])?$fieldv['is_required']:'';
         $isRequired = ($fieldRequired == 1 ? 'checked' : "" );
         $return = '<td><input type="checkbox" name="lfb_form[form_field_' . $fieldID . '][is_required]" id="is_required_'.$fieldID.'" value="1" '.$isRequired.'></td>';
         
         return $return;
+
     }
 
-    // remove field button
+    /**
+     * Remove Field Button
+     * Hooked via action admin_menu
+     * @since   1.0.0
+     */
     function lfbRemoveField($fieldID){
+
         $return = '<td id="wpth_add_form_table_' . $fieldID . '">
             <input type="button" class="button lf_remove" name="remove_field" id="remove_field_' . $fieldID . '" onclick="remove_form_fields(' . $fieldID . ')" value="Remove">
             <input type="hidden" value="' . $fieldID . '" name="lfb_form[form_field_' . $fieldID . '][field_id]">
             </td>';
         
         return $return;
+
     }
 
+    /**
+     * Add Field
+     * @since   1.0.0
+     */
     function lfbAddField($fieldv,$fieldID,$lastFieldID){
+
         $return = '<td></td><td><input type="hidden" name="lfb_form[form_field_'.$fieldID.'][field_name]" id="field_name_'.$fieldID.'" value="submit"><select class="form_field_select" name="lfb_form[form_field_'.$fieldID.'][field_type][type]" id="field_type_'.$fieldID.'">
             <option value="submit" selected="selected">'.esc_html("Submit Button").'</option>
             </select></td>';
@@ -281,9 +385,15 @@ Class LFB_EDIT_DEL_FORM {
         $return .= '<td></td><td class="add-field" id="wpth_add_form_table_' . $fieldID . '">'.$fieldButton.'</td>';
 
         return $return;
+
     }
 
+    /**
+     * Field Type Text
+     * @since   1.0.0
+     */
     function lfbTypeText($fieldv,$fieldtype,$fieldID){
+
         $checkboxField = $isChecked = $return ='';
         $value = $this->lfbFormField($fieldtype);
 
@@ -295,9 +405,15 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbRemoveField($fieldID);
         
         return $return;
+
     }
 
+    /**
+     * Field Textarea
+     * @since   1.0.0
+     */
     function lfbTypeTextarea($fieldv,$fieldtype,$fieldID){
+
         $return ='';
         
         $return .= $this->lfbFieldName($fieldv,$fieldID);
@@ -308,21 +424,32 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbRemoveField($fieldID);
 
         return $return;
+
     }
 
+    /**
+     * Html Field
+     * @since   1.0.0
+     */
     function lfbhtmlfield($fieldv,$fieldtype,$fieldID){
+
         $return ='';
         
         $return .= $this->lfbFieldName($fieldv,$fieldID);
-        $return .= $this->lfbFieldTypeDefault('htmlfield',esc_html__('Content Area (Read only Text)','lead-form-builder'),$fieldID);
+        $return .= $this->lfbFieldTypeDefault('htmlfield',esc_html__('Content Area (Read only Text)','sejoli-lead-form'),$fieldID);
         $return .= $this->lfbHtmlFieldValue($fieldv,$fieldID);
         $return .= $this->lfbRemoveField($fieldID);
         
         return $return;
+
     }
 
-    // select option
+    /**
+     * Select Field Option
+     * @since   1.0.0
+     */
     function lfbSelectOption($fieldv,$fieldtype,$fieldID){
+
         $optionField = $isChecked = $return ='';
         $lastFieldID = 0;
         unset($fieldtype['type']);
@@ -349,7 +476,7 @@ Class LFB_EDIT_DEL_FORM {
 
         $return .= '<td>
             <select class="form_field_select" name="lfb_form[form_field_' . $fieldID . '][field_type][type]" id="field_type_' . $fieldID . '">
-            <option value="option" selected="selected" >'.esc_html__("Option (Choose Single Option)","lead-form-builder").'</option>
+            <option value="option" selected="selected" >'.esc_html__("Option (Choose Single Option)","sejoli-lead-form").'</option>
             </select>
             <div class="add_radio_checkbox_' . $fieldID . '" id="add_radio_checkbox">
             <div class="" id="add_option">' . $optionField . '</div>
@@ -368,10 +495,15 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbRemoveField($fieldID);
 
         return $return;
+
     }
 
-    // radio options
+    /**
+     * Radio Button
+     * @since   1.0.0
+     */
     function lfbRadio($fieldv,$fieldtype,$fieldID){
+
         $optionField = $isChecked = $return ='';
         $lastFieldID = 0;
         unset($fieldtype['type']);
@@ -388,7 +520,7 @@ Class LFB_EDIT_DEL_FORM {
                 $fieldPlus = '<p class="button lf_plus" id="add_new_radio_' . $lastFieldID . '" onclick="add_new_radio_fields(' . $fieldID . ',' . $lastFieldID . ')"><i class="fa fa-plus" aria-hidden="true"></i></p>';
             }
         
-            $childOption = '<input type="text" class="input_radio_val" name="lfb_form[form_field_' . $fieldID . '][field_type][field_' . $checkboxId . ']" id="radio_field_' . $checkboxId . '" placeholder="'.esc_html__("First Choice","lead-form-builder").'" value="'.$value.'">';
+            $childOption = '<input type="text" class="input_radio_val" name="lfb_form[form_field_' . $fieldID . '][field_type][field_' . $checkboxId . ']" id="radio_field_' . $checkboxId . '" placeholder="'.esc_html__("First Choice","sejoli-lead-form").'" value="'.$value.'">';
 
             // default checked
             $isChecked .='<p id="default_radio_value_' . $checkboxId . '">'.$value.' <input type="radio" class="checked" name="lfb_form[form_field_' . $fieldID . '][default_value][field]" id="default_radio_value_' . $checkboxId . '" value="' . $checkboxId . '" '.$checked.'></p>';
@@ -402,13 +534,13 @@ Class LFB_EDIT_DEL_FORM {
 
         $return .= '<td>
             <select class="form_field_select" name="lfb_form[form_field_' . $fieldID . '][field_type][type]" id="field_type_' . $fieldID . '" >
-            <option value="radio" selected="selected" >'.esc_html__("Radio (Choose Single Option)","lead-form-builder").'</option>
+            <option value="radio" selected="selected" >'.esc_html__("Radio (Choose Single Option)","sejoli-lead-form").'</option>
             </select>
             <div class="add_radio_checkbox_' . $fieldID . '" id="add_radio_checkbox">
             <div class="" id="add_radio">' . $optionField . '</div>
             </div>
             </td>
-            <td><input type="text" class="default_value" name="lfb_form[form_field_' . $fieldID . '][default_value]" id="default_value_' . $fieldID . '" value="'.esc_html__("Choose Default Value","lead-form-builder").'" disabled="disabled">
+            <td><input type="text" class="default_value" name="lfb_form[form_field_' . $fieldID . '][default_value]" id="default_value_' . $fieldID . '" value="'.esc_html__("Choose Default Value","sejoli-lead-form").'" disabled="disabled">
             <div class="add_default_radio_checkbox_' . $fieldID . '" id="add_default_radio_checkbox">
             <div class="" id="default_add_radio">' . $isChecked . '</div>
             </div>
@@ -421,10 +553,15 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbRemoveField($fieldID);
 
         return $return;
+
     }
 
-    // checkbox options
+    /**
+     * Checkbox Option
+     * @since   1.0.0
+     */
     function lfbCheckbox($fieldv,$fieldtype,$fieldID){
+
         $checkboxField = $isChecked = $return ='';
         $lastFieldID = 0;
         unset($fieldtype['type']);
@@ -453,13 +590,13 @@ Class LFB_EDIT_DEL_FORM {
 
         $return .= '<td>
             <select class="form_field_select" name="lfb_form[form_field_' . $fieldID . '][field_type][type]" id="field_type_' . $fieldID . '" >
-            <option value="checkbox" selected="selected" >'.esc_html__("Checkbox (Choose Multiple Option)","lead-form-builder").'</option>
+            <option value="checkbox" selected="selected" >'.esc_html__("Checkbox (Choose Multiple Option)","sejoli-lead-form").'</option>
             </select>
             <div class="add_radio_checkbox_' . $fieldID . '" id="add_radio_checkbox">
             <div class="" id="add_checkbox">' . $checkboxField . '</div>
             </div>
             </td>
-            <td><input type="text" class="default_value" name="lfb_form[form_field_' . $fieldID . '][default_value]" id="default_value_' . $fieldID . '" value="'.esc_html__("Choose Default Value","lead-form-builder").'" disabled="disabled">
+            <td><input type="text" class="default_value" name="lfb_form[form_field_' . $fieldID . '][default_value]" id="default_value_' . $fieldID . '" value="'.esc_html__("Choose Default Value","sejoli-lead-form").'" disabled="disabled">
             <div class="add_default_radio_checkbox_' . $fieldID . '" id="add_default_radio_checkbox">
             <div class="" id="default_add_checkbox">' . $isChecked . '</div>
             </div>
@@ -472,9 +609,15 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbRemoveField($fieldID);
 
         return $return;
+
     }
 
+    /**
+     * Set Field Type
+     * @since   1.0.0
+     */
     function lfbFieldType($fieldv,$fieldID){
+
         $text = array('name','email','url','number','text','date','dob','upload','terms');
         $textarea = array('message','textarea');
         $fieldtype = $fieldv['field_type'];
@@ -493,12 +636,15 @@ Class LFB_EDIT_DEL_FORM {
         } elseif(in_array($fType, $textarea)){
             return $this->lfbTypeTextarea($fieldv,$fType,$fieldID);
         }
+
     }
 
-    /*
-     * *For each for each form fields 
+    /**     
+     * For each for each form fields 
+     * @since   1.0.0
      */
     function lfb_create_form_fields_for_edit($form_title, $form_data_result) {
+
         $all_form_fields = "";
         $total_form_fields = count($form_data_result);
         $field_counter = 0;
@@ -521,5 +667,6 @@ Class LFB_EDIT_DEL_FORM {
         }
 
         return '<tbody class="append_new">'.$fieldRow.'</tbody>'.$addButton;
+        
     }
 }

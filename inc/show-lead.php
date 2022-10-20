@@ -2,6 +2,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 Class LFB_Show_Leads {
 
+    /**
+     * Set Allowed Tags
+     * @since   1.0.0
+     */
     function expanded_alowed_tags() {
         $allowed = wp_kses_allowed_html( 'post' );
 
@@ -30,6 +34,10 @@ Class LFB_Show_Leads {
         return $allowed;
     }
 
+    /**
+     * Show Form Leads
+     * @since   1.0.0
+    */
     function lfb_show_form_leads() {
         global $wpdb;
         $option_form = '';
@@ -57,14 +65,18 @@ Class LFB_Show_Leads {
         include_once( plugin_dir_path(__FILE__) . 'header.php' );
 
         echo '<div class="wrap"><div class="inside"><div class="card"><table class="form-table"><tbody><tr><th scope="row">
-            <label for="select_form_lead">'.esc_html__('Select From','lead-form-builder').'</label></th>
+            <label for="select_form_lead">'.esc_html__('Select From','sejoli-lead-form').'</label></th>
             <td><select name="select_form_lead" id="select_form_lead">' . wp_kses($option_form,$this->expanded_alowed_tags()) . '</select>
-            <td><input rem_nonce = "'.$rem_nonce.'" type="button" value="'.esc_html__('Remember this form','lead-form-builder').'" onclick="remember_this_form_id();" id="remember_this_form_id"></td>
+            <td><input rem_nonce = "'.$rem_nonce.'" type="button" value="'.esc_html__('Remember this form','sejoli-lead-form').'" onclick="remember_this_form_id();" id="remember_this_form_id"></td>
             </tr><tr><td><div id="remember_this_message" ></div></td></tr></tbody></table></div></div></div><div class="wrap" id="form-leads-show">';
         $this->lfb_show_leads_first_form($first_form_id);
         echo '</div>';
     }
 
+    /**
+     * Show Leads First Form
+     * @since   1.0.0
+     */
     function lfb_show_leads_first_form($form_id){
         $start = 0;
 
@@ -126,6 +138,8 @@ Class LFB_Show_Leads {
                 $complete_data = '';
                 $popup_data_val= '';
                 $date_td = '<td><b>'.$lead_date.'</b></td>';
+
+                // error_log(print_r($affiliate->user_email, true));
 
                 $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,5);
 
@@ -199,13 +213,17 @@ Class LFB_Show_Leads {
             ?>
             <div class="wrap" id="form-leads-show">
             <?php
-                esc_html_e("No leads..!","lead-form-builder")
+                esc_html_e("No leads..!","sejoli-lead-form")
             ?>
             </div>
             <?php
         }
     }
 
+    /**
+     * Show Leads by Affiliate
+     * @since   1.0.0
+     */
     function lfb_show_form_leads_by_affiliate() {
         global $wpdb;
         $option_form = '';
@@ -233,13 +251,17 @@ Class LFB_Show_Leads {
         include_once( plugin_dir_path(__FILE__) . 'header.php' );
 
         echo '<div class="wrap"><div class="inside"><div class="card"><table class="form-table"><tbody><tr><th scope="row">
-            <label for="select_form_lead">'.esc_html__('Select From','lead-form-builder').'</label></th>
+            <label for="select_form_lead">'.esc_html__('Select From','sejoli-lead-form').'</label></th>
             <td><select name="select_form_lead" id="select_form_lead">' . wp_kses($option_form,$this->expanded_alowed_tags()) . '</select>
             </tr><tr><td><div id="remember_this_message" ></div></td></tr></tbody></table></div></div></div><div class="wrap" id="form-leads-show">';
         $this->lfb_show_leads_first_form_by_affiliate($first_form_id);
         echo '</div>';
     }
 
+    /**
+     * Show First Lead Form by Affiliate
+     * @since   1.0.0
+     */
     function lfb_show_leads_first_form_by_affiliate($form_id){
         $start = 0;
 
@@ -375,14 +397,17 @@ Class LFB_Show_Leads {
             ?>
             <div class="wrap" id="form-leads-show">
             <?php
-                esc_html_e("No leads..!","lead-form-builder")
+                esc_html_e("No leads..!","sejoli-lead-form")
             ?>
             </div>
             <?php
         }
     }
 
-    // show all leads
+    /**
+     * Show All Leads
+     * @since   1.0.0
+     */
     function lfb_show_form_leads_datewise($form_id,$leadtype){
         $th_save_db = new LFB_SAVE_DB();
 
@@ -422,7 +447,7 @@ Class LFB_Show_Leads {
             $popupTab   = '';
            
             if($headcount >= 6){
-                $table_head .='<th> . . . </th><th><input type="button" onclick="show_all_leads(' . $id . ',' . $form_id . ')" value="'.esc_html__('Show all Columns','lead-form-builder').'"></th>';
+                $table_head .='<th> . . . </th><th><input type="button" onclick="show_all_leads(' . $id . ',' . $form_id . ')" value="'.esc_html__('Show all Columns','sejoli-lead-form').'"></th>';
             }
             
             foreach ($posts as $results) {
@@ -514,8 +539,9 @@ Class LFB_Show_Leads {
             <?php
         } else {
             ?> <div class="wrap" id="form-leads-show"><?php
-            esc_html_e("No leads..!","lead-form-builder");
+            esc_html_e("No leads..!","sejoli-lead-form");
             ?> </div> <?php
         }
     }
+    
 }

@@ -1,11 +1,11 @@
 <?php sejoli_header(); ?>
-<h2 class="ui header"><?php _e('Anda tidak memiliki akses', 'sejoli'); ?></h2>
+<h2 class="ui header"><?php _e('Anda tidak memiliki akses', 'sejoli-lead-form'); ?></h2>
 <div class="ui negative message">
     <div class="header">
-        Maaf, anda tidak berhak mengakses halaman ini
+        <?php _e('Maaf, anda tidak berhak mengakses halaman ini', 'sejoli-lead-form'); ?>
     </div>
     <p>
-        Halaman ini hanya untuk JV ( Joint Venture ). Anda tidak berhak untuk mengakses halaman ini.
+        <?php _e('Anda tidak berhak untuk mengakses halaman ini.', 'sejoli-lead-form'); ?>
     </p>
 </div>
 <?php

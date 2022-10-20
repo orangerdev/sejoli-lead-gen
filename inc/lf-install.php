@@ -1,7 +1,9 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-/*
- * Include assets
+/**
+ * Set Asstes Admin
+ * Hooked via action admin_enqueue_scripts
+ * @since   1.0.0
  */
 function lfb_admin_assets($hook) {
     $pageSearch = array('lead-forms_page_add-new-form','lead-forms_page_all-form-entries','themehunk_page_wplf-plugin-menu','admin_page_pro-form-leads','lead-forms_page_all-leads','toplevel_page_lead-forms');
@@ -26,6 +28,11 @@ function lfb_admin_assets($hook) {
 }
 add_action('admin_enqueue_scripts', 'lfb_admin_assets');
 
+/**
+ * Set Assets Public
+ * Hooked via action wp_enqueue_scripts
+ * @since   1.0.0
+ */
 function lfb_wp_assets() {
 
     global $wp;
@@ -68,27 +75,30 @@ function lfb_wp_assets() {
 }
 add_action('wp_enqueue_scripts', 'lfb_wp_assets', 15);
 
-/*
- * Register custom menu pages.
+/**
+ * Register admin menu pages.
+ * Hooked via action admin_menu
+ * @since   1.0.0
  */
 function lfb_register_my_custom_menu_page() {
 
     $user = get_userdata( get_current_user_id() );
     // Get all the user roles as an array.
     $user_roles = $user->roles;
-    add_submenu_page('lead-forms', __('Add New Forms', 'lead-form-builder'), __('Add New Forms', 'lead-form-builder'), 'manage_options', 'add-new-form', 'lfb_add_contact_forms');
+    add_submenu_page('lead-forms', __('Add New Forms', 'sejoli-lead-form'), __('Add New Forms', 'sejoli-lead-form'), 'manage_options', 'add-new-form', 'lfb_add_contact_forms');
     add_submenu_page( 'lead-forms', __('Entries', 'wppb'), __('Entries', 'wppb'), 'manage_options', 'all-form-entries','lfb_all_forms_lead');
 
-    // add_menu_page(__('Lead Form', 'lead-form-builder'), __('Lead Form', 'lead-form-builder'), 'manage_options', 'wplf-plugin-menu', 'lfb_lead_form_page', plugins_url('../images/icon.png', __FILE__ ));
-    // if( in_array( 'administrator', $user_roles, true )) {
-    add_submenu_page(false, __('View Entries', 'lead-form-builder'), __('View Entries', 'lead-form-builder'), 'manage_options', 'all-form-leads', 'lfb_all_forms_lead');
-    // }
-    // add_submenu_page(false, __('Premium Version', 'th-lead-form'), __('Premium Version', 'th-lead-form'), 'manage_options', 'pro-form-leads', 'lfb_pro_feature');
+    add_submenu_page(false, __('View Entries', 'sejoli-lead-form'), __('View Entries', 'sejoli-lead-form'), 'manage_options', 'all-form-leads', 'lfb_all_forms_lead');   
 
 }
 add_action('admin_menu', 'lfb_register_my_custom_menu_page');
 
+/**
+ * Set lead form page actions
+ * @since   1.0.0
+ */
 function lfb_lead_form_page() {
+
     if (isset($_GET['action']) && isset($_GET['formid'])) {
         $form_action = sanitize_text_field($_GET['action']);
         $this_form_id = intval($_GET['formid']);
@@ -122,15 +132,25 @@ function lfb_lead_form_page() {
         }
         $th_show_forms->lfb_show_all_forms($page_id);
     }
+
 }
 
-// extra slas remove
-function lfb_array_stripslash($theArray){
+/**
+ * Extra slash remove
+ * @since   1.0.0
+ */
+function lfb_array_stripslash($theArray) {
+
    foreach ( $theArray as &$v ) if ( is_array($v) ) $v = lfb_array_stripslash($v); else $v = stripslashes($v);
+
    return $theArray;
+
 }
 
-// form builder update nad delete function
+/**
+ * Form builder update nad delete function
+ * @since   1.0.0
+ */
 function lfb_add_contact_forms() {
     if (isset($_POST['update_form']) && wp_verify_nonce($_REQUEST['_wpnonce'],'_nonce_verify') ) {
         $data_form =isset($_POST['lfb_form'])?$_POST['lfb_form']:'';
@@ -166,13 +186,11 @@ function lfb_add_contact_forms() {
     }
 }
 
+/**
+ * Show all forms lead
+ * @since   1.0.0
+ */
 function lfb_all_forms_lead() {
     $th_show_forms = new LFB_Show_Leads();
     $th_show_forms->lfb_show_form_leads();
 }
-
-// function lfb_pro_feature(){
-
-// include_once( plugin_dir_path(__FILE__) . 'options/option.php' );
-
-// }
