@@ -71,10 +71,10 @@ Class LFB_SHOW_FORMS {
                 $edit_url_nonce =$lfb_admin_url . 'admin.php?page=add-new-form&action=edit&formid=' . $form_id.'&_wpnonce='.$this->lfb_show_form_nonce();
 
                 $advance_adons =$lfb_admin_url . 'admin.php?page=lfb-form-extension&fname=' . $form_title.'&fid=' . $form_id.'&_wpnonce='.$this->lfb_show_form_nonce();
-                $form_color = $lfb_admin_url . 'admin.php?page=wplf-plugin-menu&action=show&formid=' . $form_id;
+                $form_color = $lfb_admin_url . 'admin.php?page=lead-forms&action=show&formid=' . $form_id;
 
                 echo '<tr><td class="title column-title has-row-actions column-primary" data-colname="Title"><strong><a class="row-title" href="'.esc_url($edit_url_nonce).'" title="Edit “' . esc_html($form_title) . '”">' . esc_html($form_title) . '</a></strong>
-            		<div class="row-actions"><span class="edit"><a href="' . esc_url($edit_url_nonce). '">Edit</a></span>|<span class="edit"><a href="' . esc_url($lfb_admin_url) . 'admin.php?page=wplf-plugin-menu&action=delete&page_id='.$id.'&formid=' . $form_id . '">Delete</a></span>|<span class="edit"><a href="'.esc_url($form_color).'" target="_blank" >View Form</a></span>
+            		<div class="row-actions"><span class="edit"><a href="' . esc_url($edit_url_nonce). '">Edit</a></span>|<span class="edit"><a href="' . esc_url($lfb_admin_url) . 'admin.php?page=lead-forms&action=delete&page_id='.$id.'&formid=' . $form_id . '">Delete</a></span>|<span class="edit"><a href="'.esc_url($form_color).'" target="_blank" >View Form</a></span>
             		</div>
             		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','sejoli-lead-form').' </span></button>
             		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','sejoli-lead-form').' </span></button>
@@ -87,10 +87,10 @@ Class LFB_SHOW_FORMS {
             		</td>
 
             		<td class="form-date column-form-date" data-colname="Form-date">
-            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=wplf-plugin-menu&action=today_leads&formid=' . $form_id . '" target="_blank"><div class="lfb-counter">' . intval($lead_count) . '</div></a></abbr>
+            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=lead-forms&action=today_leads&formid=' . $form_id . '" target="_blank"><div class="lfb-counter">' . intval($lead_count) . '</div></a></abbr>
             		</td>
             		<td class="form-date column-form-date" data-colname="Form-date">
-            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=wplf-plugin-menu&action=total_leads&formid=' . intval($form_id) . '" target="_blank"><div class="lfb-counter">' . intval($total_lead_result) . '</div></a></abbr>
+            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=lead-forms&action=total_leads&formid=' . intval($form_id) . '" target="_blank"><div class="lfb-counter">' . intval($total_lead_result) . '</div></a></abbr>
             		</td>
 
                     <td class="form-date column-form-date" data-colname="Form-date">
@@ -106,17 +106,17 @@ Class LFB_SHOW_FORMS {
         $rows = count($rows);
         $total = ceil($rows / $limit);
         if ($id > 1) {
-            echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=wplf-plugin-menu&page_id=" . intval($id - 1) ). "' class='button'><i class='fa fa-chevron-right'></i></a>";
+            echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id - 1) ). "' class='button'><i class='fa fa-chevron-right'></i></a>";
         }
         if ($id != $total) {
-            echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=wplf-plugin-menu&page_id=" . intval($id + 1) ). "' class='button'><i class='fa fa-chevron-left'></i></a>";
+            echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id + 1) ). "' class='button'><i class='fa fa-chevron-left'></i></a>";
         }
         echo "<ul class='page'>";
         for ($i = 1; $i <= $total; $i++) {
             if ($i == $id) {
                 echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
             } else {
-                echo "<li><a href='". esc_url($lfb_admin_url . "admin.php?page=wplf-plugin-menu&page_id=" .intval($i) ). "'>" . intval($i) . "</a></li>";
+                echo "<li><a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" .intval($i) ). "'>" . intval($i) . "</a></li>";
             }
         }
         echo '</ul>';
