@@ -76,7 +76,7 @@ class lfb_widget extends WP_Widget {
 
         $title = isset($instance['title']) ? esc_html__($instance['title']) : esc_html__('Contact Us Form','sejoli-lead-form');
         $lfb_shortcode = isset($instance['lfb_shortcode']) ? esc_attr($instance['lfb_shortcode']) : '';
-        $shortcode = "<a href='".admin_url('admin.php?page=wplf-plugin-menu')."'>Go Shortcode</a>";
+        $shortcode = "<a href='".admin_url('admin.php?page=lead-forms')."'>Go Shortcode</a>";
 ?>
         <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title','lead_form_builder'); ?></label>
             <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_html($title); ?>" /></p>

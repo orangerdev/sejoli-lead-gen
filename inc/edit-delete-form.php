@@ -144,7 +144,7 @@ Class LFB_EDIT_DEL_FORM {
             <a class="nav-tab lead-form-setting  '.esc_attr($form_active).'" href="#">'.esc_html__("Setting","sejoli-lead-form").'</a>
             </div>
             <div id="sections">
-            <span class="back-arrow"><a href="'.admin_url('admin.php?page=wplf-plugin-menu').'" ><img width ="18" src="'.LFB_FORM_BACK_SVG.'" ></a></span>
+            <span class="back-arrow"><a href="'.admin_url('admin.php?page=lead-forms').'" ><img width ="18" src="'.LFB_FORM_BACK_SVG.'" ></a></span>
             <section><div class="wrap">
             <h2>'.esc_html__('Edit From','sejoli-lead-form').'</h2>
             <form method="post" action="'.esc_url($update_url).'" id="new_lead_form">

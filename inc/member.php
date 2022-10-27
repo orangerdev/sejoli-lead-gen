@@ -128,6 +128,29 @@ add_filter( 'sejoli/member-area/backend/menu', 'add_menu_in_backend', 1111);
  */
 function display_link_list_in_menu($output, $object, $args, $setup) {
 
+    $member_menu = array(
+        'link'    => 'javascript::void(0)',
+        'label'   => __('Lead Gen', 'sejoli'),
+        'icon'    => 'users icon',
+        'class'   => 'item',
+        'submenu' => array(
+            'lead-affiliasi' => array(
+                'link'    => site_url('member-area/lead-affiliasi'),
+                'label'   => __('Link Affiliasi', 'sejoli'),
+                'icon'    => '',
+                'class'   => 'item',
+                'submenu' => array()
+            ),
+            'lead-entries' => array(
+                'link'    => site_url('member-area/lead-entries'),
+                'label'   => __('Manajemen Data ', 'sejoli'),
+                'icon'    => '',
+                'class'   => 'item',
+                'submenu' => array()
+            )
+        )
+    );
+
     if('sejoli-lead-gen' === $object->object) :
 
         extract($args);
