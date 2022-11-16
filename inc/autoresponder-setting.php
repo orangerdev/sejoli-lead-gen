@@ -35,32 +35,36 @@ class LFB_AutoresponderSettingForm{
         }
         $aaress_nonce = wp_create_nonce( 'aaress-nonce' );
 
-        echo "<div>";
+        echo "<div style='margin-top: 1em;'>";
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="width:90.5%">';
+        } else {
+            echo "<div class='form-block' style='width: 55%;'>";
+        }
         echo "<form id='form-autoresponder-setting' action='' method='post'>
             <div class='inside autoresponder_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('Autoresponder Setting', 'sejoli-lead-form') . "</h2><br>
             <table class='form-table'>
                 <tbody>
                     <tr>
-                        <th scope='row'><label for='autoresponder_setting_code'>Message" . LFB_REQUIRED_SIGN . "</th>
+                        <th scope='row'><label for='autoresponder_setting_code'>HTML Code" . LFB_REQUIRED_SIGN . "</th>
                         <td>
-                            <textarea name='autoresponder_setting[code]' id='autoresponder_setting_code' rows='5' cols='46' required>" . esc_html($autoresponder_setting_code) . "</textarea></label>
+                            <textarea name='autoresponder_setting[code]' id='autoresponder_setting_code' rows='10' cols='90' required>" . esc_html($autoresponder_setting_code) . "</textarea></label>
                             <p class='description' id='from-description'>" . esc_html__('Paste kode HTML Form yang anda dapatkan dari autoresponder. Jika anda masih belum mengerti hal, silahkan tanyakan ke autoresponder yang anda gunakan', 'sejoli-lead-form') . "</p></td>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type='hidden' name='autoresponder_setting[form-id]' required value='" . intval($this_form_id) . "'> 
-                        <input type='hidden' name='aaress_nonce' value='".$aaress_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='Save'></p>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <input type='hidden' name='autoresponder_setting[form-id]' required value='" . intval($this_form_id) . "'> 
+            <input type='hidden' name='aaress_nonce' value='".$aaress_nonce."'>
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='Save'>
+            </p>
             </div><div id='error-message-autoresponder-setting'></div></div></div>
             </form>";
+            echo "</div>";
         echo "</div>";
 
     }

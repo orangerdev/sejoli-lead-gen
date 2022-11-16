@@ -42,7 +42,7 @@ include_once( plugin_dir_path(__FILE__) . 'inc/lfb-constant.php' );
  * @return array - Links
  */
 function lfb_plugin_action_links($links){
-    $settings_page = add_query_arg(array('page' => 'wplf-plugin-menu'), admin_url('/admin.php?'));
+    $settings_page = add_query_arg(array('page' => 'lead-forms'), admin_url('/admin.php?'));
     $settings_link = '<a href="'.esc_url($settings_page).'">'.__('Settings', 'sejoli-lead-form' ).'</a>';
     array_unshift($links, $settings_link);
     

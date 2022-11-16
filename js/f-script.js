@@ -69,34 +69,43 @@ var dateToday = new Date();
  */
  // inser form data
 function lfbInserForm(element,form_id,uploaddata=''){
-            var this_form_data = element.serialize();
-            if(uploaddata!=''){
-            this_form_data = this_form_data + '&' + uploaddata;
-            } 
-           var  lfbFormData = { fdata : this_form_data,
-                                 action :  'Save_Form_Data'  
-                                };
-        SavedataByAjaxRequest(lfbFormData, 'POST').success(function(response) {
-            element.find('#loading_image').hide();;
-            if (jQuery.trim(response) == 'invalidcaptcha') {
+        var this_form_data = element.serialize();
+        if(uploaddata!=''){
+        this_form_data = this_form_data + '&' + uploaddata;
+        } 
+       var  lfbFormData = { fdata : this_form_data,
+                             action :  'Save_Form_Data'  
+                            };
+    SavedataByAjaxRequest(lfbFormData, 'POST').success(function(response) {
+        element.find('#loading_image').hide();;
+        if (jQuery.trim(response) == 'invalidcaptcha') {
 
-            element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
-                grecaptcha.reset();
+        element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
+            grecaptcha.reset();
 
-            } else if (jQuery.trim(response) > 0) {
-                var redirect = jQuery(".successmsg_"+form_id).attr('redirect');
-                    element.siblings(".successmsg_"+form_id).css('display','block');
-                    jQuery('#lfb-submit').trigger('click');
-                    element.hide();
-                    if (typeof grecaptcha === "function") { 
-                        grecaptcha.reset();
-                    }
-                if(jQuery.trim(redirect)!=''){
-                    window.location.href = redirect;
+        } else if (jQuery.trim(response) > 0) {
+            var redirect = jQuery(".successmsg_"+form_id).attr('redirect');
+            if(jQuery.trim(redirect)!=''){
+                element.siblings(".successmsg_"+form_id).css('display','none');
+                jQuery('#lfb-submit').trigger('click');
+                // element.hide();
+                element.siblings(".text-affiliate-by").hide();
+                if (typeof grecaptcha === "function") { 
+                    grecaptcha.reset();
+                }
+                window.location.href = redirect;
+            } else {
+                element.siblings(".successmsg_"+form_id).css('display','block');
+                jQuery('#lfb-submit').trigger('click');
+                element.hide();
+                element.siblings(".text-affiliate-by").hide();
+                if (typeof grecaptcha === "function") { 
+                    grecaptcha.reset();
                 }
             }
-        });
-    }
+        }
+    });
+}
 
 function lfbfileUpload(element,form_id){
     var fd = new FormData();
@@ -1014,14 +1023,14 @@ jQuery("form#captcha-on-off-setting").submit(function(event) {
 /*
  *Show leads according to form in back-end.
  */
-jQuery('#select_form_lead').on('change', function() {
-    var form_id = jQuery(this).val();
-    form_data = "slectleads=1&form_id=" + form_id + "&action=ShowAllLeadThisForm";
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        jQuery('#form-leads-show').empty();
-        jQuery('#form-leads-show').append(response);
-    });
-});
+// jQuery('#select_form_lead').on('change', function() {
+//     var form_id = jQuery(this).val();
+//     form_data = "slectleads=1&form_id=" + form_id + "&action=ShowAllLeadThisForm";
+//     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+//         jQuery('#form-leads-show').empty();
+//         jQuery('#form-leads-show').append(response);
+//     });
+// });
 
 jQuery("form#lfb-form-success-msg").submit(function(event) {
     var form_data = jQuery("form#lfb-form-success-msg").serialize();
@@ -1083,23 +1092,35 @@ function lead_pagination_datewise(page_id, form_id, datewise) {
 
 function show_all_leads(page_id, form_id) {
     event.preventDefault();
-    var form_data = "form_id=" + form_id + "&id=" + page_id + "&detailview=1&action=ShowAllLeadThisForm";
+    var form_data = "form_id=" + form_id + "&id=" + page_id + "&detailview=1&action=ShowAllLeadThisFormByAffiliate";
     SaveByAjaxRequest(form_data, 'GET').success(function(response) {
         jQuery('#form-leads-show').empty();
         jQuery('#form-leads-show').append(response);
+
+        jQuery('#show-leads-table').DataTable({
+            language   : dataTableTranslation,
+            responsive : true,
+            searching  : false,
+            processing : true,
+            pageLength : 10,
+            order: [
+                [ 1, "desc" ]
+            ],
+        });
     });
 }
 
 
 function remember_this_form_id() {
-    if (confirm("OK to Remember?")) {
+    if (confirm("Show this entries?")) {
         var form_id = jQuery('#select_form_lead').val();
         var rem_nonce = jQuery('#remember_this_form_id').attr('rem_nonce');
         jQuery('#remember_this_message').find('div').remove();
         var form_data = "rem_nonce=" + rem_nonce + "&form_id=" + form_id + "&action=RememberMeThisForm";
         SaveByAjaxRequest(form_data, 'POST').success(function(response) {
             if (jQuery.trim(form_id) == jQuery.trim(response)) {
-                jQuery('#remember_this_message').append("<div><i>Saved</i></div>");
+                jQuery('#remember_this_message').append("<div><i>Please Wait...</i></div>");
+                window.location.reload();
             }
         });
     }
@@ -1215,6 +1236,72 @@ jQuery(function($) {
             $('#affiliate-link-holder').html('<div class="ui red message">Please select a lead form</div>');
 
         }
+    });
+
+    $(document).ready(function(){
+        $('#show-leads-table').DataTable({
+            language   : dataTableTranslation,
+            responsive : true,
+            searching  : false,
+            processing : true,
+            pageLength : 10,
+            order: [
+                [ 1, "desc" ]
+            ],
+        });
+
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('input[name="filter-lead-entries"]').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+
+        $('input[name="filter-lead-entries"]').daterangepicker({
+            startDate: start,
+            endDate: end,
+            locale: {
+              format: 'MMMM D, YYYY'
+            },
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+
+        $("#filter_lead_entries").on('change', function() {
+            var startDate = jQuery(this).data('daterangepicker').startDate.format('Y-M-D');
+            var endDate = jQuery(this).data('daterangepicker').endDate.format('Y-M-D');
+
+            event.preventDefault();
+            var form_id = jQuery('input[name="form_id_filter"]').val();
+            var form_data = "startDate=" + startDate + "&endDate=" + endDate + "&form_id=" + form_id + "&id=10&detailview=1&action=ShowAllLeadThisForm";
+            SaveByAjaxRequest(form_data, 'GET').success(function(response) {
+                jQuery('#show-leads-table').empty();
+                jQuery('#show-leads-table').append(response);
+                jQuery('#show-leads-table').DataTable().clear().destroy();
+
+                jQuery('#show-leads-table').DataTable({
+                    language   : dataTableTranslation,
+                    responsive : true,
+                    searching  : false,
+                    processing : true,
+                    pageLength : 10,
+                    order: [
+                        [ 1, "desc" ]
+                    ],
+                });
+
+                jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
+            });
+        });
+
     });
 
 });

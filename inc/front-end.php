@@ -96,7 +96,7 @@ Class LFB_Front_end_FORMS {
                 $field_name = '';
                 $field_type = '';
                 $default_value = '';
-                $default_phonenumber = '';
+                // $default_phonenumber = '';
                 $is_required = '';
                 if (isset($results['field_name'])) {
                     $field_name = $results['field_name'];
@@ -123,11 +123,11 @@ Class LFB_Front_end_FORMS {
                     }
                 }
 
-                if (isset($results['default_phonenumber'])) {
-                    $default_phonenumber = $results['default_phonenumber'];
-                } else {
-                    $default_phonenumber = 0;
-                }
+                // if (isset($results['default_phonenumber'])) {
+                //     $default_phonenumber = $results['default_phonenumber'];
+                // } else {
+                //     $default_phonenumber = 0;
+                // }
 
                 if (isset($results['is_required'])) {
                     $is_required = $results['is_required'];
@@ -142,7 +142,7 @@ Class LFB_Front_end_FORMS {
                     'field_name'=>$field_name,
                     'field_type_array'=>$field_type_array,
                     'default_value'=>$default_value,
-                    'default_phonenumber'=>$default_phonenumber,
+                    // 'default_phonenumber'=>$default_phonenumber,
                     'is_required'=>$is_required,
                     'field_id'=>$field_id,
                     'field_type'=>$field_type,
@@ -158,6 +158,9 @@ Class LFB_Front_end_FORMS {
                 }elseif ($field_type == 'name') {
                     /***Name***/
                     $form_elemets .=$this->lfb_front_end_field_type_name($data_array);
+                }elseif ($field_type == 'phonenumber') {
+                    /***Phone Number***/
+                    $form_elemets .=$this->lfb_front_end_field_type_phonenumber($data_array);
                 }elseif ($field_type == 'upload') {
                     /***Upload***/
                     $form_elemets .=$this->lfb_front_end_field_type_upload($data_array);
@@ -225,8 +228,7 @@ Class LFB_Front_end_FORMS {
                     </div>
                 </div>
                 </form>
-                '.$show_affiliate.'
-                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p></div>';
+                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p></div><div class="text-affiliate-by">'.$show_affiliate.'</div>';
 
             return $return;
 
@@ -243,7 +245,7 @@ Class LFB_Front_end_FORMS {
         $fieldType = $data_array['field_type'];
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
         $text_email_url_number ='<div class="text-type lf-field"><label>' . $data_array['field_name'] . '</label>
-        <span><input id="' .  $fieldIdName . '" type="' . $fieldType . '" class="lf-form-text ' . ((($data_array['field_type'] == "date" )||($data_array['field_type'] == "dob"))? "lf-jquery-datepicker" : "" ) . '" name="' .  $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' value="' . ($data_array['default_phonenumber'] == 1 ? "" : $data_array['default_value'] ) . '" placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" />
+        <span><input id="' .  $fieldIdName . '" type="' . $fieldType . '" class="lf-form-text ' . ((($data_array['field_type'] == "date" )||($data_array['field_type'] == "dob"))? "lf-jquery-datepicker" : "" ) . '" name="' .  $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' value="" placeholder="" />
         </span></div>';
         
         return $text_email_url_number;
@@ -277,7 +279,23 @@ Class LFB_Front_end_FORMS {
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
         $name ='<div class="name-type lf-field"><label>' . $data_array['field_name'] . '</label>
-        <span><input id="' . $fieldIdName . '" type="text" name="' . $fieldIdName . '" class="lf-form-name" value="' . ($data_array['default_phonenumber'] == 1 ? "" : $data_array['default_value'] ) . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" />
+        <span><input id="' . $fieldIdName . '" type="text" name="' . $fieldIdName . '" class="lf-form-name" value="" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . '" />
+        </span></div>';
+        
+        return $name;
+
+    }
+
+    /**
+     * Form Field Type Phone Number
+     * @since   1.0.0
+     */
+    function lfb_front_end_field_type_phonenumber($data_array){
+
+        $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
+
+        $name ='<div class="name-type lf-field"><label>' . $data_array['field_name'] . '</label>
+        <span><input id="' . $fieldIdName . '" type="number" name="' . $fieldIdName . '" class="lf-form-name" value="" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . '" />
         </span></div>';
         
         return $name;

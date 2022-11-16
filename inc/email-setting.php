@@ -8,11 +8,14 @@ class LFB_EmailSettingForm{
      * @since   1.0.0
      */
     function __construct($this_form_id){
+
         global $wpdb;
+
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $table_name = LFB_FORM_FIELD_TBL;
-        $prepare_9 =  $wpdb->prepare("SELECT * FROM $table_name WHERE id = %d LIMIT 1", $this_form_id);
+        $prepare_9  = $wpdb->prepare("SELECT * FROM $table_name WHERE id = %d LIMIT 1", $this_form_id);
         $posts = $th_save_db->lfb_get_form_content($prepare_9);
+        
         if ($posts) {
             $form_title = $posts[0]->form_title;
             $form_status = $posts[0]->form_status;
@@ -24,6 +27,7 @@ class LFB_EmailSettingForm{
             $affiliatemail_setting = maybe_unserialize($posts[0]->affiliatemail_setting);
             $form_data = maybe_unserialize($posts[0]->form_data);
         }
+
     }
 
     /**
@@ -37,7 +41,7 @@ class LFB_EmailSettingForm{
         $mail_setting_subject = esc_html__("Form Leads", "sejoli-lead-form");
         $mail_setting_message = '[lf-new-form-data]';
         $multi_mail = "";
-        $mail_setting_header  = esc_html__("New Lead Received", "sejoli-lead-form");
+        $mail_setting_header = esc_html__("New Lead Received", "sejoli-lead-form");
         if (!empty($mail_setting_result)) {
             $mail_setting_result = maybe_unserialize($mail_setting_result);
             $mail_setting_to = $mail_setting_result['email_setting']['to'];
@@ -50,11 +54,25 @@ class LFB_EmailSettingForm{
         }
         $aes_nonce = wp_create_nonce( 'aes-nonce' );
 
-        echo "<div>";
-        echo '<div><b>Shortcode</b>: <pre><i><code title="'.__('Shortcode untuk menampilkan semua entri dari form.', 'sejoli-lead-form').'"> [lf-new-form-data]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama affiliasi.', 'sejoli-lead-form').'">[affiliate-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan no. telepon affiliasi.', 'sejoli-lead-form').'">[affiliate-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email affiliasi.', 'sejoli-lead-form').'">[affiliate-email]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama produk.', 'sejoli-lead-form').'">[product-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan harga produk.', 'sejoli-lead-form').'">[product-price]</code> </i></pre></br></div>';
-        echo "<form id='form-email-setting' action='' method='post'>
+        echo "<div style='margin-top: 1em;'>";
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block">';
+        }
+        echo '<h2>'.esc_html__('Email Setting','sejoli-lead-form').'</h2>';
+        
+        echo '<div><b>Shortcode</b>: <pre style="margin: 19px 0 0 0;"><i><code title="'.__('Shortcode untuk menampilkan semua entri dari form.', 'sejoli-lead-form').'">[lf-new-form-data]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama form.', 'sejoli-lead-form').'">[form-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan ID lead.', 'sejoli-lead-form').'">[lead-id]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan Nama lead.', 'sejoli-lead-form').'">[lead-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan No. Telepon lead.', 'sejoli-lead-form').'">[lead-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email lead.', 'sejoli-lead-form').'">[lead-email]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama affiliasi.', 'sejoli-lead-form').'">[affiliate-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan no. telepon affiliasi.', 'sejoli-lead-form').'">[affiliate-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email affiliasi.', 'sejoli-lead-form').'">[affiliate-email]</code> </i><i><code title="'.__('Shortcode untuk menampilkan nama produk.', 'sejoli-lead-form').'">[product-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan harga produk.', 'sejoli-lead-form').'">[product-price]</code> </i></pre></br></div>';
+        echo '</div>';
+
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="display: inline-block; width: 47%;float: left;">';
+        }
+        echo "<form id='form-email-setting' action='' method='post' style='width: 100%;'>
             <div class='inside email_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('Admin Email Notifications', 'sejoli-lead-form') . "</h2><br>
             <table class='form-table'>
@@ -81,20 +99,20 @@ class LFB_EmailSettingForm{
                     <tr>
                         <th scope='row'><label for='email_setting_message'>Message" . LFB_REQUIRED_SIGN . "</th>
                         <td>
-                            <textarea name='email_setting[message]' id='email_setting_message' rows='5' cols='46' required>" . esc_html($mail_setting_message) . "</textarea></label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type='hidden' name='email_setting[form-id]' required value='" . intval($this_form_id) . "'> 
-                        <input type='hidden' name='aes_nonce' value='".$aes_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='Save'></p>
+                            <textarea name='email_setting[message]' id='email_setting_message' rows='10' cols='70' required>" . esc_html($mail_setting_message) . "</textarea></label>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <input type='hidden' name='email_setting[form-id]' required value='" . intval($this_form_id) . "'> 
+            <input type='hidden' name='aes_nonce' value='".$aes_nonce."'>
+
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            </p>
             </div><div id='error-message-email-setting'></div></div></div>
             </form>";
+            echo "</div>";
         echo "</div>";
 
         $usermail_setting_from      = get_option('admin_email');
@@ -113,9 +131,14 @@ class LFB_EmailSettingForm{
         $ues_nonce = wp_create_nonce( 'ues-nonce' );
 
         echo "<div>";
-        echo "<form id='form-user-email-setting' action='' method='post'>
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="display: inline-block; width: 47%;float: right;">';
+        }
+        echo "<form id='form-user-email-setting' action='' method='post' style='width: 100%;'>
             <div class='inside email_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('User Email Notifications', 'sejoli-lead-form') . " </h2><br>
             <table class='form-table'>
@@ -135,7 +158,7 @@ class LFB_EmailSettingForm{
                     <tr>
                         <th scope='row'><label for='user_email_setting_message'>Message" . LFB_REQUIRED_SIGN . "</th>
                         <td>
-                            <textarea name='user_email_setting[message]' id='user_email_setting_message' rows='5' cols='46' required>" . esc_html($usermail_setting_message) . "</textarea></label>
+                            <textarea name='user_email_setting[message]' id='user_email_setting_message' rows='10' cols='70' required>" . esc_html($usermail_setting_message) . "</textarea></label>
                         </td>
                     </tr>
                     <tr>
@@ -144,26 +167,26 @@ class LFB_EmailSettingForm{
                     <p><input type='radio' name='user_email_setting[user-email-setting-option]' " . ($usermail_setting_option == 'ON' ? 'checked' : '') . " value='" . esc_html__('ON', 'sejoli-lead-form') . "'><span>" . esc_html__('Send email to user when submit form.', 'sejoli-lead-form') . " </span></p>
                     <p><input type='radio' name='user_email_setting[user-email-setting-option]' " . ($usermail_setting_option == 'OFF' ? 'checked' : '') . " value='" . esc_html__('OFF', 'sejoli-lead-form') . "'><span>" . esc_html__("Don't Send.", 'sejoli-lead-form') . " </span></p>
                     </td></tr>
-                    <tr>
-                        <td><input type='hidden' name='user_email_setting[form-id]' required value='" . $this_form_id . "'> 
-                        
-                        <input type='hidden' name='ues_nonce' value='".$ues_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'></p>
-                        </td>
-                    </tr>
                 </tbody>
             </table> 
+            <input type='hidden' name='user_email_setting[form-id]' required value='" . $this_form_id . "'> 
+            
+            <input type='hidden' name='ues_nonce' value='".$ues_nonce."'>
+
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            </p>
             </div>
             <div id='error-message-user-email-setting'></div></div> </div>
             </form>";
+            echo "</div>";
         echo "</div>";
 
-        $affiliatemail_setting_from      = get_option('admin_email');
-        $affiliatemail_setting_subject   = esc_html('Received a lead');
-        $affiliatemail_setting_message   = esc_html('Form Submitted Successfully');
-        $affiliatemail_setting_option    = esc_html('OFF');
-        $affiliatemail_setting_header    = esc_html('New Lead Received');
+        $affiliatemail_setting_from    = get_option('admin_email');
+        $affiliatemail_setting_subject = esc_html('Received a lead');
+        $affiliatemail_setting_message = esc_html('Form Submitted Successfully');
+        $affiliatemail_setting_option  = esc_html('OFF');
+        $affiliatemail_setting_header  = esc_html('New Lead Received');
         if (!empty($affiliatemail_setting)) {
             $affiliatemail_setting_result = maybe_unserialize($affiliatemail_setting);
             $affiliatemail_setting_from = $affiliatemail_setting_result['affiliate_email_setting']['from'];
@@ -175,9 +198,14 @@ class LFB_EmailSettingForm{
         $affes_nonce = wp_create_nonce( 'affes-nonce' );
 
         echo "<div>";
-        echo "<form id='form-affiliate-email-setting' action='' method='post'>
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="display: inline-block; width: 47%;float: right;">';
+        }
+        echo "<form id='form-affiliate-email-setting' action='' method='post' style='width: 100%;'>
             <div class='inside email_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('Affiliate Email Notifications', 'sejoli-lead-form') . " </h2><br>
             <table class='form-table'>
@@ -197,7 +225,7 @@ class LFB_EmailSettingForm{
                     <tr>
                         <th scope='row'><label for='affiliate_email_setting_message'>Message" . LFB_REQUIRED_SIGN . "</th>
                         <td>
-                            <textarea name='affiliate_email_setting[message]' id='affiliate_email_setting_message' rows='5' cols='46' required>" . esc_html($affiliatemail_setting_message) . "</textarea></label>
+                            <textarea name='affiliate_email_setting[message]' id='affiliate_email_setting_message' rows='10' cols='70' required>" . esc_html($affiliatemail_setting_message) . "</textarea></label>
                         </td>
                     </tr>
                     <tr>
@@ -206,19 +234,19 @@ class LFB_EmailSettingForm{
                     <p><input type='radio' name='affiliate_email_setting[affiliate-email-setting-option]' " . ($affiliatemail_setting_option == 'ON' ? 'checked' : '') . " value='" . esc_html__('ON', 'sejoli-lead-form') . "'><span>" . esc_html__('Send email to user when submit form.', 'sejoli-lead-form') . " </span></p>
                     <p><input type='radio' name='affiliate_email_setting[affiliate-email-setting-option]' " . ($affiliatemail_setting_option == 'OFF' ? 'checked' : '') . " value='" . esc_html__('OFF', 'sejoli-lead-form') . "'><span>" . esc_html__("Don't Send.", 'sejoli-lead-form') . " </span></p>
                     </td></tr>
-                    <tr>
-                        <td><input type='hidden' name='affiliate_email_setting[form-id]' required value='" . $this_form_id . "'> 
-                        
-                        <input type='hidden' name='affes_nonce' value='".$affes_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'></p>
-                        </td>
-                    </tr>
                 </tbody>
             </table> 
+            <input type='hidden' name='affiliate_email_setting[form-id]' required value='" . $this_form_id . "'> 
+            
+            <input type='hidden' name='affes_nonce' value='".$affes_nonce."'>
+
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            </p>
             </div>
             <div id='error-message-affiliate-email-setting'></div></div> </div>
             </form>";
+            echo "</div>";
         echo "</div>";
     }
 
@@ -238,9 +266,13 @@ class LFB_EmailSettingForm{
         $captcha_sitekey = get_option('captcha-setting-sitekey');
         $captcha_secret = get_option('captcha-setting-secret');
         
-        echo '<div class="wrap">
-            <div class="card" id="recaptcha">
-            <div class="infobox">
+        echo '<div class="wrap" style="margin-top: 1em !important;">';
+        if(wp_is_mobile()){
+            echo '<div class="form-block" id="recaptcha" style="width: 90.5%;">';
+        } else {
+            echo '<div class="form-block" id="recaptcha" style="width: 80%;">';
+        }
+        echo'<div class="infobox">
             <h2>' . esc_html__('Setup Captcha', 'sejoli-lead-form') . '</h2><br>
             <a href="https://www.google.com/recaptcha/intro/index.html" target="_blank">' . esc_html__('Get your Keys', 'sejoli-lead-form') . '</a></div>
             <br class="clear">
@@ -251,18 +283,18 @@ class LFB_EmailSettingForm{
             <tbody>
             <tr>
                 <th scope="row"><label for="sitekey">' . esc_html__('Site Key', 'sejoli-lead-form') . ' </label></th>
-                <td><input type="text" required value="' . esc_html($captcha_sitekey) . '" id="sitekey" name="captcha-setting-sitekey" class="regular-text code"></td>
+                <td><input type="text" style="width: 100%;" required value="' . esc_html($captcha_sitekey) . '" id="sitekey" name="captcha-setting-sitekey" class="regular-text code"></td>
             </tr>
             <tr>
                 <th scope="row"><label for="secret">' . esc_html__('Secret Key', 'sejoli-lead-form') . ' </label></th>
-                <td><input type="text" required value="' . esc_html($captcha_secret) . '" id="secret" name="captcha-setting-secret" class="regular-text code"></td>
+                <td><input type="text" style="width: 100%;" required value="' . esc_html($captcha_secret) . '" id="secret" name="captcha-setting-secret" class="regular-text code"></td>
             </tr>
             </tbody>
             </table>
             <input type="hidden" name="captcha-keys" required value="' . intval($this_form_id) . '">
             <input type="hidden" name="captcha_nonce" value="'.$captcha_nonce.'">
 
-            <p class="submit"><input type="submit" class="button button-primary" id="captcha_save_settings" value="' . esc_html('Save', 'sejoli-lead-form') . '" name="submit"></p>
+            <p class="submit" style="text-align:right"><input type="submit" style="background: #ff4545; margin: 2em 8px 0 8px;" class="button button-primary" id="captcha_save_settings" value="' . esc_html('Save', 'sejoli-lead-form') . '" name="submit"></p>
             </form><br/>
             <div id="error-message-captcha-key"></div>
             </div>
@@ -292,26 +324,6 @@ class LFB_EmailSettingForm{
      * @since   1.0.0
      */
     function lfb_lead_setting_form($this_form_id, $lead_store_option){
-        if (isset($lead_store_option)) {
-            $lead_store_option = $lead_store_option;
-        } else {
-            $lead_store_option = 2;
-        }
-        $nonce = wp_create_nonce( 'lrv-nonce' );
-        echo '<div class="inside setting_section lead-receiving">
-            <div class="card">
-                <form name="" id="lead-email-setting" method="post" action="">
-                <h2>' . esc_html__('Lead Receiving Method', 'sejoli-lead-form') . '</h2>
-                <p><input type="radio" name="data-recieve-method" ' . ($lead_store_option == 1 ? 'checked' : "") . ' value="1"><span>' . esc_html__('Receive Leads in Email, WhatsApp and SMS', 'sejoli-lead-form') . ' </span></p>
-                <p><input type="radio" name="data-recieve-method" ' . ($lead_store_option == 2 ? 'checked' : "") . ' value="2"><span>' . esc_html__('Save Leads in database (you can see all leads in the lead option)', 'sejoli-lead-form') . ' </span></p>
-                <p><input type="radio" name="data-recieve-method" ' . ($lead_store_option == 3 ? 'checked' : "") . ' value="3"><span>' . esc_html__('Receive Leads in Email, WhatsApp, SMS and Save in database', 'sejoli-lead-form') . '</span><br><span id="data-rec-met-err"></span></p>
-                <p><input type="submit" class="button button-primary" id="advance_lead_setting" value="' . esc_html('Update') . '"></p>
-                <input type="hidden" name="action-lead-setting" value="' . intval($this_form_id) . '">    
-                <input type="hidden" name="lrv_nonce_verify" value="' . $nonce . '">
-
-                </form><br/><div id="error-message-lead-store"></div>          
-            </div>
-            </div>';
 
         global $wpdb;
         $msg_nonce = wp_create_nonce( 'thankyou-nonce' );
@@ -327,9 +339,13 @@ class LFB_EmailSettingForm{
             $successMsg = esc_html__("Thank You ...", 'sejoli-lead-form');
             $redirectUrl = '';
         }
-        echo '<div class="inside setting_section lead-form-setting">
-            <div class="card">
-                <form name="" id="lfb-form-success-msg" method="post" action="">
+        echo "<div style='margin-top: 1em;'>";
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="width:40%">';
+        }
+        echo '<form name="" id="lfb-form-success-msg" method="post" action="">
                 <h2>' . esc_html__('Form submitting Message (Thankyou Message)', 'sejoli-lead-form') . '</h2>
                 <div class="tablenav top">
                 <p>
@@ -338,19 +354,45 @@ class LFB_EmailSettingForm{
                  <i>' . esc_html__('This message will display to the visitor at your site. After submitting form.', 'sejoli-lead-form') . ' </i>
 
                 </p>
-                <h2>Redirect Url</h2>
+                <h2>' . esc_html__('Redirect Url', 'sejoli-lead-form') . '</h2>
                 <p>
                  <input name="thankyou_settings[redirect-url]" id="lfb_redirect_url" value="' . esc_url($redirectUrl) . '">
                  <p><i>' . esc_html__('Visitor will be redirected to this URL after submitting form.', 'sejoli-lead-form') . ' </i></p>
                  <i> ' . esc_html__('Enter full url like : http://domainanda.com/thankyou', 'sejoli-lead-form') . ' </i>
                 </p>
                 </div>
-                <p><input type="submit" class="button button-primary" id="advance_lead_msg_setting" value="' . esc_html('Save') . '"></p>
+                <p style="text-align:right"><input type="submit" style="background: #ff4545; margin: 2em 0px 0 8px;" class="button button-primary" id="advance_lead_msg_setting" value="' . esc_html('Save') . '"></p>
                 <input type="hidden" name="thankyou_settings[form-id]" value="' . intval($this_form_id) . '">    
                 <input type="hidden" name="thankyou-nonce" value="' . $msg_nonce . '">
                 <div id="error-thankyou-message-setting"></div>
             </form>
             </div>
             </div>';
+
+        if (isset($lead_store_option)) {
+            $lead_store_option = $lead_store_option;
+        } else {
+            $lead_store_option = 2;
+        }
+        $nonce = wp_create_nonce( 'lrv-nonce' );
+        echo '<div>';
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="width:40%">';
+        }
+        echo '<form name="" id="lead-email-setting" method="post" action="">
+                <h2>' . esc_html__('Lead Receiving Method', 'sejoli-lead-form') . '</h2>
+                <p><input type="radio" name="data-recieve-method" ' . ($lead_store_option == 1 ? 'checked' : "") . ' value="1"><span>' . esc_html__('Receive Leads in Email, WhatsApp and SMS', 'sejoli-lead-form') . ' </span></p>
+                <p><input type="radio" name="data-recieve-method" ' . ($lead_store_option == 2 ? 'checked' : "") . ' value="2"><span>' . esc_html__('Save Leads in database (you can see all leads in the lead option)', 'sejoli-lead-form') . ' </span></p>
+                <p><input type="radio" name="data-recieve-method" ' . ($lead_store_option == 3 ? 'checked' : "") . ' value="3"><span>' . esc_html__('Receive Leads in Email, WhatsApp, SMS and Save in database', 'sejoli-lead-form') . '</span><br><span id="data-rec-met-err"></span></p>
+                <p style="text-align:right"><input type="submit" class="button button-primary" style="background: #ff4545; margin: 2em 0px 0 8px;" id="advance_lead_setting" value="' . esc_html('Update') . '"></p>
+                <input type="hidden" name="action-lead-setting" value="' . intval($this_form_id) . '">    
+                <input type="hidden" name="lrv_nonce_verify" value="' . $nonce . '">
+
+                </form><br/><div id="error-message-lead-store"></div>          
+            </div>
+            </div>';
+
     }
 }
