@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @since   1.0.0
  */
 function lfb_admin_assets($hook) {
-    $pageSearch = array('lead-forms_page_add-new-form','lead-forms_page_all-form-entries','themehunk_page_wplf-plugin-menu','admin_page_pro-form-leads','lead-forms_page_all-leads','toplevel_page_lead-forms');
+    $pageSearch = array('lead-campaign_page_add-new-form','lead-campaign_page_all-form-entries','themehunk_page_wplf-plugin-menu','admin_page_pro-form-leads','lead-forms_page_all-leads','toplevel_page_lead-forms');
     if(in_array($hook, $pageSearch)){
         wp_enqueue_style('wpth_fa_css', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
         wp_enqueue_style('lfb-option-css', LFB_PLUGIN_URL . 'css/option-style.css');
@@ -28,6 +28,7 @@ function lfb_admin_assets($hook) {
         wp_register_style( 'daterangepicker',           'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css',          [], NULL, 'all');
         wp_register_style( 'roworder-dt',           'https://cdn.datatables.net/rowreorder/1.3.1/css/rowReorder.dataTables.min.css',          [], NULL, 'all');
         wp_register_style( 'responsive-dt',           'https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css',          [], NULL, 'all');
+        wp_register_style( 'fixedcolumn-dt',           'https://cdn.datatables.net/fixedcolumns/4.2.1/css/fixedColumns.dataTables.min.css',          [], NULL, 'all');
         // wp_register_style( 'semantic-ui',               'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css', [], '2.4.1', 'all' );
         wp_register_style( 'dataTables-semantic-ui',    'https://cdn.datatables.net/1.10.19/css/dataTables.semanticui.min.css',      ['dataTables', 'semantic-ui'], '1.10.19', 'all' );
 
@@ -36,9 +37,10 @@ function lfb_admin_assets($hook) {
         wp_enqueue_style( 'daterangepicker');
         wp_enqueue_style( 'roworder-dt');
         wp_enqueue_style( 'responsive-dt');
+        wp_enqueue_style( 'fixedcolumn-dt');
         // wp_enqueue_style( 'semantic-ui');
         
-        $page_form_list = array('lead-forms_page_all-form-entries','toplevel_page_lead-forms');
+        $page_form_list = array('lead-campaign_page_all-form-entries','toplevel_page_lead-forms');
         if(in_array($hook, $page_form_list)) {
             wp_enqueue_style( 'dataTables-semantic-ui' );
         }
@@ -47,6 +49,7 @@ function lfb_admin_assets($hook) {
         wp_register_script( 'dataTables',       'https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js',                           ['jquery'], LFB_VER, '1.13.1', true);
         wp_register_script( 'roworder-dt-js',           'https://cdn.datatables.net/rowreorder/1.3.1/js/dataTables.rowReorder.min.js',                                   ['jquery'], NULL, true);
         wp_register_script( 'responsive-dt-js',           'https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js',                                   ['jquery'], NULL, true);
+        wp_register_script( 'fixedcolumn-dt-js',           'https://cdn.datatables.net/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js',                                   ['jquery'], NULL, true);
         wp_register_script( 'moment',           'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js',                                   ['jquery'], NULL, true);
         
         wp_register_script( 'dtButton',           'https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js',                                   ['jquery'], NULL, true);
@@ -64,12 +67,19 @@ function lfb_admin_assets($hook) {
         wp_enqueue_script( 'dataTables' );
         wp_enqueue_script( 'roworder-dt-js' );
         wp_enqueue_script( 'responsive-dt-js' );
+        wp_enqueue_script( 'fixedcolumn-dt-js' );
         wp_enqueue_script( 'dtButton' );
         wp_enqueue_script( 'jsZip' );
         wp_enqueue_script( 'pdfMake' );
         wp_enqueue_script( 'vfsFonts' );
         wp_enqueue_script( 'buttonHtml5' );
         wp_enqueue_script( 'buttonPrint' );
+
+        if(wp_is_mobile()){
+            $fixedcolumn = 1;
+        } else {
+            $fixedcolumn = 3;
+        }
 
         wp_localize_script( "dataTables", "dataTableTranslation", array(
             "all"            => __('Semua','sejoli-lead-form'),
@@ -95,7 +105,8 @@ function lfb_admin_assets($hook) {
             "aria"           => array(
                 "sortAscending"  => __("Klik untuk mengurutkan kolom naik","sejoli-lead-form"),
                 "sortDescending" => __("Klik untuk mengurutkan kolom turun","sejoli-lead-form")
-            )
+            ),
+            "fixedcolumn"  => $fixedcolumn
         ));
         // wp_enqueue_script( 'semantic-ui');
 
@@ -149,10 +160,11 @@ function lfb_wp_assets() {
 
         wp_register_style( 'sejoli-lead-dataTables',   SEJOLISA_URL . 'admin/css/dataTables.css', [], LFB_VER, 'all');
         wp_register_style( 'select2',                   'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css',  [], '4.0.7', 'all');
+        wp_register_style( 'dataTables',                'https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css',          [], '1.13.1', 'all');
         wp_register_style( 'daterangepicker',           'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css',          [], NULL, 'all');
         wp_register_style( 'roworder-dt',           'https://cdn.datatables.net/rowreorder/1.3.1/css/rowReorder.dataTables.min.css',          [], NULL, 'all');
         wp_register_style( 'responsive-dt',           'https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css',          [], NULL, 'all');
-        // wp_register_style( 'daterangepicker',           'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css',          [], NULL, 'all');
+        wp_register_style( 'fixedcolumn-dt',           'https://cdn.datatables.net/fixedcolumns/4.2.1/css/fixedColumns.dataTables.min.css',          [], NULL, 'all');
         // wp_register_style( 'semantic-ui',               'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css', [], '2.4.1', 'all' );
         wp_register_style( 'dataTables-semantic-ui',    'https://cdn.datatables.net/1.10.19/css/dataTables.semanticui.min.css',      ['dataTables', 'semantic-ui'], '1.10.19', 'all' );
 
@@ -161,6 +173,7 @@ function lfb_wp_assets() {
         wp_enqueue_style( 'daterangepicker');
         wp_enqueue_style( 'roworder-dt');
         wp_enqueue_style( 'responsive-dt');
+        wp_enqueue_style( 'fixedcolumn-dt');
         // wp_enqueue_style( 'semantic-ui');
         
         // if(wp_is_mobile()){
@@ -171,6 +184,7 @@ function lfb_wp_assets() {
         wp_register_script( 'dataTables',       'https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js',                           ['jquery'], LFB_VER, '1.13.1', true);
         wp_register_script( 'roworder-dt-js',           'https://cdn.datatables.net/rowreorder/1.3.1/js/dataTables.rowReorder.min.js',                                   ['jquery'], NULL, true);
         wp_register_script( 'responsive-dt-js',           'https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js',                                   ['jquery'], NULL, true);
+        wp_register_script( 'fixedcolumn-dt-js',           'https://cdn.datatables.net/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js',                                   ['jquery'], NULL, true);
         wp_register_script( 'moment',           'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js',                                   ['jquery'], NULL, true);
         wp_register_script( 'daterangepicker',  'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js',                      ['moment'], NULL, true);
         // wp_register_script( 'semantic-ui',      'https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js',                 ['jquery'], '2.4.1', true );
@@ -181,6 +195,13 @@ function lfb_wp_assets() {
         wp_enqueue_script( 'dataTables' );
         wp_enqueue_script( 'roworder-dt-js' );
         wp_enqueue_script( 'responsive-dt-js' );
+        wp_enqueue_script( 'fixedcolumn-dt-js' );
+
+        if(wp_is_mobile()){
+            $fixedcolumn = 1;
+        } else {
+            $fixedcolumn = 3;
+        }
 
         wp_localize_script( "dataTables", "dataTableTranslation", array(
             "all"            => __('Semua','sejoli'),
@@ -206,7 +227,8 @@ function lfb_wp_assets() {
             "aria"           => array(
                 "sortAscending"  => __("Klik untuk mengurutkan kolom naik","sejoli-lead-form"),
                 "sortDescending" => __("Klik untuk mengurutkan kolom turun","sejoli-lead-form")
-            )
+            ),
+            "fixedcolumn"  => $fixedcolumn
         ));
         // wp_enqueue_script( 'semantic-ui');
 

@@ -241,6 +241,7 @@ table#show-leads-table th {
   position: relative;
   border: 1px solid #ececec;
   font-weight: 400;
+  width: auto !important;
 }
 #show-leads-table span.lead-count {
   width: 30px;
@@ -517,7 +518,7 @@ a.lead-remove i {
 }
  .nav-tab-wrapper a{
    background: #ffffff;
-   margin: 0 15px 5px 0;
+   margin: 0px 8px 5px 0;
    border-radius: 3px;
  }
  .nav-tab-active:focus{
@@ -767,11 +768,49 @@ table#show-leads-table thead th input[type="button"]:hover,
   -webkit-transition: 50ms border-color ease-in-out;
   transition: 50ms border-color ease-in-out;
 }
-.form-table th {
-  vertical-align: top;
-  text-align: left;
-  padding: 20px 10px 20px 0;
-  width: 140px !important;
+
+#form-email-setting .form-table th,
+#form-user-email-setting .form-table th,
+#form-affiliate-email-setting .form-table th,
+#form-wa-setting .form-table th,
+#form-user-wa-setting .form-table th,
+#form-affiliate-wa-setting .form-table th,
+#form-sms-setting .form-table th,
+#form-user-sms-setting .form-table th,
+#form-affiliate-sms-setting .form-table th
+ {
+    vertical-align: top;
+    text-align: left;
+    padding: 20px 10px 20px 0;
+    width: 125px !important;
+    display: inline-block;
+    float: left;
+}
+#form-email-setting .form-table td,
+#form-user-email-setting .form-table td,
+#form-affiliate-email-setting .form-table td,
+#form-wa-setting .form-table td,
+#form-user-wa-setting .form-table td,
+#form-affiliate-wa-setting .form-table td,
+#form-sms-setting .form-table td,
+#form-user-sms-setting .form-table td,
+#form-affiliate-sms-setting .form-table td
+ {
+    margin-bottom: 9px;
+    padding: 15px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 400px;
+    display: inline-block;
+    float: right;
+}
+
+textarea {
+    overflow: auto;
+    padding: 2px 6px;
+    line-height: 1.42857143;
+    resize: vertical;
+    width: 100%;
 }
 #recaptcha form#captcha-form {
   text-align: left;
@@ -2302,7 +2341,7 @@ table.widefat {
 }
 
 .widefat td {
-  padding: 10px 5px 10px 5px !important;
+  /* padding: 10px 5px 10px 5px !important; */
 }
 #wpbody-content .show-all-form .sorting-indicator:before {
   color: #007100;
@@ -2324,6 +2363,7 @@ table.widefat {
   cursor: pointer;
 }
 #error-message-lead-store .success p,
+#error-message-form-option .success p,
 #lfb-error-message-form-success .success p,
 #error-message-captcha-key .success p,
 #error-message-captcha-option .success p,
@@ -2345,6 +2385,7 @@ table.widefat {
   margin: 0;
 }
 #error-message-lead-store .success p::before,
+#error-message-form-option .success p::before,
 #lfb-error-message-form-success .success p::before,
 #error-message-captcha-key .success p::before,
 #error-message-captcha-option .success p::before,
@@ -2365,6 +2406,7 @@ table.widefat {
 }
 /*error///*/
 #error-message-lead-store .error p,
+#error-message-form-option .error p,
 #lfb-error-message-form-success .error p,
 #error-message-captcha-key .error p,
 #error-message-captcha-option .error p,
@@ -2385,6 +2427,7 @@ table.widefat {
   margin: 0;
 }
 #error-message-lead-store .error p::before,
+#error-message-form-option .error p::before,
 #lfb-error-message-form-success .error p::before,
 #error-message-captcha-key .error p::before,
 #error-message-captcha-option .error p::before,
@@ -2404,6 +2447,7 @@ table.widefat {
 }
 
 #error-message-lead-store .success p,
+#error-message-form-option .success p,
 #lfb-error-message-form-success .success p,
 #error-message-captcha-key .success p,
 #error-message-captcha-option .success p,
@@ -2427,6 +2471,7 @@ table.widefat {
   margin: 0;
 }
 #error-message-lead-store .success p::before,
+#error-message-form-option .success p::before,
 #lfb-error-message-form-success .success p::before,
 #error-message-captcha-key .success p::before,
 #error-message-captcha-option .success p::before,
@@ -2447,6 +2492,7 @@ table.widefat {
 }
 /*error///*/
 #error-message-lead-store .error p,
+#error-message-form-option .error p,
 #lfb-error-message-form-success .error p,
 #error-message-captcha-key .error p,
 #error-message-captcha-option .error p,
@@ -2469,6 +2515,7 @@ table.widefat {
   margin: 0;
 }
 #error-message-lead-store .error p::before,
+#error-message-form-option .error p::before,
 #lfb-error-message-form-success .error p::before,
 #error-message-captcha-key .error p::before,
 #error-message-captcha-option .error p::before,
@@ -2767,13 +2814,47 @@ form#thpopup_add .th_popup_header_image img {
     padding: 2px 1.5em !important;
   }
 
-  .form-table td, .form-table th, .label-responsive {
+    #form-email-setting .form-table th,
+    #form-user-email-setting .form-table th,
+    #form-affiliate-email-setting .form-table th,
+    #form-wa-setting .form-table th,
+    #form-user-wa-setting .form-table th,
+    #form-affiliate-wa-setting .form-table th,
+    #form-sms-setting .form-table th,
+    #form-user-sms-setting .form-table th,
+    #form-affiliate-sms-setting .form-table th,
+    #form-autoresponder-setting .form-table th,
+    #form-followup-setting .form-table th
+     {
         display: block;
         width: auto;
         vertical-align: middle;
         padding-top: 5px;
         padding-bottom: 5px;
         padding: 0;
+        float: none;
+        width: auto !important; 
+    }
+    #form-email-setting .form-table td,
+    #form-user-email-setting .form-table td,
+    #form-affiliate-email-setting .form-table td,
+    #form-wa-setting .form-table td,
+    #form-user-wa-setting .form-table td,
+    #form-affiliate-wa-setting .form-table td,
+    #form-sms-setting .form-table td,
+    #form-user-sms-setting .form-table td,
+    #form-affiliate-sms-setting .form-table td,
+    #form-autoresponder-setting .form-table td,
+    #form-followup-setting .form-table td
+     {
+        display: block;
+        width: auto;
+        vertical-align: middle;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding: 0;
+        float: none;
+        width: auto !important;
     }
 
     table.dataTable>tbody>tr.child ul.dtr-details {
@@ -2807,6 +2888,23 @@ form#thpopup_add .th_popup_header_image img {
         padding-top: 2.25em !important
     }
 
+    /* .form-table td {
+      margin-bottom: 9px;
+      padding: 5px 0 !important;
+      line-height: 1.3;
+      vertical-align: middle;
+      width: 75.5% !important;
+      display: inline-block;
+  }
+
+  .form-table th {
+      vertical-align: top;
+      text-align: left;
+      padding: 10px 0px 10px 0;
+      width: 22% !important;
+      display: inline-block;
+  } */
+
 }
 table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control, table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control {
     padding: 0 0em 0 40px !important;
@@ -2815,7 +2913,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control, table.dataTable.dt
 div.dataTables_wrapper div.dataTables_length select {
     vertical-align: middle;
     min-height: 2.7142em;
-    width: 4em !important;
+    width: 3.5em !important;
 }
 
 @media only screen and (min-width: 768px) {
@@ -3157,3 +3255,246 @@ table.show-leads-table tbody tr.even {
     background-color: #f4f4f4;
 }
 
+/* #wrap-wa-setting .form-table td {
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 71.1%;
+    display: inline-block;
+}
+
+#wrap-wa-setting .form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px 0px 10px 0;
+    width: 22%;
+    display: inline-block;
+}
+
+#wrap-wa-setting input[type="text"], 
+#wrap-wa-setting input[type="password"], input[type="color"], 
+#wrap-wa-setting input[type="date"], input[type="datetime"], 
+#wrap-wa-setting input[type="datetime-local"], input[type="email"], 
+#wrap-wa-setting input[type="month"], input[type="number"], 
+#wrap-wa-setting input[type="search"], input[type="tel"], 
+#wrap-wa-setting input[type="time"], input[type="url"], 
+#wrap-wa-setting input[type="week"], 
+#wrap-wa-setting select, 
+#wrap-wa-setting textarea {
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    width: 100%;
+}
+
+#wrap-email-setting .form-table td {
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 71.1%;
+    display: inline-block;
+}
+
+#wrap-email-setting .form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px 0px 10px 0;
+    width: 22%;
+    display: inline-block;
+}
+
+#wrap-email-setting input[type="text"], 
+#wrap-email-setting input[type="password"], input[type="color"], 
+#wrap-email-setting input[type="date"], input[type="datetime"], 
+#wrap-email-setting input[type="datetime-local"], input[type="email"], 
+#wrap-email-setting input[type="month"], input[type="number"], 
+#wrap-email-setting input[type="search"], input[type="tel"], 
+#wrap-email-setting input[type="time"], input[type="url"], 
+#wrap-email-setting input[type="week"], 
+#wrap-email-setting select, 
+#wrap-email-setting textarea {
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    width: 100%;
+}
+
+#wrap-sms-setting .form-table td {
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 71.1%;
+    display: inline-block;
+}
+
+#wrap-sms-setting .form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px 0px 10px 0;
+    width: 22%;
+    display: inline-block;
+}
+
+#wrap-sms-setting input[type="text"], 
+#wrap-sms-setting input[type="password"], input[type="color"], 
+#wrap-sms-setting input[type="date"], input[type="datetime"], 
+#wrap-sms-setting input[type="datetime-local"], input[type="email"], 
+#wrap-sms-setting input[type="month"], input[type="number"], 
+#wrap-sms-setting input[type="search"], input[type="tel"], 
+#wrap-sms-setting input[type="time"], input[type="url"], 
+#wrap-sms-setting input[type="week"], 
+#wrap-sms-setting select, 
+#wrap-sms-setting textarea {
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    width: 100%;
+}
+
+#form-autoresponder-setting .form-table td {
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 75.3%;
+    display: inline-block;
+}
+
+#form-autoresponder-setting .form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px 0px 10px 0;
+    width: 22%;
+    display: inline-block;
+}
+
+#form-autoresponder-setting input[type="text"], 
+#form-autoresponder-setting input[type="password"], input[type="color"], 
+#form-autoresponder-setting input[type="date"], input[type="datetime"], 
+#form-autoresponder-setting input[type="datetime-local"], input[type="email"], 
+#form-autoresponder-setting input[type="month"], input[type="number"], 
+#form-autoresponder-setting input[type="search"], input[type="tel"], 
+#form-autoresponder-setting input[type="time"], input[type="url"], 
+#form-autoresponder-setting input[type="week"], 
+#form-autoresponder-setting select, 
+#form-autoresponder-setting textarea {
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    width: 100%;
+}
+
+#form-followup-setting .form-table td {
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 75.3%;
+    display: inline-block;
+}
+
+#form-followup-setting .form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px 0px 10px 0;
+    width: 22%;
+    display: inline-block;
+}
+
+#form-followup-setting input[type="text"], 
+#form-followup-setting input[type="password"], input[type="color"], 
+#form-followup-setting input[type="date"], input[type="datetime"], 
+#form-followup-setting input[type="datetime-local"], input[type="email"], 
+#form-followup-setting input[type="month"], input[type="number"], 
+#form-followup-setting input[type="search"], input[type="tel"], 
+#form-followup-setting input[type="time"], input[type="url"], 
+#form-followup-setting input[type="week"], 
+#form-followup-setting select, 
+#form-followup-setting textarea {
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    width: 100%;
+}
+
+#wrap-customer-setting .form-table td {
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    line-height: 1.3;
+    vertical-align: middle;
+    width: 71.1%;
+    display: inline-block;
+}
+
+#wrap-customer-setting .form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px 0px 10px 0;
+    width: 22%;
+    display: inline-block;
+}
+
+#wrap-customer-setting input[type="text"], 
+#wrap-customer-setting input[type="password"], input[type="color"], 
+#wrap-customer-setting input[type="date"], input[type="datetime"], 
+#wrap-customer-setting input[type="datetime-local"], input[type="email"], 
+#wrap-customer-setting input[type="month"], input[type="number"], 
+#wrap-customer-setting input[type="search"], input[type="tel"], 
+#wrap-customer-setting input[type="time"], input[type="url"], 
+#wrap-customer-setting input[type="week"], 
+#wrap-customer-setting select, 
+#wrap-customer-setting textarea {
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    width: 100%;
+} */
+
+.dataTables_wrapper .dataTables_scroll {
+    clear: both;
+    margin-bottom: 1em;
+}
+
+table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc, table.dataTable thead>tr>th.sorting_asc_disabled, table.dataTable thead>tr>th.sorting_desc_disabled, table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>td.sorting_asc_disabled, table.dataTable thead>tr>td.sorting_desc_disabled {
+    cursor: pointer;
+    position: relative;
+    /* padding-right: 0 !important; */
+}
+
+table.dataTable thead th {
+    padding-left: 5px !important;
+    background: #f6f6f6;
+    border: 1px solid #ececec;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px;
+    border-bottom: 1px solid #ececec !important;
+}
+
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+    border-bottom: 1px solid #ececec !important;
+}
+
+/* #show-leads-table { table-layout: fixed; } */
+
+table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc, table.dataTable thead>tr>th.sorting_asc_disabled, table.dataTable thead>tr>th.sorting_desc_disabled, table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>td.sorting_asc_disabled, table.dataTable thead>tr>td.sorting_desc_disabled {
+    cursor: pointer;
+    position: relative;
+    padding-right: unset !important;
+}

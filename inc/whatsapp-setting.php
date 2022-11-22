@@ -43,6 +43,8 @@ class LFB_WhatsAppSettingForm{
         }
         $awas_nonce = wp_create_nonce( 'awas-nonce' );
 
+        echo "<div id='wrap-wa-setting'>";
+
         echo "<div style='margin-top: 1em;'>";
         if(wp_is_mobile()){
             echo '<div class="form-block" style="display: inline-block; width:90.5%">';
@@ -82,7 +84,7 @@ class LFB_WhatsAppSettingForm{
             <input type='hidden' name='awas_nonce' value='".$awas_nonce."'>
 
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
             </p>
             </div><div id='error-message-wa-setting'></div></div></div>
             </form>";
@@ -122,7 +124,7 @@ class LFB_WhatsAppSettingForm{
             <input type='hidden' name='uwas_nonce' value='".$uwas_nonce."'>
 
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
             </p>
             </div>
             <div id='error-message-user-wa-setting'></div></div> </div>
@@ -163,12 +165,14 @@ class LFB_WhatsAppSettingForm{
             <input type='hidden' name='affwas_nonce' value='".$affwas_nonce."'>
 
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
             </p>
             </div>
             <div id='error-message-affiliate-wa-setting'></div></div> </div>
             </form>";
             echo "</div>";
+        echo "</div>";
+
         echo "</div>";
     }
 

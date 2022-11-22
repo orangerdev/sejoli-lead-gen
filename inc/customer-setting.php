@@ -45,6 +45,8 @@ class LFB_CustomerSettingForm{
         }
         $ces_nonce = wp_create_nonce( 'ces-nonce' );
 
+        echo '<div id="wrap-customer-setting">';
+
         echo "<div style='margin-top: 1em;'>";
         if(wp_is_mobile()){
             echo '<div class="form-block" style="display: inline-block; width:90.5%">';
@@ -92,7 +94,7 @@ class LFB_CustomerSettingForm{
             
             <input type='hidden' name='ces_nonce' value='".$ces_nonce."'>
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
             </p>
             </div>
             <div id='error-message-customer-email-setting'></div></div> </div>
@@ -133,7 +135,7 @@ class LFB_CustomerSettingForm{
             <input type='hidden' name='cws_nonce' value='".$cws_nonce."'>
 
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
             </p>
             </div>
             <div id='error-message-customer-wa-setting'></div></div> </div>
@@ -174,12 +176,14 @@ class LFB_CustomerSettingForm{
             <input type='hidden' name='css_nonce' value='".$css_nonce."'>
 
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
             </p>
             </div>
             <div id='error-message-customer-sms-setting'></div></div> </div>
             </form>";
             echo "</div>";
+        echo "</div>";
+
         echo "</div>";
     }
 

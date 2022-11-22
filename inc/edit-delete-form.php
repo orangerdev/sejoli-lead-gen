@@ -106,6 +106,7 @@ Class LFB_EDIT_DEL_FORM {
             $customer_sms_setting_result = $posts[0]->customer_sms_setting;
             $captcha_option = $posts[0]->captcha_status;
             $lead_store_option = esc_html($posts[0]->storeType);
+            $form_display_option = esc_html($posts[0]->formDisplayOption);
 
             $all_form_fields = $this->lfb_create_form_fields_for_edit($form_title, $form_data_result);
         }
@@ -232,7 +233,7 @@ Class LFB_EDIT_DEL_FORM {
         echo '</section><section>';
             if (is_admin()) {
                 $lf_email_setting_form = new LFB_EmailSettingForm($this_form_id);
-                $lf_email_setting_form->lfb_lead_setting_form($this_form_id, $lead_store_option);
+                $lf_email_setting_form->lfb_lead_setting_form($this_form_id, $lead_store_option, $form_display_option);
             }
         echo '</section></div>
             </div>';
@@ -322,7 +323,7 @@ Class LFB_EDIT_DEL_FORM {
             <option value='name' ".( $fieldtype === 'name' ? 'selected="selected"' : '' ).">".esc_html__('Name','sejoli-lead-form')."</option>         
             <option value='email' ".( $fieldtype === 'email' ? 'selected="selected"' : '' ).">".esc_html__('Email','sejoli-lead-form')."</option>
             <option value='message' ".( $fieldtype === 'message' ? 'selected="selected"' : '' ).">".esc_html__('Message','sejoli-lead-form')."</option>
-            <option value='dob' ".( $fieldtype === 'dob' ? 'selected="selected"' : '' ).">".esc_html__('DOB','sejoli-lead-form')."</option>
+            <option value='dob' ".( $fieldtype === 'dob' ? 'selected="selected"' : '' ).">".esc_html__('Date of Birth','sejoli-lead-form')."</option>
             <option value='date' ".( $fieldtype === 'date' ? 'selected="selected"' : '' ).">".esc_html__('Date','sejoli-lead-form')." </option>        
             <option value='text' ".( $fieldtype === 'text' ? 'selected="selected"' : '' ).">".esc_html__('Text (Single Line Text)','sejoli-lead-form')."</option>
             <option value='textarea' ".( $fieldtype === 'textarea' ? 'selected="selected"' : '' ).">".esc_html__('Textarea (Multiple Line Text)','sejoli-lead-form')." </option>
@@ -330,6 +331,7 @@ Class LFB_EDIT_DEL_FORM {
             <option value='url' ".( $fieldtype === 'url' ? 'selected="selected"' : '' ).">".esc_html__('Url (Website url)','sejoli-lead-form')."</option>
             <option value='phonenumber' ".( $fieldtype === 'phonenumber' ? 'selected="selected"' : '' ).">".esc_html__('Phone Number','sejoli-lead-form')." </option>
             <option value='number' ".( $fieldtype === 'number' ? 'selected="selected"' : '' ).">".esc_html__('Number (Only Numeric 0-9 )','sejoli-lead-form')." </option>
+            <option value='upload' ".( $fieldtype === 'upload' ? 'selected="selected"' : '' ).">".esc_html__('Upload File/Image','sejoli-lead-form')." </option>
             <option value='radio' ".( $fieldtype === 'radio' ? 'selected="selected"' : '' ).">".esc_html__('Radio (Choose Single Option)','sejoli-lead-form')."</option>    
             <option value='option' ".( $fieldtype === 'option' ? 'selected="selected"' : '' ).">".esc_html__('Option (Choose Single Option)','sejoli-lead-form')."</option>  
             <option value='checkbox' ".( $fieldtype === 'checkbox' ? 'selected="selected"' : '' ).">".esc_html__('Checkbox (Choose Multiple Option)','sejoli-lead-form')."</option>
@@ -417,11 +419,11 @@ Class LFB_EDIT_DEL_FORM {
             <option value="submit" selected="selected">'.esc_html("Submit Button").'</option>
             </select></td>';
 
-        // $return .=$this->lfbFieldDefaultValue($fieldv,$fieldID);
+        $return .=$this->lfbFieldDefaultValue($fieldv,$fieldID);
 
         $fieldButton = '<span><input type="button" class="button lf_addnew" name="add_new" id="add_new_'.$lastFieldID.'" onclick="add_new_form_fields('.$lastFieldID.')" value="Add New"></span>';
         $return .='<td><input type="hidden" value="' . $fieldID . '" name="lfb_form[form_field_' . $fieldID . '][field_id]"></td>';
-        $return .= '<td></td><td class="add-field" id="wpth_add_form_table_' . $fieldID . '">'.$fieldButton.'</td>';
+        $return .= '<td class="add-field" id="wpth_add_form_table_' . $fieldID . '">'.$fieldButton.'</td>';
 
         return $return;
 
@@ -527,7 +529,7 @@ Class LFB_EDIT_DEL_FORM {
             </div>
             </td>';
 
-        $return .= '<td>-</td>';
+        // $return .= '<td>-</td>';
            
         $return .= $this->lfbFieldIsRequired($fieldv,$fieldID);
 
@@ -659,6 +661,7 @@ Class LFB_EDIT_DEL_FORM {
 
         $text = array('name','email','url','phonenumber','number','text','date','dob','upload','terms');
         $textarea = array('message','textarea');
+        $upload = array('upload','file');
         $fieldtype = $fieldv['field_type'];
         $fType = $fieldv['field_type']['type'];
 
@@ -671,6 +674,8 @@ Class LFB_EDIT_DEL_FORM {
         } elseif($fType=='htmlfield') {
             return $this->lfbhtmlfield($fieldv,$fieldtype,$fieldID);
         } elseif(in_array($fType, $text)){
+            return $this->lfbTypeText($fieldv,$fType,$fieldID);
+        } elseif(in_array($fType, $upload)){
             return $this->lfbTypeText($fieldv,$fType,$fieldID);
         } elseif(in_array($fType, $textarea)){
             return $this->lfbTypeTextarea($fieldv,$fType,$fieldID);

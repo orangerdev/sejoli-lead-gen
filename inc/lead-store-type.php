@@ -100,7 +100,7 @@ Class LFB_LeadStoreType{
         $update_leads = $wpdb->query( $wpdb->prepare( 
         "INSERT INTO $data_table_name ( form_id, product, affiliate, form_data, status, ip_address, server_request, date ) 
         VALUES ( %d, %d, %d, %s, %s, %s, %s, %s )",
-        $form_id, $form_product, $form_affiliate, $form_data, 'lead', $ip_address, $server_request, date('Y/m/d g:i:s') ) );
+        $form_id, $form_product, $form_affiliate, $form_data, 'lead', $ip_address, $server_request, date_i18n('Y/m/d H:i:s') ) );
         
         $lead_id = $wpdb->insert_id;
 
@@ -130,14 +130,14 @@ Class LFB_LeadStoreType{
             if(isset($form_data[$key]) && is_array($form_data[$key])){
                 if(strstr($key, 'upload_')){
                     $upload_filename = isset($form_data[$key]['filename'])?$form_data[$key]['filename']:$form_data[$key]['error'];
-                    $upload = isset($form_data[$key]['url'])?'<a target="_blank" href="'.esc_url($form_data[$key]["url"]).'">'.$upload_filename.'</a>':$upload_filename;
-                    $table .='<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong>'.$value.': </strong></td><td style="padding:8px;" >'.$upload.'</td></tr>';
+                    // $upload = isset($form_data[$key]['url'])?'<a target="_blank" href="'.esc_url($form_data[$key]["url"]).'">'.$upload_filename.'</a>':$upload_filename;
+                    // $table .='<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong>'.$value.': </strong></td><td style="padding:8px;" >'.$upload.'</td></tr>';
                 } else {
                     $fieldVal = implode(", ",$form_data[$key]);
                     $table .='<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong>'.$value.': </strong></td><td style="padding:8px;" >'.$fieldVal.'</td></tr>';
                 }
             } else{
-                $table .=(isset($form_data[$key]))?'<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong> '.$value.': </td></strong><td style="padding:8px;" >'.$form_data[$key].'</td></tr>':'<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong>'.$value.'</strong></td><td style="padding:8px;" > - </td></tr>';
+                $table .= (isset($form_data[$key]))?'<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong> '.$value.': </td></strong><td style="padding:8px;" >'.$form_data[$key].'</td></tr>':'<tr style="'.$trnth.'" ><td style="padding:8px;" ><strong>'.$value.'</strong></td><td style="padding:8px;" > - </td></tr>';
             }
             $i++;
         }
@@ -167,6 +167,47 @@ Class LFB_LeadStoreType{
                 if(strstr($key, 'upload_')){
                     $upload_filename = isset($form_data[$key]['filename']) ? $form_data[$key]['filename'] : $form_data[$key]['error'];
                     $upload = isset($form_data[$key]['url'])?'<a target="_blank" href="'.esc_url($form_data[$key]["url"]).'">'.$upload_filename.'</a>':$upload_filename;
+                    $table .= $value .': '. $upload."\r \n";
+                } else {
+                    $fieldVal = implode(", ",$form_data[$key]);
+                    $table .= $value .': '. $fieldVal."\r \n";
+                }
+
+            } else{
+
+                $table .= $value .': '. $form_data[$key]."\r \n";
+
+            }
+            
+
+            $i++;
+        }
+
+        return $table;
+
+    }
+
+    /**
+     * Filter Data from Form Entries
+     * @since   1.0.0
+     */
+    function lfb_wa_sms_data_filter($form_id,$form_data){
+
+        global $wpdb;
+
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $form_field = $th_save_db->lfb_admin_email_send($form_id);
+        $form_data = maybe_unserialize($form_data);
+        $i = 0;
+        $table = '';
+   
+        foreach ($form_field as $key => $value){
+
+            if(isset($form_data[$key]) && is_array($form_data[$key])){
+
+                if(strstr($key, 'upload_')){
+                    $upload_filename = isset($form_data[$key]['filename']) ? $form_data[$key]['filename'] : $form_data[$key]['error'];
+                    $upload = isset($form_data[$key]['url'])? esc_url($form_data[$key]["url"]):$upload_filename;
                     $table .= $value .': '. $upload."\r \n";
                 } else {
                     $fieldVal = implode(", ",$form_data[$key]);
@@ -277,6 +318,7 @@ Class LFB_LeadStoreType{
             $lead_email = '';
             $lead_name  = '';
             $lead_phone = '';
+            $getFileUploadSource = array();
 
             foreach ($form_datas as $results) {
 
@@ -289,6 +331,9 @@ Class LFB_LeadStoreType{
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
                     $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                } elseif ($type === 'upload') { 
+                    $lead_uploaded_file = $form_data['upload_'.$field_id];
+                    $getFileUploadSource[] = $lead_uploaded_file['url'];
                 }
 
             }
@@ -352,11 +397,24 @@ Class LFB_LeadStoreType{
         // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
-            $email->send(
-                array($to),
-                $message,
-                $subject
-            );
+            if(count($getFileUploadSource) > 0) {
+
+                $email->send(
+                    array($to),
+                    $message,
+                    $subject,
+                    $getFileUploadSource
+                );
+
+            } else {
+
+                $email->send(
+                    array($to),
+                    $message,
+                    $subject
+                );
+
+            }
         }
 
         //user email send
@@ -431,6 +489,7 @@ Class LFB_LeadStoreType{
         $lead_email = '';
         $lead_name  = '';
         $lead_phone = '';
+        $getFileUploadSource = array();
 
         foreach ($form_datas as $results) {
 
@@ -443,6 +502,9 @@ Class LFB_LeadStoreType{
                 $lead_name = $form_data['name_'.$field_id];
             } elseif ( $type === 'phonenumber' ) {
                 $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+            } elseif ($type === 'upload') { 
+                $lead_uploaded_file = $form_data['upload_'.$field_id];
+                $getFileUploadSource[] = $lead_uploaded_file['url'];
             }
 
         }
@@ -492,11 +554,24 @@ Class LFB_LeadStoreType{
         // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
-            $email->send(
-                array($to),
-                $message,
-                $subject
-            );
+            if(count($getFileUploadSource) > 0) {
+
+                $email->send(
+                    array($to),
+                    $message,
+                    $subject,
+                    $getFileUploadSource
+                );
+
+            } else {
+
+                $email->send(
+                    array($to),
+                    $message,
+                    $subject
+                );
+
+            }
         }
 
     }
@@ -553,6 +628,7 @@ Class LFB_LeadStoreType{
         $lead_email = '';
         $lead_name  = '';
         $lead_phone = '';
+        $getFileUploadSource = array();
 
         foreach ($form_datas as $results) {
 
@@ -565,6 +641,9 @@ Class LFB_LeadStoreType{
                 $lead_name = $form_data['name_'.$field_id];
             } elseif ( $type === 'phonenumber' ) {
                 $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+            } elseif ($type === 'upload') { 
+                $lead_uploaded_file = $form_data['upload_'.$field_id];
+                $getFileUploadSource[] = $lead_uploaded_file['url'];
             }
 
         }
@@ -614,11 +693,24 @@ Class LFB_LeadStoreType{
         // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
-            $email->send(
-                array($to),
-                $message,
-                $subject
-            );
+            if(count($getFileUploadSource) > 0) {
+
+                $email->send(
+                    array($to),
+                    $message,
+                    $subject,
+                    $getFileUploadSource
+                );
+
+            } else {
+
+                $email->send(
+                    array($to),
+                    $message,
+                    $subject
+                );
+
+            }
         }
 
     }
@@ -629,7 +721,7 @@ Class LFB_LeadStoreType{
      */
     function lfb_send_data_wa($form_id,$form_data,$lead_id,$form_title,$form_product,$form_affiliate,$wa_setting,$user_wa,$affiliate_wa,$affiliate_setting,$user_emailid){
         
-        $form_entry_data = $this->lfb_data_filter($form_id,$form_data);
+        $form_entry_data = $this->lfb_wa_sms_data_filter($form_id,$form_data);
 
         if(!empty($wa_setting['whatsapp_setting'])){
             $sitelink = preg_replace('#^https?://#', '', site_url());
@@ -712,11 +804,11 @@ Class LFB_LeadStoreType{
                 $explode = explode( ',',$multiple );
                 if(is_array($explode)){
                     foreach ( $explode as $wa ) {
-                        $wa_number = explode( ',',$wa );
+                        $wa_number = explode( ',',$multiple );
                     } // foreach
                 } // //is array
             } //explode
-            
+
             if($message) {
                 $whatsapp = new LeadFormWhatsApp();
                 $whatsapp->send($wa_number, strip_tags($message), $title = '');
@@ -983,7 +1075,7 @@ Class LFB_LeadStoreType{
                 $explode = explode( ',',$multiple );
                 if(is_array($explode)){
                     foreach ( $explode as $sms ) {
-                        $sms_number = explode( ',',$sms );
+                        $sms_number = explode( ',',$multiple );
                     } // foreach
                 } // //is array
             } //explode

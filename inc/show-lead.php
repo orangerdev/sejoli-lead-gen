@@ -109,7 +109,7 @@ Class LFB_Show_Leads {
             } else {
                 echo '<div class="wrap" style="display: inline-block;width: 100%; margin-bottom: 1.5em !important;">';
                     echo '<h3 style="margin-bottom: 3em; margin-top: 1em;float: left;">'.$query_forms[0]->form_title.'</h3>';
-                    echo '<div class="export-button"></div><table class="form-table" style="float: right;width: 30%;clear: inherit; margin: 0;"><tbody><tr><th scope="row" style="width: auto !important; padding: 20px 0; text-align: right;">
+                    echo '<div class="export-button"></div><table class="form-table" style="float: right;width: 23%;clear: inherit; margin: 0;"><tbody><tr><th scope="row" style="width: auto !important; padding: 20px 0; text-align: right;">
                     <label for="filter_lead_entries">'.esc_html__('Filter Data','sejoli-lead-form').'</label></th><td><input type="text" name="filter-lead-entries" id="filter_lead_entries"/><input type="hidden" name="form_id_filter" value="'.$first_form_id.'"/></td></tr></tbody></table>';
                 echo '</div>';
             }
@@ -145,7 +145,7 @@ Class LFB_Show_Leads {
                 continue;
             }
 
-            $tableHead  .= '<th class="none">' . $fieldvalue . '</th>';
+            $tableHead  .= '<th class="all">' . $fieldvalue . '</th>';
 
             $leadscount =  $headcount;
 
@@ -174,7 +174,7 @@ Class LFB_Show_Leads {
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
                 $get_status = $results->status;
 
                 if ($get_status === "lead") {
@@ -192,8 +192,11 @@ Class LFB_Show_Leads {
                 $date_td = '<td><b>'.$lead_date.'</b></td>';
 
                 $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
-                $table_row .= "<td>".$product->post_title."</td>";
                 $table_row .= $returnData['table_row'];
+
+                $table_row .= "<td>".$product->post_title."</td>";
+
+                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
 
                 if($affiliate_id > 0) {
                     $table_row .= "<td>".$affiliate->display_name."</td>";
@@ -201,7 +204,6 @@ Class LFB_Show_Leads {
                     $table_row .= "<td>-</td>";
                 }
 
-                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
                 $table_row .= $date_td;
                 $form = $th_save_db->lfb_get_form_data($results->form_id);
                 $form_data_result = maybe_unserialize($form[0]->form_data);
@@ -242,24 +244,25 @@ Class LFB_Show_Leads {
                 // }
                 $complete_data .='<table><tr><th>Field</th><th>Value</th></tr>'.$returnData['table_popup'].'<tr><td>Date</td>'.$date_td.'</tr></table>';
 
-                $popupTab .= '<div id="lf-openModal-'.$lead_id.'" class="lf-modalDialog">
-                    <div class="lfb-popup-leads"><a href="#lf-close" title="Close" class="lf-close">X</a>'.$complete_data.'
-                    </div>
-                    </div>';
+                // $popupTab .= '<div id="lf-openModal-'.$lead_id.'" class="lf-modalDialog">
+                //     <div class="lfb-popup-leads"><a href="#lf-close" title="Close" class="lf-close">X</a>'.$complete_data.'
+                //     </div>
+                //     </div>';
 
                 // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
-                $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $lead_id . '</a></td>'. $table_row .'</tr>';
+                // $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $lead_id . '</a></td>'. $table_row .'</tr>';
+                $table_body .= '<tr>'. $table_row .'</tr>';
             }
 
             if(wp_is_mobile()){
-                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
-                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th class="none">Value</th><th class="none">Date</th>'.$table_head.'<th class="none">'.$text_follow.'</th><th class="none">Status</th></tr></thead>';
+                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat " style="width: 100%" id="show-leads-table" >
+                <thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
             } else {
-                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
-                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
+                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat" style="width: 100%" id="show-leads-table" >
+                <thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
             }
 
-            echo wp_kses($thHead. $table_body.'</table>'.$popupTab,$this->expanded_alowed_tags());
+            echo wp_kses($thHead. $table_body.'</table>',$this->expanded_alowed_tags());
             // echo wp_kses($thHead. $table_body.'</tbody></table>'.$popupTab,$this->expanded_alowed_tags());
 
             // $total = ceil($rows / $limit);
@@ -367,7 +370,7 @@ Class LFB_Show_Leads {
 
         echo '<div class="form-block">';
             echo '<div class="wrap"><div class="inside"><div class="card"><table class="form-table"><tbody><tr><th scope="row">
-                <label for="select_form_lead">'.esc_html__('Select From','sejoli-lead-form').'</label></th>
+                <label for="select_form_lead"><b>'.esc_html__('Select From','sejoli-lead-form').'</b></label></th>
                 <td><select name="select_form_lead" id="select_form_lead">' . wp_kses($option_form,$this->expanded_alowed_tags()) . '</select>
                 <td><input rem_nonce = "'.$rem_nonce.'" type="button" value="'.esc_html__('Show Entries','sejoli-lead-form').'" onclick="remember_this_form_id();" id="remember_this_form_id"></td>
                 </tr><tr><td><div id="remember_this_message" ></div></td></tr></tbody></table></div></div></div><div class="wrap" id="form-leads-shows-box">';
@@ -380,8 +383,8 @@ Class LFB_Show_Leads {
             } else {
                 echo '<div class="wrap" style="display: inline-block;width: 100%; margin-bottom: 0 !important;">';
                     echo '<h3 style="margin-bottom: 3em;float: left; margin-top: 8px;">'.$query_forms[0]->form_title.'</h3>';
-                    echo '<div class="export-button"></div><table class="form-table" style="float: right;width: 30%;clear: inherit; margin: 0;"><tbody><tr><th scope="row" style="width: auto !important; padding: 5px 0; text-align: right;">
-                    <label for="filter_lead_entries">'.esc_html__('Filter Data','sejoli-lead-form').'</label></th><td><input type="text" name="filter-lead-entries" id="filter_lead_entries"/><input type="hidden" name="form_id_filter" value="'.$first_form_id.'"/></td></tr></tbody></table>';
+                    echo '<div class="export-button"></div><table class="form-table" style="float: right;width: 25%;clear: inherit; margin: 0;"><tbody><tr><th scope="row" style="width: auto !important; padding: 5px 0; text-align: right;">
+                    <label for="filter_lead_entries"><b>'.esc_html__('Filter Data','sejoli-lead-form').'</b></label></th><td style="padding-right: 0;"><input type="text" name="filter-lead-entries" id="filter_lead_entries"/><input type="hidden" name="form_id_filter" value="'.$first_form_id.'"/></td></tr></tbody></table>';
                 echo '</div>';
             }
             $this->lfb_show_leads_first_form_by_affiliate($first_form_id);
@@ -417,7 +420,7 @@ Class LFB_Show_Leads {
                 continue;
             }
 
-            $tableHead  .= '<th class="none">' . $fieldvalue . '</th>';
+            $tableHead  .= '<th class="all">' . $fieldvalue . '</th>';
 
             $leadscount =  $headcount;
 
@@ -431,9 +434,9 @@ Class LFB_Show_Leads {
             $table_body = '';
             $popupTab   = '';
 
-            if($headcount >= 6){
-                $table_head .='<th> . . . </th>';
-            }
+            // if($headcount >= 6){
+            //     $table_head .='<th> . . . </th>';
+            // }
 
             foreach ($posts as $results) {
                 $table_row = '';
@@ -446,7 +449,7 @@ Class LFB_Show_Leads {
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
                 $get_status = $results->status;
                 if ($get_status === "lead") {
                     $status = '<a href="#" class="button button-small button-status-lead">'. __('Lead', 'sejoli-lead-form') .' </a>';
@@ -463,14 +466,18 @@ Class LFB_Show_Leads {
 
                 $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
 
-                $table_row .= "<td>".$product->post_title."</td>";
                 $table_row .= $returnData['table_row'];
+                
+                $table_row .= "<td>".$product->post_title."</td>";
+
+                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+                
                 if($affiliate_id > 0) {
                     $table_row .= "<td>".$affiliate->display_name."</td>";
                 } else {
                     $table_row .= "<td>-</td>";
                 }
-                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+
                 $table_row .= $date_td;
                 $form = $th_save_db->lfb_get_form_data($results->form_id);
                 $form_data_result = maybe_unserialize($form[0]->form_data);
@@ -506,11 +513,7 @@ Class LFB_Show_Leads {
                 //     }
                 // }
 
-                if($headcount >= 6) {
-                    $table_row .= '<td></td><td>'.$status.'</td>';
-                } else {
-                    $table_row .= '<td>'.$status.'</td>';
-                }
+                $table_row .= '<td>'.$status.'</td>';
 
                 // $table_row .= '<td></span><a class="lead-followup-wa"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></span></span><a class="lead-remove" onclick="delete_this_lead(' . $lead_id . ',\''.$nonce.'\')"><i class="fa fa-trash" aria-hidden="true" title="Hapus"></i></a></span></td>';
          
@@ -529,18 +532,18 @@ Class LFB_Show_Leads {
                     </div>';
 
                 // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
-                $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $lead_id . '</a></td>'. $table_row .'</tr>';
+                $table_body .= '<tr>'. $table_row .'</tr>';
             }
 
             // $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
             //     <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
 
             if(wp_is_mobile()){
-                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
-                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th class="none">Value</th><th class="none">Date</th>'.$table_head.'<th class="none">Status</th></tr></thead>';
+                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat " style="width: 100%" id="show-leads-table" >
+                <thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
             } else {
-                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
-                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
+                $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat " style="width: 100%" id="show-leads-table" >
+                <thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
             }
 
             echo wp_kses($thHead. $table_body.'</table>'.$popupTab,$this->expanded_alowed_tags());
@@ -632,7 +635,7 @@ Class LFB_Show_Leads {
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
                 $get_status = $results->status;
                 if ($get_status === "lead") {
                     $status = '<button type="submit" class="button button-small button-status-lead" data-lead-id="'.$lead_id.'">'. __('Lead', 'sejoli-lead-form') .' </button>';

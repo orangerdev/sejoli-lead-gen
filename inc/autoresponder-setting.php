@@ -50,7 +50,7 @@ class LFB_AutoresponderSettingForm{
                 <tbody>
                     <tr>
                         <th scope='row'><label for='autoresponder_setting_code'>HTML Code" . LFB_REQUIRED_SIGN . "</th>
-                        <td>
+                        <td style='width: 490px;'>
                             <textarea name='autoresponder_setting[code]' id='autoresponder_setting_code' rows='10' cols='90' required>" . esc_html($autoresponder_setting_code) . "</textarea></label>
                             <p class='description' id='from-description'>" . esc_html__('Paste kode HTML Form yang anda dapatkan dari autoresponder. Jika anda masih belum mengerti hal, silahkan tanyakan ke autoresponder yang anda gunakan', 'sejoli-lead-form') . "</p></td>
                         </td>
@@ -60,7 +60,7 @@ class LFB_AutoresponderSettingForm{
             <input type='hidden' name='autoresponder_setting[form-id]' required value='" . intval($this_form_id) . "'> 
             <input type='hidden' name='aaress_nonce' value='".$aaress_nonce."'>
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;' id='button' value='Save'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 8px 0 8px;' id='button' value='Save'>
             </p>
             </div><div id='error-message-autoresponder-setting'></div></div></div>
             </form>";

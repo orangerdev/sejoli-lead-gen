@@ -26,17 +26,29 @@ jQuery(function() {
             
         }
     });
+    var colCount = jQuery("#show-leads-table tr th").length;
+    if(colCount > 9){
+        $scrollInnerWidth = "170%";
+    } else {
+        $scrollInnerWidth = "110%";
+    }
 
     jQuery('#show-leads-table').DataTable({
         language   : dataTableTranslation,
-        responsive : true,
+        responsive : false,
+        scrollX    : true,
+        scrollCollapse: true,
+        sScrollXInner: $scrollInnerWidth,
+        autoWidth   : true,
+        fixedColumns: {
+            leftColumns: dataTableTranslation.fixedcolumn
+        },
+        paging     : true,
         searching  : false,
         processing : true,
         pageLength : 10,
-        order: [
-            [ 1, "desc" ]
-        ],
-        dom: 'lBt',
+        order      : [],
+        dom: 'Blfrtip',
         buttons: [ 
             { 
                 extend: 'collection',
@@ -77,9 +89,8 @@ jQuery(function() {
         searching  : false,
         processing : true,
         pageLength : 10,
-        order: [
-            [ 1, "desc" ]
-        ],
+        autoWidth  : true,
+        order      : [],
     });
 
     // jQuery('input[name="filter-lead-entries"]').daterangepicker({
@@ -95,14 +106,14 @@ jQuery(function() {
     var end = moment();
 
     function cb(start, end) {
-        jQuery('input[name="filter-lead-entries"]').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        jQuery('input[name="filter-lead-entries"]').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
     }
 
     jQuery('input[name="filter-lead-entries"]').daterangepicker({
         startDate: start,
         endDate: end,
         locale: {
-          format: 'MMMM D, YYYY'
+          format: 'YYYY-MM-DD'
         },
         ranges: {
            'Today': [moment(), moment()],
@@ -128,16 +139,28 @@ jQuery(function() {
             jQuery('#show-leads-table').empty();
             jQuery('#show-leads-table').append(response);
             jQuery('#show-leads-table').DataTable().clear().destroy();
+            var colCount = jQuery("#show-leads-table tr th").length;
+            if(colCount > 9){
+                $scrollInnerWidth = "170%";
+            } else {
+                $scrollInnerWidth = "110%";
+            }
             jQuery('#show-leads-table').DataTable({
                 language   : dataTableTranslation,
-                responsive : true,
+                responsive : false,
+                scrollX    : true,
+                scrollCollapse: true,
+                sScrollXInner: $scrollInnerWidth,
+                autoWidth   : true,
+                fixedColumns: {
+                    leftColumns: dataTableTranslation.fixedcolumn
+                },
+                paging     : true,
                 searching  : false,
                 processing : true,
                 pageLength : 10,
-                order: [
-                    [ 1, "desc" ]
-                ],
-                dom: 'lBt',
+                order      : [],
+                dom: 'Blfrtip',
                 buttons: [ 
                     { 
                         extend: 'collection',
@@ -672,7 +695,7 @@ function add_new_form_fields(this_field_id) {
         var field_id = this_field_id + 1;
         var field_sr = "<td>" + field_id + "</td>";
         var field_name = "<td><input type='text' name='lfb_form[form_field_" + field_id + "][field_name]' id='field_name_" + field_id + "' value=''></td>";
-        var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='phonenumber'>Phone Number</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
+        var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='phonenumber'>Phone Number</option><option value='upload'>Upload File/Image</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
         var field_default = "<td><input type='text' class='default_value' name='lfb_form[form_field_" + field_id + "][default_value]' id='default_value_" + field_id + "' value=''><div class='default_htmlfield_" + field_id + "'' id='default_htmlfield'></div><div class='default_terms_" + field_id + "'' id='default_terms'></div><div class='add_default_radio_checkbox_" + field_id + "' id='add_default_radio_checkbox'><div class='' id='default_add_radio'></div><div class='' id='default_add_checkbox'></div><div class='' id='default_add_option'></div></div></td>";
         // var field_placeholder = "<td><input type='checkbox' class='default_placeholder' name='lfb_form[form_field_" + field_id + "][default_placeholder]' id='default_placeholder_" + field_id + "' value='1'></td>";
         var field_required = "<td><input type='checkbox' class='is_required' name='lfb_form[form_field_" + field_id + "][is_required]' id='is_required_" + field_id + "' value='1'></td>";
@@ -1200,6 +1223,24 @@ jQuery("form#lead-email-setting").submit(function(event) {
 })
 
 /*
+ *Save form display setting for each form
+ */
+jQuery("form#form-option-setting").submit(function(event) {
+    var form_data = jQuery("form#form-option-setting").serialize();
+    event.preventDefault();
+    form_data = form_data + "&action=SaveFormOptionSettings";
+    jQuery("#error-message-form-option").find("div").remove();
+    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+        // console.log(response);
+        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
+            jQuery("#error-message-form-option").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
+        } else {
+            jQuery("#error-message-form-option").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
+        }
+    });
+})
+
+/*
  *Save captcha enable/disable for each form
  */
 jQuery("form#captcha-on-off-setting").submit(function(event) {
@@ -1294,16 +1335,28 @@ function show_all_leads(page_id, form_id) {
         jQuery('#form-leads-show').empty();
         jQuery('#form-leads-show').append(response);
 
+        var colCount = jQuery("#show-leads-table tr th").length;
+        if(colCount > 9){
+            $scrollInnerWidth = "170%";
+        } else {
+            $scrollInnerWidth = "110%";
+        }
         jQuery('#show-leads-table').DataTable({
             language   : dataTableTranslation,
-            responsive : true,
+            responsive : false,
+            scrollX    : true,
+            scrollCollapse: true,
+            sScrollXInner: $scrollInnerWidth,
+            autoWidth   : true,
+            fixedColumns: {
+                leftColumns: dataTableTranslation.fixedcolumn
+            },
+            paging     : true,
             searching  : false,
             processing : true,
             pageLength : 10,
-            order: [
-                [ 1, "desc" ]
-            ],
-            dom: 'lBt',
+            order      : [],
+            dom: 'Blfrtip',
             buttons: [ 
                 { 
                     extend: 'collection',

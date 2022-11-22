@@ -355,7 +355,7 @@ Class LFB_AddNewForm {
             <option value='name'>".esc_html__('Name','sejoli-lead-form')."</option>		    
             <option value='email'>".esc_html__('Email','sejoli-lead-form')."</option>
             <option value='message'>".esc_html__('Message','sejoli-lead-form')."</option>
-            <option value='dob'>".esc_html__('DOB','sejoli-lead-form')."</option>
+            <option value='dob'>".esc_html__('Date of Birth','sejoli-lead-form')."</option>
             <option value='date'>".esc_html__('Date','sejoli-lead-form')." </option>	    
             <option value='text'>".esc_html__('Text (Single Line Text)','sejoli-lead-form')."</option>
             <option value='textarea'>".esc_html__('Textarea (Multiple Line Text)','sejoli-lead-form')." </option>
@@ -363,6 +363,7 @@ Class LFB_AddNewForm {
             <option value='url'>".esc_html__('Url (Website url)','sejoli-lead-form')."</option>
             <option value='phonenumber'>".esc_html__('Phone Number','sejoli-lead-form')." </option>
             <option value='number'>".esc_html__('Number (Only Numeric 0-9 )','sejoli-lead-form')." </option>
+            <option value='upload'>".esc_html__('Upload File/Image','sejoli-lead-form')." </option>
             <option value='radio'>".esc_html__('Radio (Choose Single Option)','sejoli-lead-form')."</option>    
             <option value='option'>".esc_html__('Option (Choose Single Option)','sejoli-lead-form')."</option>  
             <option value='checkbox'>".esc_html__('Checkbox (Choose Multiple Option)','sejoli-lead-form')."</option>

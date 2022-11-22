@@ -27,7 +27,7 @@ Class LFB_SHOW_FORMS {
         include_once( plugin_dir_path(__FILE__) . 'header.php' );
         
         echo '<div class="form-block" style="padding-top:2em">
-            <table class="wp-list-table widefat fixed striped posts" id="lead-form-list">
+            <table class="wp-list-table widefat striped posts"style="width:100%" id="lead-form-list">
         	<thead>
         	<tr>
         		<th scope="col" id="title" class="manage-column column-title column-primary sortable asc">'.esc_html__('Form Name','sejoli-lead-form').'</th>

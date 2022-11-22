@@ -50,7 +50,7 @@ class LFB_FollowUpSettingForm{
                 <tbody>
                     <tr>
                         <th scope='row'><label for='followup_setting_message'>Message" . LFB_REQUIRED_SIGN . "</th>
-                        <td>
+                        <td style='width: 490px;'>
                             <textarea name='followup_setting[message]' id='followup_setting_message' rows='10' cols='90' required>" . esc_html($followup_setting_message) . "</textarea></label>
                         </td>
                     </tr>
@@ -59,7 +59,7 @@ class LFB_FollowUpSettingForm{
             <input type='hidden' name='followup_setting[form-id]' required value='" . intval($this_form_id) . "'> 
             <input type='hidden' name='afs_nonce' value='".$afs_nonce."'>
             <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 2em 8px 0 8px;'  id='button' value='Save'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;'  id='button' value='Save'>
             </p>
             </div><div id='error-message-followup-setting'></div></div></div>
             </form>";

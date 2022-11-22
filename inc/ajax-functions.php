@@ -22,9 +22,9 @@ function lfb_user_permission_check(){
  */
 function lfb_upload_dir($dirs){
 
-    $dirs['subdir'] = '/lfb_uploads';
-    $dirs['path'] = $dirs['basedir'] . '/lfb_uploads';
-    $dirs['url'] = $dirs['baseurl'] . '/lfb_uploads';
+    $dirs['subdir'] = '/sejoli-lead-campaign';
+    $dirs['path'] = $dirs['basedir'] . '/sejoli-lead-campaign';
+    $dirs['url'] = $dirs['baseurl'] . '/sejoli-lead-campaign';
 
     return $dirs;
 
@@ -55,6 +55,7 @@ function lfb_fileupload(){
     $response = array();
 
     foreach ($file_data as $key => $file) {
+
         $uploaded_file = wp_handle_upload($file, $overrides);
 
         if ($uploaded_file && !isset($uploaded_file['error'])) {
@@ -66,9 +67,12 @@ function lfb_fileupload(){
             $response[$key]['response'] = esc_html__("ERROR", 'sejoli-lead-form');
             $response[$key]['error'] = $uploaded_file['error'];
         }
+
     }
 
     $parse = http_build_query($response);
+
+    wp_send_json($parse);
 
     remove_filter('upload_dir', 'lfb_upload_dir');
 
@@ -107,6 +111,36 @@ function lfb_save_lead_settings(){
 
 }
 add_action('wp_ajax_SaveLeadSettings', 'lfb_save_lead_settings');
+
+/**
+ * Save Form Display Setting method
+ * Hooked via action wp_ajax_SaveFormOptionSettings
+ * @since   1.0.0
+ */
+function lfb_save_form_option_settings(){
+
+    $nonce = $_REQUEST['fop_nonce_verify'];
+    // Get all the user roles as an array.
+    if (isset($_POST['action-form-option-setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'fop-nonce')) {
+
+        $data_form_option_method = intval($_POST['data-form-option-method']);
+        $this_form_id = intval($_POST['action-form-option-setting']);
+        global $wpdb;
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set formDisplayOption='" . $data_form_option_method . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveFormOptionSettings', 'lfb_save_form_option_settings');
 
 /**
  * Save Email Settings
@@ -809,7 +843,7 @@ function lfb_ShowAllLeadThisForm(){
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
                 $get_status = $results->status;
 
                 if ($get_status === "lead") {
@@ -828,16 +862,18 @@ function lfb_ShowAllLeadThisForm(){
 
                 $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
 
-                $table_row .= "<td>".$product->post_title."</td>";
                 $table_row .= $returnData['table_row'];
 
+                $table_row .= "<td>".$product->post_title."</td>";
+
+                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+                
                 if($affiliate_id > 0) {
                     $table_row .= "<td>".$affiliate->display_name."</td>";
                 } else {
                     $table_row .= "<td>-</td>";
                 }
 
-                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
                 $table_row .= $date_td;
                 $form = $th_save_db->lfb_get_form_data($results->form_id);
                 $form_data_result = maybe_unserialize($form[0]->form_data);
@@ -888,20 +924,20 @@ function lfb_ShowAllLeadThisForm(){
                     </div>';
 
                 // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
-                $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $lead_id . '</a></td>'. $table_row .'</tr>';
+                $table_body .= '<tr>'. $table_row .'</tr>';
             }
 
             if(wp_get_referer() === home_url('member-area/lead-entries/')) {
                 if(wp_is_mobile()){
-                    $thHead = '<thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th class="none">Value</th><th class="none">Date</th>'.$table_head.'<th class="none">Status</th></tr></thead>';
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
                 } else {
-                    $thHead = '<thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
                 }
             } else {
                 if(wp_is_mobile()){
-                    $thHead = '<thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th class="none">Value</th><th class="none">Date</th>'.$table_head.'<th class="none">'.$text_follow.'</th><th class="none">Status</th></tr></thead>';
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
                 } else {
-                    $thHead = '<thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
                 }
             }
             echo wp_kses($thHead . $table_body . '</table>', $showLeadsObj->expanded_alowed_tags());
@@ -1048,7 +1084,7 @@ function lfb_ShowAllLeadThisFormByAffiliate(){
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
                 $get_status = $results->status;
                 if ($get_status === "lead") {
                     $status = __('Lead', 'sejoli-lead-form');
@@ -1065,16 +1101,18 @@ function lfb_ShowAllLeadThisFormByAffiliate(){
 
                 $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
 
-                $table_row .= "<td>".$product->post_title."</td>";
                 $table_row .= $returnData['table_row'];
 
+                $table_row .= "<td>".$product->post_title."</td>";
+
+                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+                
                 if($affiliate_id > 0) {
                     $table_row .= "<td>".$affiliate->display_name."</td>";
                 } else {
                     $table_row .= "<td>-</td>";
                 }
 
-                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
                 $table_row .= $date_td;
                 $form = $th_save_db->lfb_get_form_data($results->form_id);
                 $form_data_result = maybe_unserialize($form[0]->form_data);
@@ -1131,16 +1169,16 @@ function lfb_ShowAllLeadThisFormByAffiliate(){
                     </div>';
 
                 // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
-                $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $lead_id . '</a></td>'. $table_row .'</tr>';
+                $table_body .= '<tr>'. $table_row .'</tr>';
             }
 
             // $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
             //     <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
             
             if(wp_is_mobile()){
-                $thHead = '<thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th class="none">Value</th><th class="none">Date</th>'.$table_head.'<th class="none">Status</th></tr></thead>';
+                $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
             } else {
-                $thHead = '<thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
+                $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
             }
 
             echo wp_kses($thHead . $table_body . '</table>', $showLeadsObj->expanded_alowed_tags());
@@ -1264,7 +1302,7 @@ function lfb_ShowLeadPagi(){
                 $affiliate_id   = $results->affiliate;
                 $affiliate      = sejolisa_get_user($affiliate_id);
                 $form_data      = maybe_unserialize($form_data);
-                $lead_date      = date("jS F Y", strtotime($results->date));
+                $lead_date      = date("j M Y", strtotime($results->date));
                 $get_status     = $results->status;
                 if ($get_status === "lead") {
                     $status = '<button type="submit" class="button button-small button-status-lead">'. __('Lead', 'sejoli-lead-form') .' </button>';
@@ -1446,7 +1484,7 @@ function lfb_ShowAllLeadThisFormDate(){
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
                 $get_status = $results->status;
 
                 if ($get_status === "lead") {
@@ -1594,6 +1632,22 @@ function lfb_lead_sanitize($leads){
 
 }
 
+function lfb_get_previous_email($form_product, $form_id) {
+
+    $unix_limit   = current_time( 'timestamp' ) - ( 5 * 60 );
+    $day_limit    = date('Y-m-d H:i:s', $unix_limit);
+
+    global $wpdb;
+
+    $table_name = LFB_FORM_DATA_TBL;
+
+    $rows = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND product = %d AND `date` > '".$day_limit."'", $form_id, $form_product);
+    $posts = $wpdb->get_results($rows);
+
+    return $posts;
+
+}
+
 /**
  * Save Form Data
  * Hooked via action wp_ajax_Save_Form_Data, wp_ajax_nopriv_Save_Form_Data
@@ -1623,15 +1677,25 @@ function lfb_Save_Form_Data(){
             $user_emailid = esc_html__('invalid_email', 'sejoli-lead-form');
         }
 
-        $sanitize_leads =  lfb_lead_sanitize($fromData);
-        $form_data = maybe_serialize($sanitize_leads);
+        $entries   = lfb_get_previous_email( $form_product, $form_id);
 
-        $lf_store   = new LFB_LeadStoreType();
-        $th_save_db = new LFB_SAVE_DB();
+        if (count($entries) !== 0) {
 
-        $lf_store->lfb_mail_type($form_id, $form_title, $form_product, $form_affiliate, $form_data, $th_save_db, $user_emailid);
-        
-        lfb_register_autoresponder($form_id, $form_product, $form_data);
+            wp_send_json(__('sudah isi data'));
+
+        } else {
+
+            $sanitize_leads =  lfb_lead_sanitize($fromData);
+            $form_data = maybe_serialize($sanitize_leads);
+
+            $lf_store   = new LFB_LeadStoreType();
+            $th_save_db = new LFB_SAVE_DB();
+
+            $lf_store->lfb_mail_type($form_id, $form_title, $form_product, $form_affiliate, $form_data, $th_save_db, $user_emailid);
+            
+            lfb_register_autoresponder($form_id, $form_product, $form_data);
+
+        }
 
     }
 
@@ -1670,6 +1734,10 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
 
             $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
             $field_id = $results['field_id'];
+
+            $data_email = '';
+            $data_name  = '';
+            $data_phone  = '';
 
             if ($type === 'email') { 
                 $data_email = $form_data['email_'.$field_id];
@@ -2133,7 +2201,7 @@ function lfb_ProceedToCustomer(){
             $affiliate    = sejolisa_get_user( $affiliate_id );
             $form_data    = maybe_unserialize( $form_data );
             $form_id      = $results->form_id;
-            $lead_date    = date("jS F Y", strtotime( $results->date ));
+            $lead_date    = date("j M Y", strtotime( $results->date ));
             $get_status   = $results->status;
 
             $form = $th_save_db->lfb_get_form_data( $results->form_id );

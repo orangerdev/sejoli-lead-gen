@@ -59,7 +59,7 @@ function register_menu( array $menu ) {
 
     $member_menu = array(
         'link'    => 'javascript::void(0)',
-        'label'   => __('Lead Gen', 'sejoli'),
+        'label'   => __('Lead Campaign', 'sejoli'),
         'icon'    => 'users icon',
         'class'   => 'item',
         'submenu' => array(
@@ -101,7 +101,7 @@ function add_menu_in_backend(array $menu) {
     $menu_position = 1;
 
     $point_menu = array(
-        'title'  => __('Lead Gen', 'sejoli'),
+        'title'  => __('Lead Campaign', 'sejoli'),
         'object' => 'sejoli-lead-gen',
         'url'    => site_url('member-area/lead-entries')
     );
@@ -130,7 +130,7 @@ function display_link_list_in_menu($output, $object, $args, $setup) {
 
     $member_menu = array(
         'link'    => 'javascript::void(0)',
-        'label'   => __('Lead Gen', 'sejoli'),
+        'label'   => __('Lead Campaign', 'sejoli'),
         'icon'    => 'users icon',
         'class'   => 'item',
         'submenu' => array(
