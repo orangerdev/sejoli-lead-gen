@@ -8,8 +8,6 @@ jQuery(function() {
 
         if (confirm('Proses data #'+leadID+' ke Customer?')) {
 
-            // var form_id = jQuery('#select_form_lead').val();
-            // var rem_nonce = jQuery('#remember_this_form_id').attr('rem_nonce');
             var form_data = "lead-id=" + leadID + "&action=ProceedToCustomer";
             SaveByAjaxRequest(form_data, 'POST').success(function(response) {
                 if (true === response) {
@@ -26,6 +24,7 @@ jQuery(function() {
             
         }
     });
+
     var colCount = jQuery("#show-leads-table tr th").length;
     if(colCount > 9){
         $scrollInnerWidth = "170%";
@@ -92,15 +91,6 @@ jQuery(function() {
         autoWidth  : true,
         order      : [],
     });
-
-    // jQuery('input[name="filter-lead-entries"]').daterangepicker({
-    //     timePicker: true,
-    //     startDate: moment().startOf('hour'),
-    //     endDate: moment().startOf('hour').add(32, 'hour'),
-    //     locale: {
-    //       format: 'M/DD hh:mm A'
-    //     }
-    // });
 
     var start = moment().subtract(29, 'days');
     var end = moment();
@@ -283,7 +273,6 @@ jQuery(function() {
             }
         });
 
-
         // heading manage
         var handleHead = jQuery("#lfb-heading-handle");
         var valueHead = jQuery('#lfb_heading_font_size').val();
@@ -306,6 +295,7 @@ jQuery(function() {
                 saveButtonActive();
             }
         });
+
         // header top/bottom aligment
         var handleHeadTB = jQuery("#lfb-header-algmnt-tb-handle");
         var valueHeadTB = jQuery('#lfb_header_algmnt_tb').val();
@@ -560,7 +550,6 @@ jQuery(function() {
             saveButtonActive();
             var arrColor = [];
 
-
             //Button background color
             $lfb_color_button_text = jQuery('#lfb_color_button_text').val();
             $lfb_color_button_bg = jQuery('#lfb_color_button_bg').val();
@@ -572,12 +561,7 @@ jQuery(function() {
                 "border-color": $lfb_color_button_border
             });
 
-
-
             $lfb_color_bg = jQuery('#lfb_color_bg').val();
-
-            //jQuery(".leadform-show-form .lead-form-front").css("background-color", $lfb_color_bg);
-            //jQuery(".leadform-show-form .lead-form-front:before").css("background-color", $lfb_color_bg);
 
             //heading color
             $lfb_color_heading = jQuery('#lfb_color_heading').val();
@@ -697,7 +681,6 @@ function add_new_form_fields(this_field_id) {
         var field_name = "<td><input type='text' name='lfb_form[form_field_" + field_id + "][field_name]' id='field_name_" + field_id + "' value=''></td>";
         var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='phonenumber'>Phone Number</option><option value='upload'>Upload File/Image</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
         var field_default = "<td><input type='text' class='default_value' name='lfb_form[form_field_" + field_id + "][default_value]' id='default_value_" + field_id + "' value=''><div class='default_htmlfield_" + field_id + "'' id='default_htmlfield'></div><div class='default_terms_" + field_id + "'' id='default_terms'></div><div class='add_default_radio_checkbox_" + field_id + "' id='add_default_radio_checkbox'><div class='' id='default_add_radio'></div><div class='' id='default_add_checkbox'></div><div class='' id='default_add_option'></div></div></td>";
-        // var field_placeholder = "<td><input type='checkbox' class='default_placeholder' name='lfb_form[form_field_" + field_id + "][default_placeholder]' id='default_placeholder_" + field_id + "' value='1'></td>";
         var field_required = "<td><input type='checkbox' class='is_required' name='lfb_form[form_field_" + field_id + "][is_required]' id='is_required_" + field_id + "' value='1'></td>";
 
         // var field_add_button = "<td id='wpth_add_form_table_" + field_id + "'><input type='button' class='button lf_addnew' name='save' id='add_new_" + field_id + "' onclick='add_new_form_fields(" + field_id + ")' value='Add New'></td>";
@@ -720,9 +703,9 @@ function add_new_form_fields(this_field_id) {
 function remove_form_fields(field_id) {
     jQuery("#form_field_row_" + field_id).remove();
 }
+
 /*
  *Save forms in admin area
-
 function save_new_form() {
     var form_heading = jQuery(".new_form_heading").val();
     if (form_heading != '') {
@@ -755,14 +738,12 @@ function htmlfield(parent_id, this_parent_id) {
     jQuery(parent_id).find('input.is_required').hide();
     jQuery(parent_id).find('#default_htmlfield').show();
 
-
     var html_text = jQuery(parent_id).find('#default_htmlfield textarea').length;
     if (html_text < 1) {
         var html_fields = "<textarea class='default_value default_htmlfield' name='lfb_form[form_field_" + this_parent_id + "][default_value]''[default_value]' id='default_value_" + this_parent_id + "'''> </textarea>";
         jQuery(parent_id).find('#default_htmlfield').append(html_fields);
         jQuery(parent_id).find('input.default_value').hide();
         jQuery(parent_id).find('input.default_placeholder').hide();
-
     }
 }
 
@@ -853,6 +834,7 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
         multioptionFieldHide(parent_id);
     }
 });
+
 /*
  *Delete dynamic sub-fields of Radio
  */
@@ -866,6 +848,7 @@ function delete_radio_fields(this_parent_id, radio_id) {
         jQuery(parent_id + " #default_radio_value_" + radio_id).remove();
     }
 }
+
 /*
  *Add dynamic sub-fields of Radio
  */
@@ -883,6 +866,7 @@ function add_new_radio_fields(this_parent_id, radio_id) {
     jQuery(parent_id + ' #default_add_radio').append(default_add_radio);
     jQuery(parent_id + ' #delete_radio_' + new_radio_id).css("display", "inline-block");
 }
+
 /*
  *Delete dynamic sub-fields of Checkbox
  */
@@ -896,6 +880,7 @@ function delete_checkbox_fields(this_parent_id, checkbox_id) {
         jQuery(parent_id + " #default_checkbox_value_" + checkbox_id).remove();
     }
 }
+
 /*
  *Add dynamic sub-fields of Checkbox
  */
@@ -913,6 +898,7 @@ function add_new_checkbox_fields(this_parent_id, checkbox_id) {
     jQuery(parent_id + ' #default_add_checkbox').append(default_add_checkbox);
     jQuery(parent_id + ' #delete_checkbox_' + new_checkbox_id).css("display", "inline-block");
 }
+
 /*
  *Delete dynamic sub-fields of Option
  */
@@ -926,6 +912,7 @@ function delete_option_fields(this_parent_id, option_id) {
         jQuery(parent_id + " #default_option_value_" + option_id).remove();
     }
 }
+
 /*
  *Add dynamic sub-fields of Option
  */
@@ -943,6 +930,7 @@ function add_new_option_fields(this_parent_id, option_id) {
     jQuery(parent_id + ' #default_add_option').append(default_add_option);
     jQuery(parent_id + ' #delete_option_' + new_option_id).css("display", "inline-block");
 }
+
 /*
  *Save email setting for each form
  */
@@ -952,7 +940,6 @@ jQuery("form#form-email-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-email-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -960,6 +947,7 @@ jQuery("form#form-email-setting").submit(function(event) {
         }
     });
 })
+
 /*
  *Save user email setting for each form
  */
@@ -969,7 +957,6 @@ jQuery("form#form-user-email-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-user-email-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-user-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -977,6 +964,7 @@ jQuery("form#form-user-email-setting").submit(function(event) {
         }
     });
 })
+
 /*
  *Save affiliate email setting for each form
  */
@@ -986,7 +974,6 @@ jQuery("form#form-affiliate-email-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-affiliate-email-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-affiliate-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -994,6 +981,7 @@ jQuery("form#form-affiliate-email-setting").submit(function(event) {
         }
     });
 })
+
 /*
  *Save captcha setting for each form
  */
@@ -1019,7 +1007,6 @@ jQuery("form#form-wa-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-wa-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1027,6 +1014,7 @@ jQuery("form#form-wa-setting").submit(function(event) {
         }
     });
 })
+
 /*
  *Save user wa setting for each form
  */
@@ -1036,7 +1024,6 @@ jQuery("form#form-user-wa-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-user-wa-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-user-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1044,6 +1031,7 @@ jQuery("form#form-user-wa-setting").submit(function(event) {
         }
     });
 })
+
 /*
  *Save affiliate wa setting for each form
  */
@@ -1053,7 +1041,6 @@ jQuery("form#form-affiliate-wa-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-affiliate-wa-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-affiliate-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1071,7 +1058,6 @@ jQuery("form#form-sms-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-sms-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1096,6 +1082,7 @@ jQuery("form#form-user-sms-setting").submit(function(event) {
         }
     });
 })
+
 /*
  *Save affiliate sms setting for each form
  */
@@ -1105,7 +1092,6 @@ jQuery("form#form-affiliate-sms-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-affiliate-sms-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-affiliate-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1123,7 +1109,6 @@ jQuery("form#form-customer-email-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-customer-email-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-customer-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1141,7 +1126,6 @@ jQuery("form#form-customer-wa-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-customer-wa-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-customer-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1159,7 +1143,6 @@ jQuery("form#form-customer-sms-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-customer-sms-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-customer-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1177,7 +1160,6 @@ jQuery("form#form-autoresponder-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-autoresponder-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-autoresponder-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1195,7 +1177,6 @@ jQuery("form#form-followup-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-followup-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-followup-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1213,7 +1194,6 @@ jQuery("form#lead-email-setting").submit(function(event) {
     form_data = form_data + "&action=SaveLeadSettings";
     jQuery("#error-message-lead-store").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        // console.log(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-lead-store").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1231,7 +1211,6 @@ jQuery("form#form-option-setting").submit(function(event) {
     form_data = form_data + "&action=SaveFormOptionSettings";
     jQuery("#error-message-form-option").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        // console.log(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-form-option").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1249,7 +1228,6 @@ jQuery("form#captcha-on-off-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-captcha-option").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-captcha-option").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1285,6 +1263,7 @@ jQuery("form#lfb-form-success-msg").submit(function(event) {
         }
     });
 })
+
 /*
  *Delete particular Leads
  */
@@ -1394,7 +1373,6 @@ function show_all_leads(page_id, form_id) {
     });
 }
 
-
 function remember_this_form_id() {
     if (confirm("Show this entries?")) {
         var form_id = jQuery('#select_form_lead').val();
@@ -1429,11 +1407,11 @@ for (var i = 0; i < deleteLinks.length; i++) {
         }
     });
 }
+
 // customize-form backend content fix size
 jQuery(document).ready(function() {
     jQuery('#lfb_formColor').append('<style>#wpbody-content{width:800px;}</style>');
 });
-
 
 function openCity(cityName, elmnt, color) {
     // Hide all elements with class="tabcontent" by default */
@@ -1460,7 +1438,6 @@ if (document.getElementById("defaultOpen")) {
 
 jQuery(function($) {
     // simple multiple select
-    // 
     // multiple select with AJAX search
     $('#sejoli_lead_select2_products').select2({
         ajax: {
