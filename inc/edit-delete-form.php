@@ -59,7 +59,7 @@ Class LFB_EDIT_DEL_FORM {
 
         $html = '';
 
-        if( $product_id > 0 ) {
+        // if( $product_id > 0 ) {
             $html .= "<div id='titlewrap'>";
             $html .= "<div class='label-form'><label>".esc_html__('Product','sejoli-lead-form')."</label></div>";
             $html .= '<div class="field-form"><select id="sejoli_lead_select2_products" name="product">';
@@ -67,7 +67,7 @@ Class LFB_EDIT_DEL_FORM {
             $title = get_the_title( $product_id );
             $html .= '<option value="' . $product_id . '" selected="selected">' . $title . '</option>';
             $html .= '<select></div></div><!-- #titlewrap -->';
-        }
+        // }
 
         return $html;
 

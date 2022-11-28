@@ -3024,7 +3024,7 @@ div.dropdown-opened {
 /***********Frontend calendar styling***********/
 .ui-datepicker-calendar .ui-datepicker-today a {
   color: #000000 !important;
-}
+}         
 
 .ui-datepicker-calendar thead th span {
   -moz-box-shadow: none !important;

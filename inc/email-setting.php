@@ -378,7 +378,7 @@ class LFB_EmailSettingForm{
         if (isset($lead_store_option)) {
             $lead_store_option = $lead_store_option;
         } else {
-            $lead_store_option = 2;
+            $lead_store_option = 3;
         }
         $nonce = wp_create_nonce( 'lrv-nonce' );
         echo '<div>';

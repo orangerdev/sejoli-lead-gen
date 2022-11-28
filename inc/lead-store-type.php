@@ -397,24 +397,13 @@ Class LFB_LeadStoreType{
         // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
-            if(count($getFileUploadSource) > 0) {
 
-                $email->send(
-                    array($to),
-                    $message,
-                    $subject,
-                    $getFileUploadSource
-                );
-
-            } else {
-
-                $email->send(
-                    array($to),
-                    $message,
-                    $subject
-                );
-
-            }
+            $email->send(
+                array($to),
+                $message,
+                $subject,
+                $getFileUploadSource
+            );
         }
 
         //user email send
@@ -554,24 +543,13 @@ Class LFB_LeadStoreType{
         // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
-            if(count($getFileUploadSource) > 0) {
 
-                $email->send(
-                    array($to),
-                    $message,
-                    $subject,
-                    $getFileUploadSource
-                );
-
-            } else {
-
-                $email->send(
-                    array($to),
-                    $message,
-                    $subject
-                );
-
-            }
+            $email->send(
+                array($to),
+                $message,
+                $subject,
+                $getFileUploadSource
+            );
         }
 
     }
@@ -693,24 +671,13 @@ Class LFB_LeadStoreType{
         // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
-            if(count($getFileUploadSource) > 0) {
 
-                $email->send(
-                    array($to),
-                    $message,
-                    $subject,
-                    $getFileUploadSource
-                );
-
-            } else {
-
-                $email->send(
-                    array($to),
-                    $message,
-                    $subject
-                );
-
-            }
+            $email->send(
+                array($to),
+                $message,
+                $subject,
+                $getFileUploadSource
+            );
         }
 
     }
