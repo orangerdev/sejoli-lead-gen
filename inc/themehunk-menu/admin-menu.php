@@ -8,7 +8,7 @@ if (!function_exists('themehunk_admin_menu')) {
     add_action( 'admin_enqueue_scripts', 'admin_scripts');
 
     function themehunk_admin_menu(){
-        add_menu_page(__('Lead Forms', 'sejoli-lead-form'), __('Lead Forms', 'sejoli-lead-form'), 'manage_options', 'lead-forms', 'lfb_lead_form_page',  THEMEHUNK_PURL . '/th-option/assets/images/icon.png', 59);
+        add_menu_page(__('Lead Campaign', 'sejoli-lead-form'), __('Lead Campaign', 'sejoli-lead-form'), 'manage_options', 'lead-forms', 'lfb_lead_form_page',  THEMEHUNK_PURL . '/th-option/assets/images/icon.png', 35);
     }
 
     function themehunk_plugins(){

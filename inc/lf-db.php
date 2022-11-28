@@ -36,12 +36,17 @@ if (!function_exists('lfb_plugin_activate')) {
                 usersms_setting text NOT NULL,
                 affiliatesms_setting text NOT NULL,
                 autoresponder_setting text NOT NULL,
+                followup_setting text NOT NULL,
+                customer_setting text NOT NULL,
+                customer_wa_setting text NOT NULL,
+                customer_sms_setting text NOT NULL,
                 multiData text NOT NULL,
                 form_url text,
                 form_skin VARCHAR(255) DEFAULT 'default' NOT NULL,
                 form_status VARCHAR(50) DEFAULT 'ACTIVE' NOT NULL,       
                 captcha_status VARCHAR(255) DEFAULT 'OFF' NOT NULL,
                 storeType ENUM('1','2','3') DEFAULT '2' NOT NULL,
+                formDisplayOption ENUM('1','2','3','4','5','6') DEFAULT '2' NOT NULL,
                 track_path varchar(255) NOT NULL,
                 PRIMARY KEY (id)
             ) $charset_collate;";
@@ -56,6 +61,7 @@ if (!function_exists('lfb_plugin_activate')) {
                 product INT(11) NOT NULL,
                 affiliate INT(11) NOT NULL,
                 form_data LONGTEXT,
+                status VARCHAR(50),
                 ip_address VARCHAR(100),
                 server_request TEXT,
                 date datetime,
@@ -88,7 +94,7 @@ if (!function_exists('lfb_plugin_activate')) {
         }  
 
        if ($default_form >= 1) {
-            $now_date= date('Y-m-d g:i:s');
+            $now_date= date_i18n('Y-m-d g:i:s');
             $form_title ='Contact Us';
             $form_data ='a:5:{s:12:"form_field_1";a:6:{s:10:"field_name";s:4:"Name";s:10:"field_type";a:1:{s:4:"type";s:4:"name";}s:13:"default_value";s:4:"Name";s:19:"default_phonenumber";s:1:"1";s:11:"is_required";s:1:"1";s:8:"field_id";s:1:"1";}s:12:"form_field_2";a:6:{s:10:"field_name";s:5:"Email";s:10:"field_type";a:1:{s:4:"type";s:5:"email";}s:13:"default_value";s:5:"Email";s:19:"default_phonenumber";s:1:"1";s:11:"is_required";s:1:"1";s:8:"field_id";s:1:"2";}s:12:"form_field_3";a:6:{s:10:"field_name";s:10:"Contact No";s:10:"field_type";a:1:{s:4:"type";s:6:"number";}s:13:"default_value";s:14:"Contact number";s:19:"default_phonenumber";s:1:"1";s:11:"is_required";s:1:"1";s:8:"field_id";s:1:"3";}s:12:"form_field_4";a:6:{s:10:"field_name";s:7:"Message";s:10:"field_type";a:1:{s:4:"type";s:7:"message";}s:13:"default_value";s:7:"Message";s:19:"default_phonenumber";s:1:"1";s:11:"is_required";s:1:"1";s:8:"field_id";s:1:"4";}s:12:"form_field_0";a:6:{s:10:"field_name";s:6:"submit";s:10:"field_type";a:1:{s:4:"type";s:6:"submit";}s:13:"default_value";s:0:"";s:19:"default_phonenumber";s:1:"0";s:11:"is_required";s:1:"1";s:8:"field_id";s:1:"0";}}';
             $default_insert = "INSERT INTO $lead_form (form_title, form_data, date) VALUES ( '$form_title', '$form_data', '$now_date' );";
@@ -262,7 +268,7 @@ Class LFB_SAVE_DB{
         $insert_leads = $this->thdb->query( $this->thdb->prepare( 
          "INSERT INTO $this->tbl_extension ( form_id, ext_api, ext_type, edate ) 
          VALUES ( %d, %s,%d,  %s)",
-         $fid, $api, $ext, date('Y-m-d g:i:s') ) );
+         $fid, $api, $ext, date_i18n('Y-m-d g:i:s') ) );
 
     }
 
@@ -477,14 +483,44 @@ Class LFB_SAVE_DB{
 
         $user_ID = get_current_user_id(); 
         if($wp->request === 'member-area/lead-entries' || $wp->request === 'member-area/lead-affiliasi') {
-            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND affiliate = %d ORDER BY id DESC LIMIT $start , $limit ", $form_id, $user_ID);
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND affiliate = %d ORDER BY `date` DESC ", $form_id, $user_ID);
         } else {
-            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d ORDER BY id DESC LIMIT $start , $limit ", $form_id);
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d ORDER BY `date` DESC ", $form_id);
         }
 
         $posts = $this->lfb_get_form_content($prepare_19);
         $rows  = $this->lfb_post_count($form_id);
         $return = array('posts'=>$posts,'rows'=>$rows,'limit' => $limit, 'fieldId'=> $fieldArr);
+        
+        return $return;
+
+    }
+
+    /**
+     * Get all view leads
+     * @since   1.0.0
+     */
+    function lfb_get_all_filter_leads_db($form_id, $startDate, $endDate){
+
+        global $wpdb, $wp;
+
+        $table_name = LFB_FORM_DATA_TBL;
+
+        // form field filter
+        $form_data  = $this->lfb_get_form_data($form_id);
+        $fieldArr = $this->lfb_form_field_filter($form_data);
+
+        $user_ID = get_current_user_id(); 
+        $field_date = "date";
+        if($wp->request === 'member-area/lead-entries' || $wp->request === 'member-area/lead-affiliasi') {
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND affiliate = %d AND $field_date BETWEEN '$startDate' AND '$endDate' ORDER BY id DESC ", $form_id, $user_ID);
+        } else {
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND $field_date BETWEEN '$startDate' AND '$endDate' ORDER BY id DESC ", $form_id);
+        }
+
+        $posts = $this->lfb_get_form_content($prepare_19);
+        $rows  = $this->lfb_post_count($form_id);
+        $return = array('posts'=>$posts,'rows'=>$rows,'fieldId'=> $fieldArr);
         
         return $return;
 
@@ -506,7 +542,7 @@ Class LFB_SAVE_DB{
         $fieldArr = $this->lfb_form_field_filter($form_data);
 
         if($user_id > 0) {
-            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND affiliate = %d ORDER BY id DESC LIMIT $start , $limit ", $form_id, $user_id);
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND affiliate = %d ORDER BY id DESC ", $form_id, $user_id);
         } else {
             $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d ORDER BY id DESC LIMIT $start , $limit ", $form_id);
         }
@@ -514,6 +550,55 @@ Class LFB_SAVE_DB{
         $posts = $this->lfb_get_form_content($prepare_19);
         $rows  = $this->lfb_post_count($form_id);
         $return = array('posts'=>$posts,'rows'=>$rows,'limit' => $limit, 'fieldId'=> $fieldArr);
+        
+        return $return;
+
+    }
+
+    /**
+     * Get affiliate filter leads
+     * @since   1.0.0
+     */
+    function lfb_get_affiliate_filter_leads_db($form_id, $user_id, $startDate, $endDate){
+
+        global $wpdb, $wp;
+
+        $table_name = LFB_FORM_DATA_TBL;
+        $limit = 10;
+
+        // form field filter
+        $form_data  = $this->lfb_get_form_data($form_id);
+        $fieldArr = $this->lfb_form_field_filter($form_data);
+
+        $field_date = "date";
+        if($user_id > 0) {
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND affiliate = %d AND $field_date BETWEEN '$startDate' AND '$endDate' ORDER BY id DESC ", $form_id, $user_id);
+        } else {
+            $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND $field_date BETWEEN '$startDate' AND '$endDate' ORDER BY id DESC ", $form_id);
+        }
+
+        $posts = $this->lfb_get_form_content($prepare_19);
+        $rows  = $this->lfb_post_count($form_id);
+        $return = array('posts'=>$posts,'rows'=>$rows, 'fieldId'=> $fieldArr);
+        
+        return $return;
+
+    }
+
+    /**
+     * Get all view leads by id
+     * @since   1.0.0
+     */
+    function lfb_get_single_leads_db($lead_id){
+
+        global $wpdb, $wp;
+
+        $table_name = LFB_FORM_DATA_TBL;
+
+        $prepare_19 = $wpdb->prepare(" SELECT * FROM $table_name WHERE id = %d ORDER BY id DESC", $lead_id);
+
+        $posts = $this->lfb_get_form_content($prepare_19);
+        $return = array('posts'=>$posts);
         
         return $return;
 
@@ -575,7 +660,7 @@ Class LFB_SAVE_DB{
     function lfb_mail_store_type($form_id){
 
         $table_name = LFB_FORM_FIELD_TBL;
-        $query = $this->thdb->prepare( "SELECT storeType, mail_setting, usermail_setting , affiliatemail_setting, wa_setting, userwa_setting, affiliatewa_setting, sms_setting, usersms_setting, affiliatesms_setting, autoresponder_setting FROM $table_name WHERE id= %d LIMIT 1",$form_id );
+        $query = $this->thdb->prepare( "SELECT formDisplayOption, storeType, mail_setting, usermail_setting , affiliatemail_setting, wa_setting, userwa_setting, affiliatewa_setting, sms_setting, usersms_setting, affiliatesms_setting, autoresponder_setting, followup_setting, customer_setting, customer_wa_setting, customer_sms_setting FROM $table_name WHERE id= %d LIMIT 1",$form_id );
         $posts = $this->lfb_get_form_content($query);
 
         return $posts;
@@ -590,8 +675,8 @@ Class LFB_SAVE_DB{
     function lfb_save_xml_formdata($form){
 
         $query = $this->thdb->query( $this->thdb->prepare( 
-        "INSERT INTO $this->tbl_leadform ( form_title, form_data, date, multiData, storeType ) VALUES ( %s, %s, %s, %s, %d  )",
-        $form['form_title'], $form['form_data'] ,date('Y-m-d g:i:s'), $form['multiData'], $form['storeType']));
+        "INSERT INTO $this->tbl_leadform ( form_title, form_data, date, multiData, storeType, formDisplayOption ) VALUES ( %s, %s, %s, %s, %d  )",
+        $form['form_title'], $form['form_data'] ,date_i18n('Y-m-d g:i:s'), $form['multiData'], $form['storeType'], $form['formDisplayOption']));
 
         return $this->thdb->insert_id;
 

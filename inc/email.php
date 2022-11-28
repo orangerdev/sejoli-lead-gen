@@ -6,7 +6,7 @@ class LeadFormEmail {
      * Attachment for file
      * @var [type]
      */
-    public $attachments = false;
+    // public $attachments = false;
 
     /**
      * Construction
@@ -19,7 +19,7 @@ class LeadFormEmail {
      * @since   1.0.0
      * @return  void
      */
-    public function send(array $recipients, $content, $title, $recipient_type = array('admin', 'affiliate', 'buyer'), $attachments = array()) {
+    public function send(array $recipients, $content, $title, $attachments) {
 
         ob_start();
         include SEJOLISA_DIR . '/template/email/template.php';
@@ -55,7 +55,8 @@ class LeadFormEmail {
                 'Content-Type: text/html; charset=UTF-8',
                 sprintf('From: %s <%s>', sejolisa_carbon_get_theme_option('notification_email_from_name'), sejolisa_carbon_get_theme_option('notification_email_from_address')),
                 sprintf('Reply-top: %s <%s>', sejolisa_carbon_get_theme_option('notification_email_reply_name'), sejolisa_carbon_get_theme_option('notification_email_reply_address'))
-            ]
+            ],
+            $attachments
         );
 
     }

@@ -23,9 +23,11 @@ Class LFB_SHOW_FORMS {
 
         $lfb_admin_url = admin_url();
         echo '<div class="wrap show-all-form">';
+
         include_once( plugin_dir_path(__FILE__) . 'header.php' );
-        echo '<div>
-            <table class="wp-list-table widefat fixed striped posts ">
+        
+        echo '<div class="form-block" style="padding-top:2em">
+            <table class="wp-list-table widefat striped posts"style="width:100%" id="lead-form-list">
         	<thead>
         	<tr>
         		<th scope="col" id="title" class="manage-column column-title column-primary sortable asc">'.esc_html__('Form Name','sejoli-lead-form').'</th>
@@ -46,9 +48,11 @@ Class LFB_SHOW_FORMS {
         $id = $id; 
         $start = ($id - 1) * $limit;
         $form_count = $start;
-        $prepare_12 = $wpdb->prepare("SELECT * FROM $table_name WHERE form_status = %s ORDER BY id DESC LIMIT $start , $limit", 'ACTIVE' );
+        $prepare_12 = $wpdb->prepare("SELECT * FROM $table_name WHERE form_status = %s ORDER BY id DESC", 'ACTIVE' );
 		$posts = $th_save_db->lfb_get_form_content($prepare_12);
+
         if ($posts){
+
             foreach ($posts as $results) {
             	$form_count++;
                 $form_title = $results->form_title;
@@ -87,10 +91,10 @@ Class LFB_SHOW_FORMS {
             		</td>
 
             		<td class="form-date column-form-date" data-colname="Form-date">
-            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=lead-forms&action=today_leads&formid=' . $form_id . '" target="_blank"><div class="lfb-counter">' . intval($lead_count) . '</div></a></abbr>
+            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=all-form-entries&action=today_leads&formid=' . $form_id . '" target="_blank"><div class="lfb-counter today-lead">' . intval($lead_count) . '</div></a></abbr>
             		</td>
             		<td class="form-date column-form-date" data-colname="Form-date">
-            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=lead-forms&action=total_leads&formid=' . intval($form_id) . '" target="_blank"><div class="lfb-counter">' . intval($total_lead_result) . '</div></a></abbr>
+            		<abbr><a href="' . esc_url($lfb_admin_url)  . 'admin.php?page=all-form-entries&action=total_leads&formid=' . intval($form_id) . '" target="_blank"><div class="lfb-counter total-lead">' . intval($total_lead_result) . '</div></a></abbr>
             		</td>
 
                     <td class="form-date column-form-date" data-colname="Form-date">
@@ -98,28 +102,32 @@ Class LFB_SHOW_FORMS {
                     </td>
             		</tr>';
             }
+
         }
 
         echo '</tbody></table><div class="tablenav bottom"><br class="clear">';
         $prepare_15 = $wpdb->prepare("SELECT * FROM $table_name WHERE form_status = %s ", 'ACTIVE' );
         $rows = $th_save_db->lfb_get_form_content($prepare_15);
         $rows = count($rows);
-        $total = ceil($rows / $limit);
-        if ($id > 1) {
-            echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id - 1) ). "' class='button'><i class='fa fa-chevron-right'></i></a>";
-        }
-        if ($id != $total) {
-            echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id + 1) ). "' class='button'><i class='fa fa-chevron-left'></i></a>";
-        }
-        echo "<ul class='page'>";
-        for ($i = 1; $i <= $total; $i++) {
-            if ($i == $id) {
-                echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
-            } else {
-                echo "<li><a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" .intval($i) ). "'>" . intval($i) . "</a></li>";
-            }
-        }
-        echo '</ul>';
+        // $total = ceil($rows / $limit);
+
+        // if ($id > 1) {
+        //     echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id - 1) ). "' class='button'><i class='fa fa-chevron-right'></i></a>";
+        // }
+
+        // if ($id != $total) {
+        //     echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id + 1) ). "' class='button'><i class='fa fa-chevron-left'></i></a>";
+        // }
+
+        // echo "<ul class='page'>";
+        // for ($i = 1; $i <= $total; $i++) {
+        //     if ($i == $id) {
+        //         echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
+        //     } else {
+        //         echo "<li><a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" .intval($i) ). "'>" . intval($i) . "</a></li>";
+        //     }
+        // }
+        // echo '</ul>';
         echo '</div> </div></div>';
 
     }

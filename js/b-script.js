@@ -2,6 +2,210 @@
  *Tabs in admin area
  */
 jQuery(function() {
+    jQuery('.button-status-lead').click(function() {
+
+        var leadID = jQuery(this).attr('data-lead-id');
+
+        if (confirm('Proses data #'+leadID+' ke Customer?')) {
+
+            // var form_id = jQuery('#select_form_lead').val();
+            // var rem_nonce = jQuery('#remember_this_form_id').attr('rem_nonce');
+            var form_data = "lead-id=" + leadID + "&action=ProceedToCustomer";
+            SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+                if (true === response) {
+                    alert("Data Berhasil di Proses ke Customer!");
+                    window.location.reload();
+                } else {
+                    alert("Data Gagal di Proses ke Customer!");
+                    window.location.reload();
+                }
+            });
+
+            // var url = jQuery(this).attr('href');
+            // $('#content').load(url);
+            
+        }
+    });
+    var colCount = jQuery("#show-leads-table tr th").length;
+    if(colCount > 9){
+        $scrollInnerWidth = "170%";
+    } else {
+        $scrollInnerWidth = "110%";
+    }
+
+    jQuery('#show-leads-table').DataTable({
+        language   : dataTableTranslation,
+        responsive : false,
+        scrollX    : true,
+        scrollCollapse: true,
+        sScrollXInner: $scrollInnerWidth,
+        autoWidth   : true,
+        fixedColumns: {
+            leftColumns: dataTableTranslation.fixedcolumn
+        },
+        paging     : true,
+        searching  : false,
+        processing : true,
+        pageLength : 10,
+        order      : [],
+        dom: 'Blfrtip',
+        buttons: [ 
+            { 
+                extend: 'collection',
+                text: '<i class="fa fa-download"></i> Download Data',
+                className: 'btn btn-sm btn-outline-dark no-round-right',
+                buttons: [ 
+                    {
+                        extend:    'csv',
+                        text:      '<i class="fa fa-file-o"></i>',
+                        titleAttr: 'Download as CSV',
+                        className: 'btn btn-md mr-2 btn-csv'
+                    },
+                    {
+                        extend:    'excel',
+                        text:      '<i class="fa fa-file-excel-o"></i>',
+                        titleAttr: 'Download as Excel',
+                        className: 'btn btn-md mr-2 btn-excel'
+                    },
+                    {
+                        extend:    'pdf',
+                        text:      '<i class="fa fa-file-pdf-o"></i>',
+                        titleAttr: 'Download as PDF',
+                        className: 'btn btn-md mr-2 btn-pdf'
+                    },
+                    {
+                        extend:    'print',
+                        text:      '<i class="fa fa-print"></i>',
+                        titleAttr: 'Print',
+                        className: 'btn btn-md mr-2 btn-print'
+                    }
+                ],
+            }
+        ],
+    });
+
+    jQuery('#lead-form-list').DataTable({
+        language   : dataTableTranslation,
+        searching  : false,
+        processing : true,
+        pageLength : 10,
+        autoWidth  : true,
+        order      : [],
+    });
+
+    // jQuery('input[name="filter-lead-entries"]').daterangepicker({
+    //     timePicker: true,
+    //     startDate: moment().startOf('hour'),
+    //     endDate: moment().startOf('hour').add(32, 'hour'),
+    //     locale: {
+    //       format: 'M/DD hh:mm A'
+    //     }
+    // });
+
+    var start = moment().subtract(29, 'days');
+    var end = moment();
+
+    function cb(start, end) {
+        jQuery('input[name="filter-lead-entries"]').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+    }
+
+    jQuery('input[name="filter-lead-entries"]').daterangepicker({
+        startDate: start,
+        endDate: end,
+        locale: {
+          format: 'YYYY-MM-DD'
+        },
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, cb);
+
+    cb(start, end);
+
+    jQuery("#filter_lead_entries").on('change', function() {
+        var startDate = jQuery(this).data('daterangepicker').startDate.format('Y-M-D');
+        var endDate = jQuery(this).data('daterangepicker').endDate.format('Y-M-D');
+
+        event.preventDefault();
+
+        var form_id = jQuery('input[name="form_id_filter"]').val();
+        var form_data = "startDate=" + startDate + "&endDate=" + endDate + "&form_id=" + form_id + "&id=10&detailview=1&action=ShowAllLeadThisForm";
+        SaveByAjaxRequest(form_data, 'GET').success(function(response) {
+            jQuery('#show-leads-table').empty();
+            jQuery('#show-leads-table').append(response);
+            jQuery('#show-leads-table').DataTable().clear().destroy();
+            var colCount = jQuery("#show-leads-table tr th").length;
+            if(colCount > 9){
+                $scrollInnerWidth = "170%";
+            } else {
+                $scrollInnerWidth = "110%";
+            }
+            jQuery('#show-leads-table').DataTable({
+                language   : dataTableTranslation,
+                responsive : false,
+                scrollX    : true,
+                scrollCollapse: true,
+                sScrollXInner: $scrollInnerWidth,
+                autoWidth   : true,
+                fixedColumns: {
+                    leftColumns: dataTableTranslation.fixedcolumn
+                },
+                paging     : true,
+                searching  : false,
+                processing : true,
+                pageLength : 10,
+                order      : [],
+                dom: 'Blfrtip',
+                buttons: [ 
+                    { 
+                        extend: 'collection',
+                        text: '<i class="fa fa-download"></i> Download Data',
+                        className: 'btn btn-sm btn-outline-dark no-round-right',
+                        buttons: [ 
+                            {
+                                extend:    'csv',
+                                text:      '<i class="fa fa-file-o"></i>',
+                                titleAttr: 'Download as CSV',
+                                className: 'btn btn-md mr-2 btn-csv'
+                            },
+                            {
+                                extend:    'excel',
+                                text:      '<i class="fa fa-file-excel-o"></i>',
+                                titleAttr: 'Download as Excel',
+                                className: 'btn btn-md mr-2 btn-excel'
+                            },
+                            {
+                                extend:    'pdf',
+                                text:      '<i class="fa fa-file-pdf-o"></i>',
+                                titleAttr: 'Download as PDF',
+                                className: 'btn btn-md mr-2 btn-pdf'
+                            },
+                            {
+                                extend:    'print',
+                                text:      '<i class="fa fa-print"></i>',
+                                titleAttr: 'Print',
+                                className: 'btn btn-md mr-2 btn-print'
+                            }
+                        ],
+                    }
+                ],
+            });
+
+            jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
+        });
+    });
+
+    jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
+
+    jQuery('.button-status-customer').click(function(e) {
+        e.preventDefault();
+    });
+
     // *Send data to save by Ajax 
     if (jQuery('#sortable').length) {
         jQuery("#sortable tbody").sortable();
@@ -491,9 +695,9 @@ function add_new_form_fields(this_field_id) {
         var field_id = this_field_id + 1;
         var field_sr = "<td>" + field_id + "</td>";
         var field_name = "<td><input type='text' name='lfb_form[form_field_" + field_id + "][field_name]' id='field_name_" + field_id + "' value=''></td>";
-        var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
+        var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='phonenumber'>Phone Number</option><option value='upload'>Upload File/Image</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
         var field_default = "<td><input type='text' class='default_value' name='lfb_form[form_field_" + field_id + "][default_value]' id='default_value_" + field_id + "' value=''><div class='default_htmlfield_" + field_id + "'' id='default_htmlfield'></div><div class='default_terms_" + field_id + "'' id='default_terms'></div><div class='add_default_radio_checkbox_" + field_id + "' id='add_default_radio_checkbox'><div class='' id='default_add_radio'></div><div class='' id='default_add_checkbox'></div><div class='' id='default_add_option'></div></div></td>";
-        var field_placeholder = "<td><input type='checkbox' class='default_placeholder' name='lfb_form[form_field_" + field_id + "][default_placeholder]' id='default_placeholder_" + field_id + "' value='1'></td>";
+        // var field_placeholder = "<td><input type='checkbox' class='default_placeholder' name='lfb_form[form_field_" + field_id + "][default_placeholder]' id='default_placeholder_" + field_id + "' value='1'></td>";
         var field_required = "<td><input type='checkbox' class='is_required' name='lfb_form[form_field_" + field_id + "][is_required]' id='is_required_" + field_id + "' value='1'></td>";
 
         // var field_add_button = "<td id='wpth_add_form_table_" + field_id + "'><input type='button' class='button lf_addnew' name='save' id='add_new_" + field_id + "' onclick='add_new_form_fields(" + field_id + ")' value='Add New'></td>";
@@ -502,7 +706,8 @@ function add_new_form_fields(this_field_id) {
 
 
         var field_hidden_id = "<input type='hidden' value=" + field_id + " name='lfb_form[form_field_" + field_id + "][field_id]'>";
-        var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_placeholder + field_required + field_remove_button + field_hidden_id + "</tr>";
+        // var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_placeholder + field_required + field_remove_button + field_hidden_id + "</tr>";
+        var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_required + field_remove_button + field_hidden_id + "</tr>";
         jQuery(".append_new").append(new_form_field);
 
         jQuery('.add-field').html("<span><input type='button' class='button lf_addnew' name='save' id='add_new_" + field_id + "' onclick='add_new_form_fields(" + field_id + ")' value='Add New'></span>");
@@ -543,8 +748,6 @@ jQuery("form#new_lead_form").submit(function(event) {
 /*
  *Add dynamic sub-fields according to Field Type
  */
-
-
 
 function htmlfield(parent_id, this_parent_id) {
     jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
@@ -599,7 +802,7 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             var default_add_radio = "<p id='default_radio_value_1'>radio name 1 <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_radio_value_1' value='1'></p>";
             jQuery(parent_id).find('#add_radio').append(radio_fields);
             jQuery(parent_id).find('#default_add_radio').append(default_add_radio);
-            jQuery(parent_id).find('#delete_radio_1').css("display", "none");
+            jQuery(parent_id).find('#delete_radio_1').css("display", "inline-block");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
 
@@ -618,7 +821,7 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             var default_add_option = "<p id='default_option_value_1'>option name 1 <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_option_value_1' value='1'></p>";
             jQuery(parent_id).find('#add_option').append(option_fields);
             jQuery(parent_id).find('#default_add_option').append(default_add_option);
-            jQuery(parent_id).find('#delete_option_1').css("display", "none");
+            jQuery(parent_id).find('#delete_option_1').css("display", "inline-block");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
 
@@ -637,7 +840,7 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             var default_add_checkbox = "<p id='default_checkbox_value_1'>checkbox name 1 <input type='checkbox' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field_1]' id='default_checkbox_value_1' value='1'></p>";
             jQuery(parent_id).find('#add_checkbox').append(checkbox_fields);
             jQuery(parent_id).find('#default_add_checkbox').append(default_add_checkbox);
-            jQuery(parent_id).find('#delete_checkbox_1').css("display", "none");
+            jQuery(parent_id).find('#delete_checkbox_1').css("display", "inline-block");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
 
@@ -678,7 +881,7 @@ function add_new_radio_fields(this_parent_id, radio_id) {
     jQuery(parent_id + ' #add_radio').append(radio_fields);
     var default_add_radio = "<p id='default_radio_value_" + new_radio_id + "'>radio name " + new_radio_id + " <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_radio_val_" + new_radio_id + "' value='" + new_radio_id + "'></p>";
     jQuery(parent_id + ' #default_add_radio').append(default_add_radio);
-    jQuery(parent_id + ' #delete_radio_' + new_radio_id).css("display", "none");
+    jQuery(parent_id + ' #delete_radio_' + new_radio_id).css("display", "inline-block");
 }
 /*
  *Delete dynamic sub-fields of Checkbox
@@ -708,7 +911,7 @@ function add_new_checkbox_fields(this_parent_id, checkbox_id) {
     jQuery(parent_id + ' #add_checkbox').append(checkbox_fields);
     var default_add_checkbox = "<p id='default_checkbox_value_" + new_checkbox_id + "'>checkbox name " + new_checkbox_id + " <input type='checkbox' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field_" + new_checkbox_id + "]' id='default_checkbox_val_" + new_checkbox_id + "' value='1'></p>";
     jQuery(parent_id + ' #default_add_checkbox').append(default_add_checkbox);
-    jQuery(parent_id + ' #delete_checkbox_' + new_checkbox_id).css("display", "none");
+    jQuery(parent_id + ' #delete_checkbox_' + new_checkbox_id).css("display", "inline-block");
 }
 /*
  *Delete dynamic sub-fields of Option
@@ -738,7 +941,7 @@ function add_new_option_fields(this_parent_id, option_id) {
     jQuery(parent_id + ' #add_option').append(option_fields);
     var default_add_option = "<p id='default_option_value_" + new_option_id + "'>option name " + new_option_id + " <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_option_val_" + new_option_id + "' value=" + new_option_id + "></p>";
     jQuery(parent_id + ' #default_add_option').append(default_add_option);
-    jQuery(parent_id + ' #delete_option_' + new_option_id).css("display", "none");
+    jQuery(parent_id + ' #delete_option_' + new_option_id).css("display", "inline-block");
 }
 /*
  *Save email setting for each form
@@ -912,6 +1115,60 @@ jQuery("form#form-affiliate-sms-setting").submit(function(event) {
 })
 
 /*
+ *Save customer email setting for each form
+ */
+jQuery("form#form-customer-email-setting").submit(function(event) {
+    var form_data = jQuery("form#form-customer-email-setting").serialize();
+    form_data = form_data + "&action=SaveCustomerEmailSettings";
+    event.preventDefault();
+    jQuery("#error-message-customer-email-setting").find("div").remove();
+    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+
+        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
+            jQuery("#error-message-customer-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
+        } else {
+            jQuery("#error-message-customer-email-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
+        }
+    });
+})
+
+/*
+ *Save customer wa setting for each form
+ */
+jQuery("form#form-customer-wa-setting").submit(function(event) {
+    var form_data = jQuery("form#form-customer-wa-setting").serialize();
+    form_data = form_data + "&action=SaveCustomerWaSettings";
+    event.preventDefault();
+    jQuery("#error-message-customer-wa-setting").find("div").remove();
+    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+
+        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
+            jQuery("#error-message-customer-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
+        } else {
+            jQuery("#error-message-customer-wa-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
+        }
+    });
+})
+
+/*
+ *Save customer sms setting for each form
+ */
+jQuery("form#form-customer-sms-setting").submit(function(event) {
+    var form_data = jQuery("form#form-customer-sms-setting").serialize();
+    form_data = form_data + "&action=SaveCustomerSMSSettings";
+    event.preventDefault();
+    jQuery("#error-message-customer-sms-setting").find("div").remove();
+    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+
+        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
+            jQuery("#error-message-customer-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
+        } else {
+            jQuery("#error-message-customer-sms-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
+        }
+    });
+})
+
+/*
  *Save autoresponder setting for each form
  */
 jQuery("form#form-autoresponder-setting").submit(function(event) {
@@ -930,6 +1187,24 @@ jQuery("form#form-autoresponder-setting").submit(function(event) {
 })
 
 /*
+ *Save followup setting for each form
+ */
+jQuery("form#form-followup-setting").submit(function(event) {
+    var form_data = jQuery("form#form-followup-setting").serialize();
+    form_data = form_data + "&action=SaveFollowUpSettings";
+    event.preventDefault();
+    jQuery("#error-message-followup-setting").find("div").remove();
+    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+        //alert(response);
+        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
+            jQuery("#error-message-followup-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
+        } else {
+            jQuery("#error-message-followup-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
+        }
+    });
+})
+
+/*
  *Save leads setting for each form
  */
 jQuery("form#lead-email-setting").submit(function(event) {
@@ -943,6 +1218,24 @@ jQuery("form#lead-email-setting").submit(function(event) {
             jQuery("#error-message-lead-store").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
             jQuery("#error-message-lead-store").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
+        }
+    });
+})
+
+/*
+ *Save form display setting for each form
+ */
+jQuery("form#form-option-setting").submit(function(event) {
+    var form_data = jQuery("form#form-option-setting").serialize();
+    event.preventDefault();
+    form_data = form_data + "&action=SaveFormOptionSettings";
+    jQuery("#error-message-form-option").find("div").remove();
+    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+        // console.log(response);
+        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
+            jQuery("#error-message-form-option").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
+        } else {
+            jQuery("#error-message-form-option").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
         }
     });
 })
@@ -968,14 +1261,14 @@ jQuery("form#captcha-on-off-setting").submit(function(event) {
 /*
  *Show leads according to form in back-end.
  */
-jQuery('#select_form_lead').on('change', function() {
-    var form_id = jQuery(this).val();
-    form_data = "slectleads=1&form_id=" + form_id + "&action=ShowAllLeadThisForm";
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        jQuery('#form-leads-show').empty();
-        jQuery('#form-leads-show').append(response);
-    });
-});
+// jQuery('#select_form_lead').on('change', function() {
+//     var form_id = jQuery(this).val();
+//     form_data = "slectleads=1&form_id=" + form_id + "&action=ShowAllLeadThisForm";
+//     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+//         jQuery('#form-leads-show').empty();
+//         jQuery('#form-leads-show').append(response);
+//     });
+// });
 
 jQuery("form#lfb-form-success-msg").submit(function(event) {
     var form_data = jQuery("form#lfb-form-success-msg").serialize();
@@ -1041,19 +1334,77 @@ function show_all_leads(page_id, form_id) {
     SaveByAjaxRequest(form_data, 'GET').success(function(response) {
         jQuery('#form-leads-show').empty();
         jQuery('#form-leads-show').append(response);
+
+        var colCount = jQuery("#show-leads-table tr th").length;
+        if(colCount > 9){
+            $scrollInnerWidth = "170%";
+        } else {
+            $scrollInnerWidth = "110%";
+        }
+        jQuery('#show-leads-table').DataTable({
+            language   : dataTableTranslation,
+            responsive : false,
+            scrollX    : true,
+            scrollCollapse: true,
+            sScrollXInner: $scrollInnerWidth,
+            autoWidth   : true,
+            fixedColumns: {
+                leftColumns: dataTableTranslation.fixedcolumn
+            },
+            paging     : true,
+            searching  : false,
+            processing : true,
+            pageLength : 10,
+            order      : [],
+            dom: 'Blfrtip',
+            buttons: [ 
+                { 
+                    extend: 'collection',
+                    text: '<i class="fa fa-download"></i> Download Data',
+                    className: 'btn btn-sm btn-outline-dark no-round-right',
+                    buttons: [ 
+                        {
+                            extend:    'csv',
+                            text:      '<i class="fa fa-file-o"></i>',
+                            titleAttr: 'Download as CSV',
+                            className: 'btn btn-md mr-2 btn-csv'
+                        },
+                        {
+                            extend:    'excel',
+                            text:      '<i class="fa fa-file-excel-o"></i>',
+                            titleAttr: 'Download as Excel',
+                            className: 'btn btn-md mr-2 btn-excel'
+                        },
+                        {
+                            extend:    'pdf',
+                            text:      '<i class="fa fa-file-pdf-o"></i>',
+                            titleAttr: 'Download as PDF',
+                            className: 'btn btn-md mr-2 btn-pdf'
+                        },
+                        {
+                            extend:    'print',
+                            text:      '<i class="fa fa-print"></i>',
+                            titleAttr: 'Print',
+                            className: 'btn btn-md mr-2 btn-print'
+                        }
+                    ],
+                }
+            ],
+        });
     });
 }
 
 
 function remember_this_form_id() {
-    if (confirm("OK to Remember?")) {
+    if (confirm("Show this entries?")) {
         var form_id = jQuery('#select_form_lead').val();
         var rem_nonce = jQuery('#remember_this_form_id').attr('rem_nonce');
         jQuery('#remember_this_message').find('div').remove();
         var form_data = "rem_nonce=" + rem_nonce + "&form_id=" + form_id + "&action=RememberMeThisForm";
         SaveByAjaxRequest(form_data, 'POST').success(function(response) {
             if (jQuery.trim(form_id) == jQuery.trim(response)) {
-                jQuery('#remember_this_message').append("<div><i>Saved</i></div>");
+                jQuery('#remember_this_message').append("<div><i>Please Wait...</i></div>");
+                window.location.reload();
             }
         });
     }

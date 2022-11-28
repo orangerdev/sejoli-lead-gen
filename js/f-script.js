@@ -1,13 +1,16 @@
 function SavedataByAjaxRequest(data, method) {
+
     return jQuery.ajax({
         url: frontendajax.ajaxurl,
         type: method,
         data: data,
         cache: false
     });
+
 }
 
 function lfbErrorCheck(){
+
     var termaccept = true;
     if(jQuery('.term_accept').length){
         var termaccept = false;
@@ -15,99 +18,129 @@ function lfbErrorCheck(){
         jQuery('.term_accept').css("outline", "2px solid #f50808");
 
         jQuery("input:checkbox[class=term_accept]:checked").each(function () {
-                --numItems;
+            --numItems;
             jQuery('#'+jQuery(this).attr("id")).css("outline", "none");
             if(numItems==false){
                 termaccept = true;
             }
-            });
+        });
     }
 
-     return termaccept;
+    return termaccept;
 }
 
 
 
 jQuery(document).ready(function(){
-var dateToday = new Date();
+
+    var dateToday = new Date();
 
     jQuery('.lf-jquery-datepicker').datepicker({
-            dateFormat: "mm/dd/yy",
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            autoclose: true,
-            changeMonth: true,
-            changeYear: true,
-            gotoCurrent: true,
-            yearRange:  (dateToday.getFullYear()-200) +":" + (dateToday.getFullYear()),
-        });
+        dateFormat: "mm/dd/yy",
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        autoclose: true,
+        changeMonth: true,
+        changeYear: true,
+        gotoCurrent: true,
+        yearRange:  (dateToday.getFullYear()-200) +":" + (dateToday.getFullYear()),
+    });
 });
 
  var CaptchaCallback = function(){  
-     var recaptcha = jQuery(".g-recaptcha").attr('data-sitekey'); 
-      jQuery('.g-recaptcha').each(function(){
-        grecaptcha.render(this,{
-            'sitekey' : recaptcha,
-            'callback' : correctCaptcha,
+        var recaptcha = jQuery(".g-recaptcha").attr('data-sitekey'); 
+        jQuery('.g-recaptcha').each(function(){
+            grecaptcha.render(this,{
+                'sitekey' : recaptcha,
+                'callback' : correctCaptcha,
             });
-      })
+        })
   };
 
  var correctCaptcha = function(response) {
  };
+
  function lfb_upload_button(newthis){
+
     $id = jQuery(newthis).attr('filetext');
     $var = jQuery(newthis).val();
 
     $newValue = $var.replace("C:\\fakepath\\", "");
     
-     jQuery("."+$id).val($newValue);
-   //jQuery("."+$id).val($var);
+    jQuery("."+$id).val($newValue);
+    //jQuery("."+$id).val($var);
+    
 }
+
 /*
  *Save form data from front-end
  */
  // inser form data
-function lfbInserForm(element,form_id,uploaddata=''){
-            var this_form_data = element.serialize();
-            if(uploaddata!=''){
-            this_form_data = this_form_data + '&' + uploaddata;
-            } 
-           var  lfbFormData = { fdata : this_form_data,
-                                 action :  'Save_Form_Data'  
-                                };
-        SavedataByAjaxRequest(lfbFormData, 'POST').success(function(response) {
-            element.find('#loading_image').hide();;
-            if (jQuery.trim(response) == 'invalidcaptcha') {
+function lfbInserForm(element,form_id,uploaddata='') {
 
-            element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
+    var this_form_data = element.serialize();
+
+    if(uploaddata!=''){
+        this_form_data = this_form_data + '&' + uploaddata;
+    } 
+
+    var lfbFormData = { fdata : this_form_data, action : 'Save_Form_Data' };
+
+    jQuery.ajax({
+        type: 'POST',
+        url: frontendajax.ajaxurl,
+        data: lfbFormData,
+        cache: false,
+        success: function(response) {
+            
+            element.find('#loading_image').hide();
+
+            if (jQuery.trim(response) == "sudah isi data") {
+                element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Anda sudah pernah isi data sebelumnya, silahkan tunggu beberapa saat untuk melakukan pengisian lagi.</p></div>");
+
+            } else if (jQuery.trim(response) == 'invalidcaptcha') {
+
+                element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
                 grecaptcha.reset();
 
             } else if (jQuery.trim(response) > 0) {
                 var redirect = jQuery(".successmsg_"+form_id).attr('redirect');
-                    element.siblings(".successmsg_"+form_id).css('display','block');
+                if(jQuery.trim(redirect)!=''){
+                    element.siblings(".successmsg_"+form_id).css('display','none');
                     jQuery('#lfb-submit').trigger('click');
-                    element.hide();
+                    // element.hide();
+                    element.siblings(".text-affiliate-by").hide();
                     if (typeof grecaptcha === "function") { 
                         grecaptcha.reset();
                     }
-                if(jQuery.trim(redirect)!=''){
                     window.location.href = redirect;
+                } else {
+                    element.siblings(".successmsg_"+form_id).css('display','block');
+                    jQuery('#lfb-submit').trigger('click');
+                    element.hide();
+                    element.siblings(".text-affiliate-by").hide();
+                    if (typeof grecaptcha === "function") { 
+                        grecaptcha.reset();
+                    }
                 }
             }
-        });
-    }
 
-function lfbfileUpload(element,form_id){
+        }
+    });
+}
+
+function lfbfileUpload(element,form_id) {
+
     var fd = new FormData();
     var file = element.find('input[type="file"]');
-        for (var i = 0, len = file.length; i < len; i++) {
-            if(file[i].files[0]!=undefined){
-                //console.log(file[i].name);
-                //console.log(file[i].files[0].name);
-                fd.append(file[i].name, file[i].files[0]);
-            }
+    for (var i = 0, len = file.length; i < len; i++) {
+        if(file[i].files[0]!=undefined){
+            //console.log(file[i].name);
+            //console.log(file[i].files[0].name);
+            fd.append(file[i].name, file[i].files[0]);
         }
+    }
+
     fd.append('action', 'fileupload');  
     fd.append('fid', form_id);  
     jQuery.ajax({
@@ -116,42 +149,47 @@ function lfbfileUpload(element,form_id){
         data: fd,
         contentType: false,
         processData: false,
-        success: function(response){
-           var uploaddata  = jQuery.trim(response);
+        success: function(response) {
+            var uploaddata = jQuery.trim(response);
             lfbInserForm(element,form_id,uploaddata);
         }
     });
 }
 
 //captcha validation check
-function lfbCaptchaCheck(element,form_id){
-        var captcha_res = element.find(".g-recaptcha-response").val();
+function lfbCaptchaCheck(element,form_id) {
+
+    var captcha_res = element.find(".g-recaptcha-response").val();
     form_data = "captcha_res="+captcha_res+"&action=verifyFormCaptcha";
+
     SavedataByAjaxRequest(form_data, 'POST').success(function(response) {
-    element.find('#loading_image').hide();
+        element.find('#loading_image').hide();
         if (jQuery.trim(response) == 'Yes') {
-        if(element.find('.upload-type').length){
-         lfbfileUpload(element,form_id);
-        }else{
-         lfbInserForm(element,form_id);
-        }
-         } else {
-          element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
-          grecaptcha.reset();
+            if(element.find('.upload-type').length) {
+                lfbfileUpload(element,form_id);
+            } else {
+                lfbInserForm(element,form_id);
+            }
+        } else {
+            element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
+            grecaptcha.reset();
         }
     });
-}
 
+}
 
 // form submit
 jQuery(document).on('submit', "form.lead-form-front", function(event) {
     
-     if(!lfbErrorCheck()){
-      return false;
+    if(!lfbErrorCheck()) {
+        return false;
     }
+
     event.preventDefault(); 
+
     var element = jQuery(this);
     element.find('input[type=submit]').prop('disabled', true);
+
     var form_id = element.find(".hidden_field").val();   
     var captcha_status = element.find(".this_form_captcha_status").val();
     
@@ -164,14 +202,17 @@ jQuery(document).on('submit', "form.lead-form-front", function(event) {
         } else{
             lfbInserForm(element,form_id);
         }
-     } else {
+    } else {
             lfbCaptchaCheck(element,form_id);
     }
- element.find('input[type=submit]').prop('disabled', false);
+
+    element.find('input[type=submit]').prop('disabled', false);
+
 });
 
 // required-field-function
 jQuery(function(){
+
     var requiredCheckboxes = jQuery('.lead-form-front :checkbox[required]');
     requiredCheckboxes.change(function(){
         if(requiredCheckboxes.is(':checked')) {
@@ -181,6 +222,7 @@ jQuery(function(){
             requiredCheckboxes.attr('required', 'required');
         }
     });
+    
 });
 
 
@@ -1014,14 +1056,14 @@ jQuery("form#captcha-on-off-setting").submit(function(event) {
 /*
  *Show leads according to form in back-end.
  */
-jQuery('#select_form_lead').on('change', function() {
-    var form_id = jQuery(this).val();
-    form_data = "slectleads=1&form_id=" + form_id + "&action=ShowAllLeadThisForm";
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        jQuery('#form-leads-show').empty();
-        jQuery('#form-leads-show').append(response);
-    });
-});
+// jQuery('#select_form_lead').on('change', function() {
+//     var form_id = jQuery(this).val();
+//     form_data = "slectleads=1&form_id=" + form_id + "&action=ShowAllLeadThisForm";
+//     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+//         jQuery('#form-leads-show').empty();
+//         jQuery('#form-leads-show').append(response);
+//     });
+// });
 
 jQuery("form#lfb-form-success-msg").submit(function(event) {
     var form_data = jQuery("form#lfb-form-success-msg").serialize();
@@ -1083,23 +1125,46 @@ function lead_pagination_datewise(page_id, form_id, datewise) {
 
 function show_all_leads(page_id, form_id) {
     event.preventDefault();
-    var form_data = "form_id=" + form_id + "&id=" + page_id + "&detailview=1&action=ShowAllLeadThisForm";
+    var form_data = "form_id=" + form_id + "&id=" + page_id + "&detailview=1&action=ShowAllLeadThisFormByAffiliate";
     SaveByAjaxRequest(form_data, 'GET').success(function(response) {
         jQuery('#form-leads-show').empty();
         jQuery('#form-leads-show').append(response);
+        var colCount = jQuery("#show-leads-table tr th").length;
+        if(colCount > 9){
+            $scrollInnerWidth = "170%";
+        } else {
+            $scrollInnerWidth = "110%";
+        }
+        jQuery('#show-leads-table').DataTable({
+            language   : dataTableTranslation,
+            responsive : false,
+            scrollX    : true,
+            scrollCollapse: true,
+            sScrollXInner: $scrollInnerWidth,
+            autoWidth   : true,
+            fixedColumns: {
+                leftColumns: dataTableTranslation.fixedcolumn
+            },
+            paging     : true,
+            searching  : false,
+            processing : true,
+            pageLength : 10,
+            order      : [],
+        });
     });
 }
 
 
 function remember_this_form_id() {
-    if (confirm("OK to Remember?")) {
+    if (confirm("Show this entries?")) {
         var form_id = jQuery('#select_form_lead').val();
         var rem_nonce = jQuery('#remember_this_form_id').attr('rem_nonce');
         jQuery('#remember_this_message').find('div').remove();
         var form_data = "rem_nonce=" + rem_nonce + "&form_id=" + form_id + "&action=RememberMeThisForm";
         SaveByAjaxRequest(form_data, 'POST').success(function(response) {
             if (jQuery.trim(form_id) == jQuery.trim(response)) {
-                jQuery('#remember_this_message').append("<div><i>Saved</i></div>");
+                jQuery('#remember_this_message').append("<div><i>Please Wait...</i></div>");
+                window.location.reload();
             }
         });
     }
@@ -1215,6 +1280,96 @@ jQuery(function($) {
             $('#affiliate-link-holder').html('<div class="ui red message">Please select a lead form</div>');
 
         }
+    });
+
+    $(document).ready(function(){
+        var colCount = jQuery("#show-leads-table tr th").length;
+        if(colCount > 9){
+            $scrollInnerWidth = "170%";
+        } else {
+            $scrollInnerWidth = "110%";
+        }
+        $('#show-leads-table').DataTable({
+            language   : dataTableTranslation,
+            responsive : false,
+            scrollX    : true,
+            scrollCollapse: true,
+            sScrollXInner: $scrollInnerWidth,
+            autoWidth   : true,
+            fixedColumns: {
+                leftColumns: dataTableTranslation.fixedcolumn
+            },
+            paging     : true,
+            searching  : false,
+            processing : true,
+            pageLength : 10,
+            order      : [],
+        });
+
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('input[name="filter-lead-entries"]').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+        }
+
+        $('input[name="filter-lead-entries"]').daterangepicker({
+            startDate: start,
+            endDate: end,
+            locale: {
+              format: 'YYYY-MM-DD'
+            },
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+
+        $("#filter_lead_entries").on('change', function() {
+            var startDate = jQuery(this).data('daterangepicker').startDate.format('Y-M-D');
+            var endDate = jQuery(this).data('daterangepicker').endDate.format('Y-M-D');
+
+            event.preventDefault();
+            var form_id = jQuery('input[name="form_id_filter"]').val();
+            var form_data = "startDate=" + startDate + "&endDate=" + endDate + "&form_id=" + form_id + "&id=10&detailview=1&action=ShowAllLeadThisForm";
+            SaveByAjaxRequest(form_data, 'GET').success(function(response) {
+                jQuery('#show-leads-table').empty();
+                jQuery('#show-leads-table').append(response);
+                jQuery('#show-leads-table').DataTable().clear().destroy();
+
+                var colCount = jQuery("#show-leads-table tr th").length;
+                if(colCount > 9){
+                    $scrollInnerWidth = "170%";
+                } else {
+                    $scrollInnerWidth = "110%";
+                }
+                jQuery('#show-leads-table').DataTable({
+                    language   : dataTableTranslation,
+                    responsive : false,
+                    scrollX    : true,
+                    scrollCollapse: true,
+                    sScrollXInner: $scrollInnerWidth,
+                    autoWidth   : true,
+                    fixedColumns: {
+                        leftColumns: dataTableTranslation.fixedcolumn
+                    },
+                    paging     : true,
+                    searching  : false,
+                    processing : true,
+                    pageLength : 10,
+                    order      : [],
+                });
+
+                jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
+            });
+        });
+
     });
 
 });

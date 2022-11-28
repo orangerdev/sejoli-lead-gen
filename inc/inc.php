@@ -21,6 +21,8 @@
     include_once( plugin_dir_path(__FILE__) . 'sms.php' );
     include_once( plugin_dir_path(__FILE__) . 'sms-setting.php' );
     include_once( plugin_dir_path(__FILE__) . 'autoresponder-setting.php' );
+    include_once( plugin_dir_path(__FILE__) . 'follow-up-setting.php' );
+    include_once( plugin_dir_path(__FILE__) . 'customer-setting.php' );
     include_once( plugin_dir_path(__FILE__) . 'show-forms-backend.php' );
     include_once( plugin_dir_path(__FILE__) . 'front-end.php' );
     include_once( plugin_dir_path(__FILE__) . 'show-lead.php' );

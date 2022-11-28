@@ -8,7 +8,7 @@ require_once('edit-delete-form.php');
  * @since   1.0.0
  */
 function lfb_create_form_sanitize($form_data){
-    $fieldArr =array('name','email','message','dob','date','url','text','textarea','number','submit');
+    $fieldArr =array('name','email','message','dob','date','url','text','textarea','phonenumber','number','submit');
     $field_rco =array('option','checkbox','radio');
     foreach($form_data as $key=>$value){
         if(in_array($value['field_type']['type'], $fieldArr)){
@@ -16,9 +16,9 @@ function lfb_create_form_sanitize($form_data){
             $form_data[$key]['default_value'] = sanitize_text_field($value['default_value']);
             $form_data[$key]['field_id'] = intval($value['field_id']);
 
-            if(isset($value['default_phonenumber'])){
-                $form_data[$key]['default_phonenumber'] = intval($value['default_phonenumber']);
-            }
+            // if(isset($value['default_phonenumber'])){
+            //     $form_data[$key]['default_phonenumber'] = intval($value['default_phonenumber']);
+            // }
             if(isset($value['is_required'])){
                 $form_data[$key]['is_required'] = intval($value['is_required']);
 
@@ -101,6 +101,8 @@ Class LFB_AddNewForm {
             <a class="nav-tab lead-form-wa-setting" href="#">'.esc_html__('WhatsApp Setting','sejoli-lead-form').'</a>
             <a class="nav-tab lead-form-sms-setting" href="#">'.esc_html__('SMS Setting','sejoli-lead-form').'</a>
             <a class="nav-tab lead-form-autoresponder-setting" href="#">'.esc_html__('Autoresponder Setting','sejoli-lead-form').'</a>
+            <a class="nav-tab lead-form-followup-setting" href="#">'.esc_html__('Follow Up Setting','sejoli-lead-form').'</a>
+            <a class="nav-tab lead-form-customer-setting" href="#">'.esc_html__('Customer Setting','sejoli-lead-form').'</a>
             <a class="nav-tab lead-form-captcha-setting" href="#">'.esc_html__('Captcha Setting','sejoli-lead-form').'</a>
             <a class="nav-tab lead-form-setting" href="#">'.esc_html__('Setting','sejoli-lead-form').'</a>
             </h2>
@@ -114,89 +116,127 @@ Class LFB_AddNewForm {
         
         if (is_admin()) {
             echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
                 <div class="infobox">
                 <h1>'.esc_html__('Email Setting','sejoli-lead-form').'</h1></div>
                 <br class="clear"><div class="inside setting_section">
-                <div class="card">
+                <div class="card" style="margin: 0;padding: 0;">
                 <form name="" id="new-lead-email-setting" method="post" action="">
                 <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
                 </form>            
                 </div>
-                </div></div>';
+                </div><br class="clear"></div></div>';
         }
         echo '</section>
         <section>';
 
         if (is_admin()) {
             echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
                 <div class="infobox">
                 <h1>'.esc_html__('WhatsApp Setting','sejoli-lead-form').'</h1></div>
                 <br class="clear"><div class="inside setting_section">
-                <div class="card">
+                <div class="card" style="margin: 0;padding: 0;">
                 <form name="" id="new-lead-email-setting" method="post" action="">
                 <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
                 </form>            
                 </div>
-                </div></div>';
+                </div><br class="clear"></div></div>';
         }
         echo '</section>
         <section>';
 
         if (is_admin()) {
             echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
                 <div class="infobox">
                 <h1>'.esc_html__('SMS Setting','sejoli-lead-form').'</h1></div>
                 <br class="clear"><div class="inside setting_section">
-                <div class="card">
+                <div class="card" style="margin: 0;padding: 0;">
                 <form name="" id="new-lead-email-setting" method="post" action="">
                 <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
                 </form>            
                 </div>
-                </div></div>';
+                </div><br class="clear"></div></div>';
         }
         echo '</section>
         <section>';
 
         if (is_admin()) {
             echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
                 <div class="infobox">
                 <h1>'.esc_html__('Autoresponder Setting','sejoli-lead-form').'</h1></div>
                 <br class="clear"><div class="inside setting_section">
-                <div class="card">
+                <div class="card" style="margin: 0;padding: 0;">
                 <form name="" id="new-lead-email-setting" method="post" action="">
                 <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
                 </form>            
                 </div>
-                </div></div>';
+                </div><br class="clear"></div></div>';
         }
         echo '</section>
         <section>';
 
         if (is_admin()) {
             echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
+                <div class="infobox">
+                <h1>'.esc_html__('Follow Up Setting','sejoli-lead-form').'</h1></div>
+                <br class="clear"><div class="inside setting_section">
+                <div class="card" style="margin: 0;padding: 0;">
+                <form name="" id="new-lead-email-setting" method="post" action="">
+                <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
+                </form>            
+                </div>
+                </div><br class="clear"></div></div>';
+        }
+        echo '</section>
+        <section>';
+
+        if (is_admin()) {
+            echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
+                <div class="infobox">
+                <h1>'.esc_html__('Customer Setting','sejoli-lead-form').'</h1></div>
+                <br class="clear"><div class="inside setting_section">
+                <div class="card" style="margin: 0;padding: 0;">
+                <form name="" id="new-lead-email-setting" method="post" action="">
+                <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
+                </form>            
+                </div>
+                </div><br class="clear"></div></div>';
+        }
+        echo '</section>
+        <section>';
+
+        if (is_admin()) {
+            echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
                 <div class="infobox">
                 <h1>'.esc_html__('Captcha Setting','sejoli-lead-form').'</h1></div>
                 <br class="clear"><div class="inside setting_section">
-                <div class="card">
+                <div class="card" style="margin: 0;padding: 0;">
                 <form name="" id="new-captcha-setting" method="post" action="">
                 <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
                 </form>            
                 </div>
-                </div></div>';
+                </div><br class="clear"></div></div>';
         }
         echo '</section><section>';
         
         if (is_admin()) {
             echo '<div class="wrap">
+            <div class="form-block" style="margin-top: 1.5em;">
                 <div class="infobox">
                 <h1>'.esc_html__('Lead Receiving Method','sejoli-lead-form').'</h1></div>
                 <br class="clear"><div class="inside setting_section">
-                <div class="card">
+                <div class="card" style="margin: 0;padding: 0;">
                 <form name="" id="new-lead-form-setting" method="post" action="">
                 <p class="sec_head">'.esc_html__('Please create and save your Lead Form to do these settings.','sejoli-lead-form').'</p>  
                 </form>            
                 </div>
-                </div></div>';
+                </div><br class="clear"></div></div>';
         }
         echo '</section></div>
             </div>';
@@ -216,14 +256,15 @@ Class LFB_AddNewForm {
 
         if( $products = get_posts( $args ) ) {
             $html .= "<div id='titlewrap'>";
-            $html .= '<select id="sejoli_lead_select2_products" name="product">';
-            $html .= '<option value="">Select Product</option>';
+            $html .= "<div class='label-form'><label>".esc_html__('Product','sejoli-lead-form')."</label></div>";
+            $html .= '<div class="field-form"><select id="sejoli_lead_select2_products" name="product">';
+            $html .= '<option value="">Select a Product</option>';
             foreach( $products as $product ) {
                 // $selected = ( is_array( $appended_tags ) && in_array( $product->term_id, $appended_tags ) ) ? ' selected="selected"' : '';
                 // $html .= '<option value="' . $product->ID . '"' . $selected . '>' . $product->post_title . '</option>';
                 $html .= '<option value="' . $product->ID . '">' . $product->post_title . '</option>';
             }
-            $html .= '<select></div><!-- #titlewrap -->';
+            $html .= '<select></div></div><!-- #titlewrap -->';
         }
 
         return $html;
@@ -239,20 +280,22 @@ Class LFB_AddNewForm {
 
         $create_url ="admin.php?page=add-new-form&action=edit&redirect=create&_wpnonce=".$nonce;
 
-        echo "<div>
-            <h2>".esc_html__('Add New From','sejoli-lead-form')."</h2>";
+        echo "<div>";
         echo "<form method='post' action='".esc_url($create_url)."' id='new_lead_form'>
-            <div id='poststuff'>
+            <div id='poststuff' style='padding-top: 20px;'>
             <div id='post-body'>
-            <div id='post-body-content'>
+            <div id='post-body-content' class='form-block'>
+            <h2>".esc_html__('Add New From','sejoli-lead-form')."</h2>
             <div id='titlediv'>
             <div id='titlewrap'>
-            <input type='text' class='new_form_heading' name='post_title' placeholder='".esc_html__('Enter title here','sejoli-lead-form')."' value='' size='30' id='title' spellcheck='true' autocomplete='off'></div><!-- #titlewrap -->
+            <div class='label-form'><label>".esc_html__('Form Name','sejoli-lead-form')."</label></div>
+            <div class='field-form'><input type='text' class='new_form_heading' style='width: 100%;' name='post_title' placeholder='".esc_html__('Enter form name here','sejoli-lead-form')."' value='' size='30' id='title' spellcheck='true' autocomplete='off'></div></div><!-- #titlewrap -->
             </br>
             ".$this->sejoli_lead_get_product()."
             </br>
             <div id='titlewrap'>
-            <input type='text' class='new_form_heading' name='form_page_url' placeholder='".esc_html__('Enter form page url here','sejoli-lead-form')."' value='' size='30' id='title' spellcheck='true' autocomplete='off'></div><!-- #titlewrap -->
+            <div class='label-form'><label>".esc_html__('Url','sejoli-lead-form')."</label></div>
+            <div class='field-form'><input type='text' class='new_form_heading' name='form_page_url' placeholder='".esc_html__('Enter url here','sejoli-lead-form')."' value='' size='30' id='title' spellcheck='true' autocomplete='off'></div></div><!-- #titlewrap -->
             </br>
             <input type='hidden' name = '_wpnonce' value='".$nonce."' />
             <div class='inside'>
@@ -268,8 +311,11 @@ Class LFB_AddNewForm {
         $this->lfb_form_last_fields();
         echo "</table>
             </div>
-            <p class='submit'><input type='submit' class='save_form button-primary' name='save_form' id='save_form' value='".esc_html__('Save Form','sejoli-lead-form')."'></p></td>
+            </div>
+            <div class='form-block'>
+            <p class='submit' style='text-align:right'><input type='submit' class='save_form button-primary' style='background: #ff4545; margin: 0 0 0 0;'  name='save_form' id='save_form' value='".esc_html__('Save Form','sejoli-lead-form')."'></p></td>
             </form><div id='message-box-error' class='message-box-error' ></div>
+            </div>
             </div>";
 
     }
@@ -281,14 +327,14 @@ Class LFB_AddNewForm {
     function lfb_basic_form() {
 
         echo "<div class='inside spth_setting_section'  id='wpth_add_form'>
-            <h2 class='sec_head'>".esc_html__('Form Fields','sejoli-lead-form')."</h2>
+            <div class='form-block'>
+            <h2>".esc_html__('Form Fields','sejoli-lead-form')."</h2>
             <table class='widefat' id='sortable'>
             <thead>
             <tr>
             <th>".esc_html__('Field name','sejoli-lead-form')." </th>
             <th>".esc_html__('Field Type','sejoli-lead-form')." </th>
             <th>".esc_html__('Default Value','sejoli-lead-form')." </th>
-            <th>".esc_html__('Use as Phone Number','sejoli-lead-form')."</th>
             <th>".esc_html__('Required','sejoli-lead-form')." </th>
             <th>".esc_html__('Action','sejoli-lead-form')." </th>
             </tr></thead>";
@@ -309,13 +355,15 @@ Class LFB_AddNewForm {
             <option value='name'>".esc_html__('Name','sejoli-lead-form')."</option>		    
             <option value='email'>".esc_html__('Email','sejoli-lead-form')."</option>
             <option value='message'>".esc_html__('Message','sejoli-lead-form')."</option>
-            <option value='dob'>".esc_html__('DOB','sejoli-lead-form')."</option>
+            <option value='dob'>".esc_html__('Date of Birth','sejoli-lead-form')."</option>
             <option value='date'>".esc_html__('Date','sejoli-lead-form')." </option>	    
             <option value='text'>".esc_html__('Text (Single Line Text)','sejoli-lead-form')."</option>
             <option value='textarea'>".esc_html__('Textarea (Multiple Line Text)','sejoli-lead-form')." </option>
             <option value='htmlfield'>".esc_html__('Content Area (Read only Text)','sejoli-lead-form')."</option>
             <option value='url'>".esc_html__('Url (Website url)','sejoli-lead-form')."</option>
+            <option value='phonenumber'>".esc_html__('Phone Number','sejoli-lead-form')." </option>
             <option value='number'>".esc_html__('Number (Only Numeric 0-9 )','sejoli-lead-form')." </option>
+            <option value='upload'>".esc_html__('Upload File/Image','sejoli-lead-form')." </option>
             <option value='radio'>".esc_html__('Radio (Choose Single Option)','sejoli-lead-form')."</option>    
             <option value='option'>".esc_html__('Option (Choose Single Option)','sejoli-lead-form')."</option>  
             <option value='checkbox'>".esc_html__('Checkbox (Choose Multiple Option)','sejoli-lead-form')."</option>
@@ -335,8 +383,6 @@ Class LFB_AddNewForm {
             <div class='' id='default_add_option'></div>
             </div>
             <div class='default_terms_1' id='default_terms'></div>
-            </td>
-            <td><input type='checkbox' class='default_phonenumber' name='lfb_form[form_field_1][default_phonenumber]' id='default_phonenumber_1' value='1'>
             </td>
             <td><input type='checkbox' name='lfb_form[form_field_1][is_required]' id='is_required_1' value='1'>
             </td>
@@ -360,8 +406,6 @@ Class LFB_AddNewForm {
             </select>
             </td>            
             <td><input type='text' class='default_value' name='lfb_form[form_field_0][default_value]' id='default_value_0' value='".esc_html__('SUBMIT','sejoli-lead-form')."'>
-            </td>
-            <td><input type='hidden' class='default_phonenumber' name='lfb_form[form_field_0][default_phonenumber]' id='default_phonenumber_0' value='0'>
             </td>
             <td><input type='hidden' name='lfb_form[form_field_0][is_required]' checked id='is_required_0' value='1'>
             <input type='hidden' value='0' name='lfb_form[form_field_0][field_id]'>

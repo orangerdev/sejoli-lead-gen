@@ -65,6 +65,7 @@ Class LFB_Front_end_FORMS {
             $form_title = $posts[0]->form_title;
             $form_product = $posts[0]->product;
             $form_data_result = maybe_unserialize($posts[0]->form_data);
+            $form_display_option = $posts[0]->formDisplayOption;
 
             $cookie_name = sejoli_lead_form_get_cookie_name();
             $get_cookie  = isset($_COOKIE[$cookie_name]) ? $_COOKIE[$cookie_name] : '';
@@ -79,16 +80,27 @@ Class LFB_Front_end_FORMS {
             );
             $affiliate_id = $cookie_data['general'];
             $affiliate    = sejolisa_get_user($affiliate_id);
-            if($affiliate_id > 0) {
-                $show_affiliate = '<span style="margin: 0 auto; width: 100%; display: block; text-align: center;">'.__('Affiliasi oleh', 'sejoli').' '.$affiliate->display_name.'</span>';
+            if($form_display_option === '5' || $form_display_option === '6') {
+                if($affiliate_id > 0) {
+                    $show_affiliate = '<div class="text-affiliate-by"><span style="margin: 0 auto; width: 100%; display: block; text-align: center;">'.__('Affiliasi oleh', 'sejoli').' '.$affiliate->display_name.'</span></div>';
+                } else {
+                    $show_affiliate = "";
+                }
             } else {
                 $show_affiliate = "";
+            }
+
+            if($form_display_option === '4' || $form_display_option === '6') {
+                $show_title = '<h2 class="lfb-heading">' . $form_title . '</h2>';
+            } else {
+                $show_title = "";
             }
 
             $form_id = $posts[0]->id;
             $captcha_option = $posts[0]->captcha_status;
 
             $success_msg = $this->lfb_success_msg($posts);
+            $error_msg = '';
             $redirect_url = $this->lfb_redirect_url($posts);
             $this_form_size = (isset($posts[0]->form_size)?$posts[0]->form_size:'');
             $submit_field_type=0;
@@ -96,7 +108,7 @@ Class LFB_Front_end_FORMS {
                 $field_name = '';
                 $field_type = '';
                 $default_value = '';
-                $default_phonenumber = '';
+                // $default_phonenumber = '';
                 $is_required = '';
                 if (isset($results['field_name'])) {
                     $field_name = $results['field_name'];
@@ -123,11 +135,11 @@ Class LFB_Front_end_FORMS {
                     }
                 }
 
-                if (isset($results['default_phonenumber'])) {
-                    $default_phonenumber = $results['default_phonenumber'];
-                } else {
-                    $default_phonenumber = 0;
-                }
+                // if (isset($results['default_phonenumber'])) {
+                //     $default_phonenumber = $results['default_phonenumber'];
+                // } else {
+                //     $default_phonenumber = 0;
+                // }
 
                 if (isset($results['is_required'])) {
                     $is_required = $results['is_required'];
@@ -142,7 +154,7 @@ Class LFB_Front_end_FORMS {
                     'field_name'=>$field_name,
                     'field_type_array'=>$field_type_array,
                     'default_value'=>$default_value,
-                    'default_phonenumber'=>$default_phonenumber,
+                    // 'default_phonenumber'=>$default_phonenumber,
                     'is_required'=>$is_required,
                     'field_id'=>$field_id,
                     'field_type'=>$field_type,
@@ -158,6 +170,9 @@ Class LFB_Front_end_FORMS {
                 }elseif ($field_type == 'name') {
                     /***Name***/
                     $form_elemets .=$this->lfb_front_end_field_type_name($data_array);
+                }elseif ($field_type == 'phonenumber') {
+                    /***Phone Number***/
+                    $form_elemets .=$this->lfb_front_end_field_type_phonenumber($data_array);
                 }elseif ($field_type == 'upload') {
                     /***Upload***/
                     $form_elemets .=$this->lfb_front_end_field_type_upload($data_array);
@@ -207,13 +222,14 @@ Class LFB_Front_end_FORMS {
                 <br/><br/>';
             }
                 
-            $return =  '<div class="leadform-show-form-'.$this_form_id.' leadform-show-form '.$this_form_size.' lf-form-default leadform-lite"><div class="lead-head"></div>'.$captcha_script.'
+            $return = '<div class="leadform-show-form-'.$this_form_id.' leadform-show-form '.$this_form_size.' lf-form-default leadform-lite"><div class="lead-head"></div>'.$captcha_script.'
                 <form action="" method="post" class="lead-form-front" id="form_' . $this_form_id . '" enctype="multipart/form-data">
-                <h2 class="lfb-heading">' . $form_title . '</h2>' . $form_elemets . '<div class="lf-form-panel">' . $submit_button . '</div>
+                '. $show_title . $form_elemets . '<div class="lf-form-panel">' . $submit_button . '</div>
                 <div class="captcha-field-area" id="captcha-field-area"></div>
                 <input type="hidden" class="hidden_field" name="hidden_field" value="' . $this_form_id . '"/>
-                <input type="hidden" class="hidden_field" name="product" value="' . $form_product . '"/>
-                <input type="hidden" class="hidden_field" name="affiliate_id" value="' . $affiliate_id . '"/>
+                <input type="hidden" class="form_title" name="form_title" value="' . $form_title . '"/>
+                <input type="hidden" class="product_id" name="product" value="' . $form_product . '"/>
+                <input type="hidden" class="affiliate_id" name="affiliate_id" value="' . $affiliate_id . '"/>
                 <input type="hidden" class="this_form_captcha_status" value="' . $captcha_status . '"/>
                 <div class="leadform-show-loading front-loading leadform-show-message-form-'.$this_form_id.'" >
                 </div>
@@ -225,8 +241,8 @@ Class LFB_Front_end_FORMS {
                     </div>
                 </div>
                 </form>
-                '.$show_affiliate.'
-                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p></div>';
+                <p wppb-add-style="display:none;" style="display:none;" class="errormsg_'.intval($this_form_id).' errormsg">'.esc_html($error_msg).'</p>
+                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p></div>'.$show_affiliate;
 
             return $return;
 
@@ -243,7 +259,7 @@ Class LFB_Front_end_FORMS {
         $fieldType = $data_array['field_type'];
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
         $text_email_url_number ='<div class="text-type lf-field"><label>' . $data_array['field_name'] . '</label>
-        <span><input id="' .  $fieldIdName . '" type="' . $fieldType . '" class="lf-form-text ' . ((($data_array['field_type'] == "date" )||($data_array['field_type'] == "dob"))? "lf-jquery-datepicker" : "" ) . '" name="' .  $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' value="' . ($data_array['default_phonenumber'] == 1 ? "" : $data_array['default_value'] ) . '" placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" />
+        <span><input id="' .  $fieldIdName . '" type="' . $fieldType . '" class="lf-form-text ' . ((($data_array['field_type'] == "date" )||($data_array['field_type'] == "dob"))? "lf-jquery-datepicker" : "" ) . '" name="' .  $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' value="" placeholder="" />
         </span></div>';
         
         return $text_email_url_number;
@@ -277,7 +293,23 @@ Class LFB_Front_end_FORMS {
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
         $name ='<div class="name-type lf-field"><label>' . $data_array['field_name'] . '</label>
-        <span><input id="' . $fieldIdName . '" type="text" name="' . $fieldIdName . '" class="lf-form-name" value="' . ($data_array['default_phonenumber'] == 1 ? "" : $data_array['default_value'] ) . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" />
+        <span><input id="' . $fieldIdName . '" type="text" name="' . $fieldIdName . '" class="lf-form-name" value="" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' />
+        </span></div>';
+        
+        return $name;
+
+    }
+
+    /**
+     * Form Field Type Phone Number
+     * @since   1.0.0
+     */
+    function lfb_front_end_field_type_phonenumber($data_array){
+
+        $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
+
+        $name ='<div class="name-type lf-field"><label>' . $data_array['field_name'] . '</label>
+        <span><input id="' . $fieldIdName . '" type="number" name="' . $fieldIdName . '" class="lf-form-phonenumber" value="" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' />
         </span></div>';
         
         return $name;
@@ -293,7 +325,7 @@ Class LFB_Front_end_FORMS {
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
         $textbox ='<div class="textarea-type lf-field"><label>' . $data_array['field_name'] . '</label>
-        <span><textarea id="' . $fieldIdName . '" name="' . $fieldIdName . '" class="lf-form-textarea" value="' . $data_array['default_value'] . '" placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . '></textarea>
+        <span><textarea id="' . $fieldIdName . '" name="' . $fieldIdName . '" class="lf-form-textarea" value="' . $data_array['default_value'] . '" placeholder="' . ($data_array['default_value'] == 1 ? $data_array['default_value'] : "" ) . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . '></textarea>
         </span></div>';
         
         return $textbox;
@@ -371,9 +403,9 @@ Class LFB_Front_end_FORMS {
         foreach ($field_type_array as $field_type_array_element => $radio_options) {
             $field_type_array_element_id = str_replace("field_", "", $field_type_array_element);
             if (($field_type_array_element_id == $default_value) && ($default_value > 0)) {
-                $radio_fields .='<li><input id="' . $fieldIdName . '" type="radio" name="' . $fieldIdName . '" value="' . $radio_options . '" checked />' . $radio_options.'</li>';
+                $radio_fields .='<li><input class=" id="' . $fieldIdName . '" type="radio" name="' . $fieldIdName . '" value="' . $radio_options . '" checked />' . $radio_options.'</li>';
             } else {
-                $radio_fields .='<li><input id="' . $fieldIdName . '" type="radio" name="' . $fieldIdName . '" value="' . $radio_options . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . '/>' . $radio_options.'</li>';
+                $radio_fields .='<li><input class=" id="' . $fieldIdName . '" type="radio" name="' . $fieldIdName . '" value="' . $radio_options . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . '/>' . $radio_options.'</li>';
             }
         }
         $radio ='<div class="radio-type lf-field"><label>' . $field_name . '</label><span><ul>' . $radio_fields . '</ul></span></div>';
@@ -404,7 +436,7 @@ Class LFB_Front_end_FORMS {
             }
         }
         $option ='<div class="select-type lf-field"><label>' . $field_name . '</label>
-        <span><select id="' . $fieldIdName . '" name="' . $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' ><option value="">none</option>' . $option_fields . '</select></span></div>';
+        <span><select class=" id="' . $fieldIdName . '" name="' . $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' ><option value="">none</option>' . $option_fields . '</select></span></div>';
             
         return $option;     
 

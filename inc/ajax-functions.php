@@ -22,9 +22,9 @@ function lfb_user_permission_check(){
  */
 function lfb_upload_dir($dirs){
 
-    $dirs['subdir'] = '/lfb_uploads';
-    $dirs['path'] = $dirs['basedir'] . '/lfb_uploads';
-    $dirs['url'] = $dirs['baseurl'] . '/lfb_uploads';
+    $dirs['subdir'] = '/sejoli-lead-campaign';
+    $dirs['path'] = $dirs['basedir'] . '/sejoli-lead-campaign';
+    $dirs['url'] = $dirs['baseurl'] . '/sejoli-lead-campaign';
 
     return $dirs;
 
@@ -55,6 +55,7 @@ function lfb_fileupload(){
     $response = array();
 
     foreach ($file_data as $key => $file) {
+
         $uploaded_file = wp_handle_upload($file, $overrides);
 
         if ($uploaded_file && !isset($uploaded_file['error'])) {
@@ -66,9 +67,12 @@ function lfb_fileupload(){
             $response[$key]['response'] = esc_html__("ERROR", 'sejoli-lead-form');
             $response[$key]['error'] = $uploaded_file['error'];
         }
+
     }
 
     $parse = http_build_query($response);
+
+    wp_send_json($parse);
 
     remove_filter('upload_dir', 'lfb_upload_dir');
 
@@ -96,6 +100,7 @@ function lfb_save_lead_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set storeType='" . $data_recieve_method . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -106,6 +111,36 @@ function lfb_save_lead_settings(){
 
 }
 add_action('wp_ajax_SaveLeadSettings', 'lfb_save_lead_settings');
+
+/**
+ * Save Form Display Setting method
+ * Hooked via action wp_ajax_SaveFormOptionSettings
+ * @since   1.0.0
+ */
+function lfb_save_form_option_settings(){
+
+    $nonce = $_REQUEST['fop_nonce_verify'];
+    // Get all the user roles as an array.
+    if (isset($_POST['action-form-option-setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'fop-nonce')) {
+
+        $data_form_option_method = intval($_POST['data-form-option-method']);
+        $this_form_id = intval($_POST['action-form-option-setting']);
+        global $wpdb;
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set formDisplayOption='" . $data_form_option_method . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+        
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveFormOptionSettings', 'lfb_save_form_option_settings');
 
 /**
  * Save Email Settings
@@ -160,7 +195,7 @@ function lfb_SaveUserEmailSettings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set usermail_setting='" . $email_setting . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
-        error_log(print_r($email_setting, true));
+
         if ($update_leads) {
             echo esc_html("updated");
         }
@@ -194,6 +229,7 @@ function lfb_SaveAffiliateEmailSettings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set affiliatemail_setting='" . $email_setting . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             echo esc_html("updated");
         }
@@ -225,6 +261,7 @@ function lfb_save_wa_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set wa_setting='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -290,6 +327,7 @@ function lfb_save_affiliate_wa_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set affiliatewa_setting='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -322,6 +360,7 @@ function lfb_save_sms_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set sms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -354,6 +393,7 @@ function lfb_save_user_sms_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set usersms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -386,6 +426,7 @@ function lfb_save_affiliate_sms_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set affiliatesms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -396,6 +437,109 @@ function lfb_save_affiliate_sms_settings(){
 
 }
 add_action('wp_ajax_SaveAffiliateSMSSettings', 'lfb_save_affiliate_sms_settings');
+
+/**
+ * Save Customer Email Settings
+ * Hooked via action wp_ajax_SaveCustomerEmailSettings
+ * @since   1.0.0
+ */
+function lfb_SaveCustomerEmailSettings(){
+
+    unset($_POST['action']);
+    $mailArr = array();
+
+    $nonce = $_REQUEST['ces_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['customer_email_setting'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'ces-nonce')) {
+
+        $mailArr['customer_email_setting'] = lfb_emailsettings_sanitize($_POST['customer_email_setting']);
+
+        $email_setting = maybe_serialize($mailArr);
+        $this_form_id = intval($_POST['customer_email_setting']['form-id']);
+        global $wpdb;
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set customer_setting='" . $email_setting . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
+        if ($update_leads) {
+            echo esc_html("updated");
+        }
+    }
+
+    die();
+
+}
+add_action('wp_ajax_SaveCustomerEmailSettings', 'lfb_SaveCustomerEmailSettings');
+
+/**
+ * Save Customer WhatsApp Settings
+ * Hooked via action wp_ajax_SaveCustomerWaSettings
+ * @since   1.0.0
+ */
+function lfb_save_customer_wa_settings(){
+
+    $nonce = $_REQUEST['cws_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['customer_wa_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'cws-nonce')) {
+
+        global $wpdb;
+
+        $customer_wa_setting = array();
+        $this_form_id = intval($_POST['customer_wa_setting']['form-id']);
+        $customer_wa_setting['customer_wa_setting'] = isset($_POST['customer_wa_setting']) ? $_POST['customer_wa_setting'] : '';
+        $serialize = maybe_serialize($customer_wa_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set customer_wa_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveCustomerWaSettings', 'lfb_save_customer_wa_settings');
+
+/**
+ * Save Customer SMS Settings
+ * Hooked via action wp_ajax_SaveCustomerSMSSettings
+ * @since   1.0.0
+ */
+function lfb_save_customer_sms_settings(){
+
+    $nonce = $_REQUEST['css_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['customer_sms_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'css-nonce')) {
+
+        global $wpdb;
+
+        $customer_sms_setting = array();
+        $this_form_id = intval($_POST['customer_sms_setting']['form-id']);
+        $customer_sms_setting['customer_sms_setting'] = isset($_POST['customer_sms_setting']) ? $_POST['customer_sms_setting'] : '';
+        $serialize = maybe_serialize($customer_sms_setting);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set customer_sms_setting='" . $serialize . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveCustomerSMSSettings', 'lfb_save_customer_sms_settings');
 
 /**
  * Save Captcha Keys
@@ -438,12 +582,14 @@ function lfb_save_autoresponder_settings(){
     if (isset($_POST['autoresponder_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'aaress-nonce')) {
 
         global $wpdb;
+
         $autoresponder_setting = isset($_POST['autoresponder_setting']['code']) ? $_POST['autoresponder_setting']['code'] : '';
         $this_form_id = intval($_POST['autoresponder_setting']['form-id']);
         $table_name = LFB_FORM_FIELD_TBL;
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set autoresponder_setting='" . $autoresponder_setting . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -454,6 +600,38 @@ function lfb_save_autoresponder_settings(){
 
 }
 add_action('wp_ajax_SaveAutoresponderSettings', 'lfb_save_autoresponder_settings');
+
+/**
+ * Save Follow Up Settings
+ * Hooked via action wp_ajax_SaveFollowUpSettings
+ * @since   1.0.0
+ */
+function lfb_save_followup_settings(){
+
+    $nonce = $_REQUEST['afs_nonce'];
+
+    // Get all the user roles as an array.
+    if (isset($_POST['followup_setting']['form-id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'afs-nonce')) {
+
+        global $wpdb;
+
+        $followup_setting = isset($_POST['followup_setting']['message']) ? $_POST['followup_setting']['message'] : '';
+        $this_form_id = intval($_POST['followup_setting']['form-id']);
+        $table_name = LFB_FORM_FIELD_TBL;
+        $update_query = "update " . LFB_FORM_FIELD_TBL . " set followup_setting='" . $followup_setting . "' where id='" . $this_form_id . "'";
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
+        if ($update_leads) {
+            esc_html_e('updated', 'sejoli-lead-form');
+        }
+
+        die();
+
+    }
+
+}
+add_action('wp_ajax_SaveFollowUpSettings', 'lfb_save_followup_settings');
 
 /**
  * Delete Leads from Backend
@@ -467,17 +645,21 @@ function lfb_delete_leads_backend(){
 
     $check = false;
     if (isset($_POST['lead_id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'lfb-nonce-rm')) {
+        
         $check = true;
 
-        $this_lead_id = intval($_POST['lead_id']);
         global $wpdb;
+
+        $this_lead_id = intval($_POST['lead_id']);
         $table_name = LFB_FORM_DATA_TBL;
 
         $update_query = $wpdb->prepare(" DELETE FROM $table_name WHERE id = %d ", $this_lead_id);
 
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_delete_form($update_query);
+
         echo esc_html($update_leads);
+
     }
 
     echo $check;
@@ -493,6 +675,7 @@ add_action('wp_ajax_delete_leads_backend', 'lfb_delete_leads_backend');
 function lfb_save_captcha_option(){
 
     $nonce = $_POST['captcha_nonce'];
+
     if (isset($_POST['captcha_on_off_form_id'])  && lfb_user_permission_check() && wp_verify_nonce($nonce, 'captcha-nonce')) {
 
         $captcha_option = sanitize_text_field($_POST['captcha-on-off-setting']);
@@ -502,6 +685,7 @@ function lfb_save_captcha_option(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set captcha_status='" . $captcha_option . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
+
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
         }
@@ -525,6 +709,7 @@ function lfb_save_thankyou_settings(){
     if (isset($_POST['thankyou_settings']['form-id']) && wp_verify_nonce($nonce, 'thankyou-nonce')) {
 
         global $wpdb;
+
         $thankyou_settings = array();
         $this_form_id = intval($_POST['thankyou_settings']['form-id']);
         $thankyou_settings['thankyou_settings'] = isset($_POST['thankyou_settings']) ? $_POST['thankyou_settings'] : '';
@@ -533,8 +718,6 @@ function lfb_save_thankyou_settings(){
         $update_query = "update " . LFB_FORM_FIELD_TBL . " set multiData='" . $serialize . "' where id='" . $this_form_id . "'";
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $update_leads = $th_save_db->lfb_update_form_data($update_query);
-
-        error_log(print_r($nonce, true));
 
         if ($update_leads) {
             esc_html_e('updated', 'sejoli-lead-form');
@@ -555,7 +738,9 @@ add_action('wp_ajax_SaveThankyouSettings', 'lfb_save_thankyou_settings');
 function lfb_ShowAllLeadThisForm(){
 
     if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
+
         global $wpdb, $wp;
+
         $table_name = LFB_FORM_DATA_TBL;
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $nonce = wp_create_nonce('lfb-nonce-rm');
@@ -575,6 +760,19 @@ function lfb_ShowAllLeadThisForm(){
             $form_id = intval($_POST['form_id']);
             $sn_counter = 0;
         }
+
+        if (isset($_GET['startDate'])) {
+            $startDate = sanitize_text_field($_GET['startDate']);
+        }
+
+        if (isset($_GET['endDate'])) {
+            $endDate = sanitize_text_field($_GET['endDate']);
+        }
+
+        if (isset($_GET['detailview'])) {
+            $detail_view = sanitize_text_field($_GET['detailview']);
+        }
+
         if (isset($_GET['detailview'])) {
             $detail_view = sanitize_text_field($_GET['detailview']);
         }
@@ -583,18 +781,28 @@ function lfb_ShowAllLeadThisForm(){
             $slectleads = sanitize_text_field($_POST['slectleads']);
         }
 
-        $user_ID = get_current_user_id(); 
+        $user_ID = get_current_user_id();
+
         if(wp_get_referer() === home_url('member-area/lead-entries/')) {
-            $getArray = $th_save_db->lfb_get_affiliate_view_leads_db($form_id, $user_ID, $start);
+            if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
+                $getArray = $th_save_db->lfb_get_affiliate_filter_leads_db($form_id, $user_ID, $startDate, $endDate);
+            } else {
+                $getArray = $th_save_db->lfb_get_affiliate_view_leads_db($form_id, $user_ID, $start);
+            }
         } else {
-            $getArray = $th_save_db->lfb_get_all_view_leads_db($form_id, $start);
+            if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
+                $getArray = $th_save_db->lfb_get_all_filter_leads_db($form_id, $startDate, $endDate);
+            } else {
+                $getArray = $th_save_db->lfb_get_all_view_leads_db($form_id, $start);
+            }
         }
-        $posts          = $getArray['posts'];
-        $rows           = $getArray['rows'];
-        $limit          = $getArray['limit'];
-        $fieldData       = $getArray['fieldId'];
+
+        $posts      = $getArray['posts'];
+        $rows       = $getArray['rows'];
+        $limit      = $getArray['limit'];
+        $fieldData  = $getArray['fieldId'];
         $tableHead  = '';
-        $headcount = 1;
+        $headcount  = 1;
         $leadscount = 5;
 
         foreach ($fieldData as $fieldkey => $fieldvalue) {
@@ -604,14 +812,251 @@ function lfb_ShowAllLeadThisForm(){
                 continue;
             }
 
-            if ($headcount < 6 && $slectleads) {
-                $tableHead  .= '<th>' . $fieldvalue . '</th>';
-            } elseif (!$slectleads) {
+            $tableHead  .= '<th>' . $fieldvalue . '</th>';
 
-                $tableHead  .= '<th>' . $fieldvalue . '</th>';
+            $leadscount =  $headcount;
 
-                $leadscount =  $headcount;
+            $fieldIdNew[] = $fieldkey;
+            $headcount++;
+
+            // } else{ break; }
+        }
+
+        if (!empty($posts)) {
+            $entry_counter = 0;
+            $table_body = '';
+            $table_head = '';
+            $popupTab   = '';
+
+            // if ($headcount >= 6 && $leadscount == 5) {
+            //     $table_head .= '<th> . . . </th><th> <input type="button" onclick="show_all_leads(' . intval($id) . ',' . intval($form_id) . ')" value="Show all Columns"></th>';
+            // }
+
+            foreach ($posts as $results) {
+                $table_row = '';
+                $sn_counter++;
+                $row_size_limit = 0;
+                $form_data = $results->form_data;
+                $lead_id = $results->id;
+                $product_id = $results->product;
+                $product    = sejolisa_get_product($product_id);
+                $affiliate_id = $results->affiliate;
+                $affiliate    = sejolisa_get_user($affiliate_id);
+                $form_data = maybe_unserialize($form_data);
+                $lead_date = date("j M Y", strtotime($results->date));
+                $get_status = $results->status;
+
+                if ($get_status === "lead") {
+                    $status = '<button type="submit" class="button button-small button-status-lead">'. __('Lead', 'sejoli-lead-form') .' </button>';
+                } else {
+                    $status = '<a href="#" class="button button-small button-status-customer">'. __('Customer', 'sejoli-lead-form') .' </a>';
+                }
+
+                unset($form_data['hidden_field']);
+                unset($form_data['action']);
+                unset($form_data['g-recaptcha-response']);
+                $entry_counter++;
+                $complete_data = '';
+                $popup_data_val= '';
+                $date_td = '<td><b>'.$lead_date.'</b></td>';
+
+                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
+
+                $table_row .= $returnData['table_row'];
+
+                $table_row .= "<td>".$product->post_title."</td>";
+
+                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+                
+                if($affiliate_id > 0) {
+                    $table_row .= "<td>".$affiliate->display_name."</td>";
+                } else {
+                    $table_row .= "<td>-</td>";
+                }
+
+                $table_row .= $date_td;
+                $form = $th_save_db->lfb_get_form_data($results->form_id);
+                $form_data_result = maybe_unserialize($form[0]->form_data);
+
+                global $wpdb;
+
+                $table_form = LFB_FORM_FIELD_TBL;
+                $prepare_9 = $wpdb->prepare("SELECT * FROM $table_form WHERE id = %d LIMIT 1", $results->form_id);
+                $posts = $th_save_db->lfb_get_form_content($prepare_9);
+
+                if ($posts) {
+                    $followup_text = maybe_unserialize($posts[0]->followup_setting);;
+                }
+
+                if(wp_get_referer() !== home_url('member-area/lead-entries/')) {
+                    $text_follow = '';
+                    foreach ($form_data_result as $results) {
+                        $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+                        if ( $type === 'phonenumber' ) {
+                            $field_id = $results['field_id'];
+                            $phone_number = isset($form_data['phonenumber_'.$field_id]) ? $form_data['phonenumber_'.$field_id] : '';
+                            if ( wp_is_mobile() ) :
+                                $table_row .= '<td><a target="_blank" class="lead-followup-wa" href="https://wa.me/'.$phone_number  . '?text='. $followup_text .'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                            else :
+                                $table_row .= '<td><a target="_blank" class="lead-followup-wa" href="https://api.whatsapp.com/send?phone='.$phone_number.'&text='.$followup_text.'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                            endif;
+                            $text_follow = "Follow Up";
+                        }
+                    }
+                }
+
+                $table_row .= '<td>'.$status.'</td>';
+
+                // $table_row .= '<td></span><a class="lead-followup-wa"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></span></span><a class="lead-remove" onclick="delete_this_lead(' . $lead_id . ',\''.$nonce.'\')"><i class="fa fa-trash" aria-hidden="true" title="Hapus"></i></a></span></td>';
+         
+                // foreach ($form_data as $form_data_key => $form_data_value) {
+                //     $row_size_limit++;
+
+                //     if (($detail_view != 1) && ($row_size_limit == 6)) {
+                //         // $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
+                //     }
+                // }
+                $complete_data .='<table><tr><th>Field</th><th>Value</th></tr>'.$returnData['table_popup'].'<tr><td>Date</td>'.$date_td.'</tr></table>';
+
+                $popupTab .= '<div id="lf-openModal-'.$lead_id.'" class="lf-modalDialog">
+                    <div class="lfb-popup-leads"><a href="#lf-close" title="Close" class="lf-close">X</a>'.$complete_data.'
+                    </div>
+                    </div>';
+
+                // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
+                $table_body .= '<tr>'. $table_row .'</tr>';
             }
+
+            if(wp_get_referer() === home_url('member-area/lead-entries/')) {
+                if(wp_is_mobile()){
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
+                } else {
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
+                }
+            } else {
+                if(wp_is_mobile()){
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
+                } else {
+                    $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
+                }
+            }
+            echo wp_kses($thHead . $table_body . '</table>', $showLeadsObj->expanded_alowed_tags());
+
+            // $total = ceil($rows / $limit);
+
+            // if ($headcount >= 6 && $leadscount == 5) {
+
+            //     if ($id > 1) {
+            //         echo "<a href=''  onclick='lead_pagi_view(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
+            //     }
+            //     if ($id != $total) {
+            //         echo "<a href='' onclick='lead_pagi_view(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
+            //     }
+            //     echo "<ul class='page'>";
+            //     for ($i = 1; $i <= $total; $i++) {
+            //         if ($i == $id) {
+            //             echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
+            //         } else {
+            //             echo "<li><a href='' onclick='lead_pagi_view(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
+            //         }
+            //     }
+            //     echo '</ul>';
+
+            // } else {
+
+            //     if ($id > 1) {
+            //         echo "<a href=''  onclick='lead_pagination(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
+            //     }
+            //     if ($id != $total) {
+            //         echo "<a href='' onclick='lead_pagination(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
+            //     }
+            //     echo "<ul class='page'>";
+            //     for ($i = 1; $i <= $total; $i++) {
+            //         if ($i == $id) {
+            //             echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
+            //         } else {
+            //             echo "<li><a href='' onclick='lead_pagination(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
+            //         }
+            //     }
+            //     echo '</ul>';
+
+            // }
+        } else {
+            // esc_html_e('No leads founds..!', 'sejoli-lead-form');
+        }
+
+        die();
+    }
+
+}
+add_action('wp_ajax_ShowAllLeadThisForm', 'lfb_ShowAllLeadThisForm');
+
+/**
+ * Show all Leads by affiliate column on Lead Page Based on form selection
+ * Hooked via action wp_ajax_ShowAllLeadThisFormByAffiliate
+ * @since   1.0.0
+ */
+function lfb_ShowAllLeadThisFormByAffiliate(){
+
+    if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
+        
+        global $wpdb, $wp;
+        
+        $table_name = LFB_FORM_DATA_TBL;
+        $th_save_db = new LFB_SAVE_DB($wpdb);
+        $nonce = wp_create_nonce('lfb-nonce-rm');
+        $showLeadsObj = new LFB_Show_Leads();
+        $start = 0;
+        $limit = 10;
+        $detail_view  = '';
+        $slectleads = false;
+
+        if (isset($_GET['id'])) {
+            $id = intval($_GET['id']);
+            $start = ($id - 1) * $limit;
+            $form_id = intval($_GET['form_id']);
+            $sn_counter = $start;
+        } else {
+            $id = 1;
+            $form_id = intval($_POST['form_id']);
+            $sn_counter = 0;
+        }
+
+        if (isset($_GET['detailview'])) {
+            $detail_view = sanitize_text_field($_GET['detailview']);
+        }
+
+        if (isset($_POST['slectleads'])) {
+            $slectleads = sanitize_text_field($_POST['slectleads']);
+        }
+
+        $user_ID = get_current_user_id(); 
+
+        if(wp_get_referer() === home_url('member-area/lead-entries/')) {
+            $getArray = $th_save_db->lfb_get_affiliate_view_leads_db($form_id, $user_ID, $start);
+        } else {
+            $getArray = $th_save_db->lfb_get_all_view_leads_db($form_id, $start);
+        }
+
+        $posts      = $getArray['posts'];
+        $rows       = $getArray['rows'];
+        $limit      = $getArray['limit'];
+        $fieldData  = $getArray['fieldId'];
+        $tableHead  = '';
+        $headcount  = 1;
+        $leadscount = 5;
+
+        foreach ($fieldData as $fieldkey => $fieldvalue) {
+            // Html Field removed
+            $pos = strpos($fieldkey, 'htmlfield_');
+            if ($pos !== false) {
+                continue;
+            }
+
+            $tableHead  .= '<th>' . $fieldvalue . '</th>';
+
+            $leadscount =  $headcount;
+
             $fieldIdNew[] = $fieldkey;
             $headcount++;
 
@@ -625,7 +1070,7 @@ function lfb_ShowAllLeadThisForm(){
             $popupTab   = '';
 
             if ($headcount >= 6 && $leadscount == 5) {
-                $table_head .= '<th></th><th> . . . </th><th><input type="button" onclick="show_all_leads(' . intval($id) . ',' . intval($form_id) . ')" value="Show all Columns"></th>';
+                $table_head .= '<th> . . . </th><th> <input type="button" onclick="show_all_leads(' . intval($id) . ',' . intval($form_id) . ')" value="Show all Columns"></th>';
             }
 
             foreach ($posts as $results) {
@@ -639,7 +1084,13 @@ function lfb_ShowAllLeadThisForm(){
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
+                $get_status = $results->status;
+                if ($get_status === "lead") {
+                    $status = __('Lead', 'sejoli-lead-form');
+                } else {
+                    $status = __('Customer', 'sejoli-lead-form');
+                }
                 unset($form_data['hidden_field']);
                 unset($form_data['action']);
                 unset($form_data['g-recaptcha-response']);
@@ -648,39 +1099,68 @@ function lfb_ShowAllLeadThisForm(){
                 $popup_data_val= '';
                 $date_td = '<td><b>'.$lead_date.'</b></td>';
 
-                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,5);
+                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
+
+                $table_row .= $returnData['table_row'];
 
                 $table_row .= "<td>".$product->post_title."</td>";
-                $table_row .= $returnData['table_row'];
+
+                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+                
                 if($affiliate_id > 0) {
                     $table_row .= "<td>".$affiliate->display_name."</td>";
                 } else {
                     $table_row .= "<td>-</td>";
                 }
-                $table_row .= "<td>".sejolisa_price_format($product->price)."</td>";
+
                 $table_row .= $date_td;
                 $form = $th_save_db->lfb_get_form_data($results->form_id);
                 $form_data_result = maybe_unserialize($form[0]->form_data);
 
-                $text_follow = '';
-                foreach ($form_data_result as $results) {
-                    $default_phonenumber = isset($results['default_phonenumber']) ? $results['default_phonenumber'] : 0;
-                    if ( $default_phonenumber !== 0 ) {
-                        $field_id = $results['field_id'];
-                        $table_row .= '<td><a class="lead-followup-wa" href="https://wa.me/'.$form_data['text_'.$field_id].'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
-                        $text_follow = "Follow Up";
-                    }
+                global $wpdb;
+
+                $table_form = LFB_FORM_FIELD_TBL;
+                $prepare_9 = $wpdb->prepare("SELECT * FROM $table_form WHERE id = %d LIMIT 1", $results->form_id);
+                $posts = $th_save_db->lfb_get_form_content($prepare_9);
+
+                if ($posts) {
+                    $followup_text = maybe_unserialize($posts[0]->followup_setting);;
                 }
+
+                // $text_follow = '';
+                // foreach ($form_data_result as $results) {
+                //     $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+                //     if ( $type === 'phonenumber' ) {
+                //         $field_id = $results['field_id'];
+                //         $phone_number = isset($form_data['phonenumber_'.$field_id]) ? $form_data['phonenumber_'.$field_id] : '';
+                //         if ( wp_is_mobile() ) :
+                //             if($headcount >= 6) {
+                //                 $table_row .= '<td><a class="lead-followup-wa" href="https://wa.me/'.$phone_number  . '?text='. $followup_text .'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                //             } else {
+                //                 $table_row .= '<td><a class="lead-followup-wa" href="https://wa.me/'.$phone_number  . '?text='. $followup_text .'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                //             }
+                //         else :
+                //             if($headcount >= 6) {
+                //                 $table_row .= '<td><a class="lead-followup-wa" href="https://web.whatsapp.com/send?phone='.$phone_number.'&text='.$followup_text.'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                //             } else {
+                //                 $table_row .= '<td><a class="lead-followup-wa" href="https://web.whatsapp.com/send?phone='.$phone_number.'&text='.$followup_text.'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                //             }
+                //         endif;
+                //         $text_follow = "Follow Up";
+                //     }
+                // }
+
+                $table_row .= '<td>'.$status.'</td>';
 
                 // $table_row .= '<td></span><a class="lead-followup-wa"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></span></span><a class="lead-remove" onclick="delete_this_lead(' . $lead_id . ',\''.$nonce.'\')"><i class="fa fa-trash" aria-hidden="true" title="Hapus"></i></a></span></td>';
          
-                foreach ($form_data as $form_data_key => $form_data_value) {
-                    $row_size_limit++;
+                // foreach ($form_data as $form_data_key => $form_data_value) {
+                //     $row_size_limit++;
 
-                    if (($detail_view != 1) && ($row_size_limit == 6)) {
-                        $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
-                    }
-                }
+                //     if (($detail_view != 1) && ($row_size_limit == 6)) {
+                //         // $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
+                //     }
+                // }
                 $complete_data .='<table><tr><th>Field</th><th>Value</th></tr>'.$returnData['table_popup'].'<tr><td>Date</td>'.$date_td.'</tr></table>';
 
                 $popupTab .= '<div id="lf-openModal-'.$lead_id.'" class="lf-modalDialog">
@@ -688,60 +1168,68 @@ function lfb_ShowAllLeadThisForm(){
                     </div>
                     </div>';
 
-                $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
-                $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $sn_counter . '</a></td>'. $table_row .'</tr>';
+                // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
+                $table_body .= '<tr>'. $table_row .'</tr>';
             }
 
-            $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
-                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th></tr></thead>';
-
-            echo wp_kses($thHead . $table_body . '</tbody></table>' . $popupTab, $showLeadsObj->expanded_alowed_tags());
-
-            $total = ceil($rows / $limit);
-            if ($headcount >= 6 && $leadscount == 5) {
-
-                if ($id > 1) {
-                    echo "<a href=''  onclick='lead_pagi_view(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
-                }
-                if ($id != $total) {
-                    echo "<a href='' onclick='lead_pagi_view(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
-                }
-                echo "<ul class='page'>";
-                for ($i = 1; $i <= $total; $i++) {
-                    if ($i == $id) {
-                        echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
-                    } else {
-                        echo "<li><a href='' onclick='lead_pagi_view(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
-                    }
-                }
-                echo '</ul>';
+            // $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
+            //     <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
+            
+            if(wp_is_mobile()){
+                $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
             } else {
-
-                if ($id > 1) {
-                    echo "<a href=''  onclick='lead_pagination(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
-                }
-                if ($id != $total) {
-                    echo "<a href='' onclick='lead_pagination(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
-                }
-                echo "<ul class='page'>";
-                for ($i = 1; $i <= $total; $i++) {
-                    if ($i == $id) {
-                        echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
-                    } else {
-                        echo "<li><a href='' onclick='lead_pagination(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
-                    }
-                }
-                echo '</ul>';
+                $thHead = '<thead><tr>'.$tableHead.'<th>Product</th><th>Value</th><th>Affiliate</th><th>Date</th>'.$table_head.'<th>Status</th></tr></thead>';
             }
+
+            echo wp_kses($thHead . $table_body . '</table>', $showLeadsObj->expanded_alowed_tags());
+
+            // $total = ceil($rows / $limit);
+            // if ($headcount >= 6 && $leadscount == 5) {
+
+            //     if ($id > 1) {
+            //         echo "<a href=''  onclick='lead_pagi_view(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
+            //     }
+            //     if ($id != $total) {
+            //         echo "<a href='' onclick='lead_pagi_view(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
+            //     }
+            //     echo "<ul class='page'>";
+            //     for ($i = 1; $i <= $total; $i++) {
+            //         if ($i == $id) {
+            //             echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
+            //         } else {
+            //             echo "<li><a href='' onclick='lead_pagi_view(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
+            //         }
+            //     }
+            //     echo '</ul>';
+
+            // } else {
+
+            //     if ($id > 1) {
+            //         echo "<a href=''  onclick='lead_pagination(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
+            //     }
+            //     if ($id != $total) {
+            //         echo "<a href='' onclick='lead_pagination(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
+            //     }
+            //     echo "<ul class='page'>";
+            //     for ($i = 1; $i <= $total; $i++) {
+            //         if ($i == $id) {
+            //             echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
+            //         } else {
+            //             echo "<li><a href='' onclick='lead_pagination(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
+            //         }
+            //     }
+            //     echo '</ul>';
+
+            // }
         } else {
-            esc_html_e('No leads..!', 'sejoli-lead-form');
+            // esc_html_e('No leads founds..!', 'sejoli-lead-form');
         }
 
         die();
     }
 
 }
-add_action('wp_ajax_ShowAllLeadThisForm', 'lfb_ShowAllLeadThisForm');
+add_action('wp_ajax_ShowAllLeadThisFormByAffiliate', 'lfb_ShowAllLeadThisFormByAffiliate');
 
 /**
  * Show Leads Page
@@ -751,7 +1239,9 @@ add_action('wp_ajax_ShowAllLeadThisForm', 'lfb_ShowAllLeadThisForm');
 function lfb_ShowLeadPagi(){
 
     if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
+        
         global $wpdb;
+
         $table_name = LFB_FORM_DATA_TBL;
         $th_save_db = new LFB_SAVE_DB($wpdb);
         $showLeadsObj = new LFB_Show_Leads();
@@ -774,12 +1264,12 @@ function lfb_ShowLeadPagi(){
             $detail_view = isset($_GET['detailview']);
         }
 
-        $getArray = $th_save_db->lfb_get_all_view_leads_db($form_id, $start);
-        $posts          = $getArray['posts'];
-        $rows           = $getArray['rows'];
-        $limit          = $getArray['limit'];
-        $fieldData       = $getArray['fieldId'];
-        $tableHead  = '';
+        $getArray  = $th_save_db->lfb_get_all_view_leads_db($form_id, $start);
+        $posts     = $getArray['posts'];
+        $rows      = $getArray['rows'];
+        $limit     = $getArray['limit'];
+        $fieldData = $getArray['fieldId'];
+        $tableHead = '';
         $headcount = 1;
 
         foreach ($fieldData as $fieldkey => $fieldvalue) {
@@ -790,6 +1280,7 @@ function lfb_ShowLeadPagi(){
             // } else{ break; }
             $headcount++;
         }
+
         if (!empty($posts)) {
             $entry_counter = 0;
             $table_body = '';
@@ -797,30 +1288,36 @@ function lfb_ShowLeadPagi(){
             $popupTab   = '';
 
             if ($headcount >= 6) {
-                $table_head .= '<th> . . . </th><th><input type="button" onclick="show_all_leads(' . $id . ',' . $form_id . ')" value="Show all Columns"></th>';
+                $table_head .= '<th> . . . </th><th> <input type="button" onclick="show_all_leads(' . $id . ',' . $form_id . ')" value="Show all Columns"></th>';
             }
 
             foreach ($posts as $results) {
                 $table_row = '';
                 $sn_counter++;
                 $row_size_limit = 0;
-                $form_data = $results->form_data;
-                $lead_id = $results->id;
-                $product_id = $results->product;
-                $product    = sejolisa_get_product($product_id);
-                $affiliate_id = $results->affiliate;
-                $affiliate    = sejolisa_get_user($affiliate_id);
-                $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $form_data      = $results->form_data;
+                $lead_id        = $results->id;
+                $product_id     = $results->product;
+                $product        = sejolisa_get_product($product_id);
+                $affiliate_id   = $results->affiliate;
+                $affiliate      = sejolisa_get_user($affiliate_id);
+                $form_data      = maybe_unserialize($form_data);
+                $lead_date      = date("j M Y", strtotime($results->date));
+                $get_status     = $results->status;
+                if ($get_status === "lead") {
+                    $status = '<button type="submit" class="button button-small button-status-lead">'. __('Lead', 'sejoli-lead-form') .' </button>';
+                } else {
+                    $status = '<a href="#" class="button button-small button-status-customer">'. __('Customer', 'sejoli-lead-form') .' </a>';
+                }
                 unset($form_data['hidden_field']);
                 unset($form_data['action']);
                 unset($form_data['g-recaptcha-response']);
                 $entry_counter++;
-                $complete_data = '';
-                $popup_data_val= '';
+                $complete_data  = '';
+                $popup_data_val = '';
                 $date_td = '<td><b>'.$lead_date.'</b></td>';
 
-                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,5);
+                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
 
                 $table_row .= "<td>".$product->post_title."</td>";
                 $table_row .= $returnData['table_row'];
@@ -834,25 +1331,40 @@ function lfb_ShowLeadPagi(){
                 $form = $th_save_db->lfb_get_form_data($results->form_id);
                 $form_data_result = maybe_unserialize($form[0]->form_data);
 
+                global $wpdb;
+                $table_form = LFB_FORM_FIELD_TBL;
+                $prepare_9 = $wpdb->prepare("SELECT * FROM $table_form WHERE id = %d LIMIT 1", $results->form_id);
+                $posts = $th_save_db->lfb_get_form_content($prepare_9);
+                if ($posts) {
+                    $followup_text = maybe_unserialize($posts[0]->followup_setting);;
+                }
+
                 $text_follow = '';
                 foreach ($form_data_result as $results) {
-                    $default_phonenumber = isset($results['default_phonenumber']) ? $results['default_phonenumber'] : 0;
-                    if ( $default_phonenumber !== 0 ) {
+                    $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+                    if ( $type === 'phonenumber' ) {
                         $field_id = $results['field_id'];
-                        $table_row .= '<td><a class="lead-followup-wa" href="https://wa.me/'.$form_data['text_'.$field_id].'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                        $phone_number = isset($form_data['phonenumber_'.$field_id]) ? $form_data['phonenumber_'.$field_id] : '';
+                        if ( wp_is_mobile() ) :
+                            $table_row .= '<td><a target="_blank" class="lead-followup-wa" href="https://wa.me/'.$phone_number  . '?text='. $followup_text .'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                        else :
+                            $table_row .= '<td><a target="_blank" class="lead-followup-wa" href="https://api.whatsapp.com/send?phone='.$phone_number.'&text='.$followup_text.'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
+                        endif;
                         $text_follow = "Follow Up";
                     }
                 }
 
+                $table_row .= '<td>'.$status.'</td>';
+
                 // $table_row .= '<td></span><a class="lead-followup-wa"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></span></span><a class="lead-remove" onclick="delete_this_lead(' . $lead_id . ',\''.$nonce.'\')"><i class="fa fa-trash" aria-hidden="true" title="Hapus"></i></a></span></td>';
          
-                foreach ($form_data as $form_data_key => $form_data_value) {
-                    $row_size_limit++;
+                // foreach ($form_data as $form_data_key => $form_data_value) {
+                //     $row_size_limit++;
 
-                    if (($detail_view != 1) && ($row_size_limit == 6)) {
-                        $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
-                    }
-                }
+                //     if (($detail_view != 1) && ($row_size_limit == 6)) {
+                //         // $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
+                //     }
+                // }
                 $complete_data .='<table><tr><th>Field</th><th>Value</th></tr>'.$returnData['table_popup'].'<tr><td>Date</td>'.$date_td.'</tr></table>';
 
                 $popupTab .= '<div id="lf-openModal-'.$lead_id.'" class="lf-modalDialog">
@@ -860,33 +1372,36 @@ function lfb_ShowLeadPagi(){
                     </div>
                     </div>';
 
-                $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
+                // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
                 $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $sn_counter . '</a></td>'. $table_row .'</tr>';
             }
 
             $thHead = '<div class="wrap" id="form-leads-show"><table class="show-leads-table wp-list-table widefat fixed" id="show-leads-table" >
-                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th></tr></thead>';
+                <thead><tr><th>ID</th><th>Product</th>'.$tableHead.'<th>Affiliate</th><th>Value</th><th>Date</th>'.$table_head.'<th>'.$text_follow.'</th><th>Status</th></tr></thead>';
 
-            echo wp_kses($thHead . $table_body . '</tbody></table>' . $popupTab, $showLeadsObj->expanded_alowed_tags());
+            echo wp_kses($thHead . $table_body . '</table>' . $popupTab, $showLeadsObj->expanded_alowed_tags());
 
-            $total = ceil($rows / $limit);
-            if ($id > 1) {
-                echo "<a href=''  onclick='lead_pagi_view(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
-            }
-            if ($id != $total) {
-                echo "<a href='' onclick='lead_pagi_view(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
-            }
-            echo "<ul class='page'>";
-            for ($i = 1; $i <= $total; $i++) {
-                if ($i == $id) {
-                    echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
-                } else {
-                    echo "<li><a href='' onclick='lead_pagi_view(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
-                }
-            }
-            echo '</ul>';
+            // $total = ceil($rows / $limit);
+
+            // if ($id > 1) {
+            //     echo "<a href=''  onclick='lead_pagi_view(" . intval($id - 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-right'></i></a>";
+            // }
+
+            // if ($id != $total) {
+            //     echo "<a href='' onclick='lead_pagi_view(" . intval($id + 1) . "," . intval($form_id) . ")' class='button'><i class='fa fa-chevron-left'></i></a>";
+            // }
+
+            // echo "<ul class='page'>";
+            // for ($i = 1; $i <= $total; $i++) {
+            //     if ($i == $id) {
+            //         echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
+            //     } else {
+            //         echo "<li><a href='' onclick='lead_pagi_view(" . intval($i) . "," . intval($form_id) . ")'>" . intval($i) . "</a></li>";
+            //     }
+            // }
+            // echo '</ul>';
         } else {
-            esc_html_e('No leads..!', 'sejoli-lead-form');
+            esc_html_e('No leads founds..!', 'sejoli-lead-form');
         }
         die();
     }
@@ -902,7 +1417,9 @@ add_action('wp_ajax_ShowLeadPagi', 'lfb_ShowLeadPagi');
 function lfb_ShowAllLeadThisFormDate(){
    
     if ((isset($_POST['form_id']) && ($_POST['form_id'] != '')) || (isset($_GET['form_id']) && ($_GET['form_id'] != ''))) {
+        
         global $wpdb;
+        
         $nonce = wp_create_nonce('lfb-nonce-rm');
         $table_name = LFB_FORM_DATA_TBL;
         $th_save_db = new LFB_SAVE_DB($wpdb);
@@ -922,18 +1439,18 @@ function lfb_ShowAllLeadThisFormDate(){
             $datewise = '';
             $sn_counter = 0;
         }
+
         if (isset($_GET['detailview'])) {
             $detail_view = sanitize_text_field($_GET['detailview']);
         }
-        $getArray =  $th_save_db->lfb_get_all_view_date_leads_db($form_id, $datewise, $start);
 
-        $posts          = $getArray['posts'];
-        $rows           = $getArray['rows'];
-        $limit          = $getArray['limit'];
-        $fieldData       = $getArray['fieldId'];
-        $fieldIdNew     = array();
-        $headcount = 1;
-
+        $getArray   =  $th_save_db->lfb_get_all_view_date_leads_db($form_id, $datewise, $start);
+        $posts      = $getArray['posts'];
+        $rows       = $getArray['rows'];
+        $limit      = $getArray['limit'];
+        $fieldData  = $getArray['fieldId'];
+        $fieldIdNew = array();
+        $headcount  = 1;
         $tableHead  = '';
 
         foreach ($fieldData as $fieldkey => $fieldvalue) {
@@ -967,7 +1484,15 @@ function lfb_ShowAllLeadThisFormDate(){
                 $affiliate_id = $results->affiliate;
                 $affiliate    = sejolisa_get_user($affiliate_id);
                 $form_data = maybe_unserialize($form_data);
-                $lead_date = date("jS F Y", strtotime($results->date));
+                $lead_date = date("j M Y", strtotime($results->date));
+                $get_status = $results->status;
+
+                if ($get_status === "lead") {
+                    $status = '<button type="submit" class="button button-small button-status-lead">'. __('Lead', 'sejoli-lead-form') .' </button>';
+                } else {
+                    $status = '<a href="#" class="button button-small button-status-customer">'. __('Customer', 'sejoli-lead-form') .' </a>';
+                }
+
                 unset($form_data['hidden_field']);
                 unset($form_data['action']);
                 unset($form_data['g-recaptcha-response']);
@@ -976,24 +1501,28 @@ function lfb_ShowAllLeadThisFormDate(){
                 $popup_data_val= '';
                 $date_td = '<td><b>'.$lead_date.'</b></td>';
 
-                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,5);
+                $returnData = $th_save_db->lfb_lead_form_value($form_data,$fieldIdNew,$fieldData,100);
                 $table_row .= "<td>".$product->post_title."</td>";
                 $table_row .= $returnData['table_row'];
+
                 if($affiliate->display_name) {
                     $table_row .= "<td>".$affiliate->display_name."</td>";
                 } else {
                     $table_row .= "<td>-</td>";
                 }
+
                 $table_row .= $date_td;
                 $table_row .= '<td></span><a class="lead-followup-wa"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></span></span><a class="lead-remove" onclick="delete_this_lead(' . $lead_id . ',\''.$nonce.'\')"><i class="fa fa-trash" aria-hidden="true" title="Hapus"></i></a></span></td>';
 
-                foreach ($form_data as $form_data_key => $form_data_value) {
-                    $row_size_limit++;
+                $table_row .= '<td>'.$status.'</td>';
 
-                    if (($detail_view != 1) && ($row_size_limit == 6)) {
-                        $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
-                    }
-                }
+                // foreach ($form_data as $form_data_key => $form_data_value) {
+                //     $row_size_limit++;
+
+                //     if (($detail_view != 1) && ($row_size_limit == 6)) {
+                //         // $table_row .= '<td> . . . </td><td><a href="#lf-openModal-' . $lead_id . '" value="view">view</a></td>';
+                //     }
+                // }
                 $complete_data .='<table><tr><th>Field</th><th>Value</th></tr>'.$returnData['table_popup'].'<tr><td>Date</td>'.$date_td.'</tr></table>';
 
                 $popupTab .= '<div id="lf-openModal-'.$lead_id.'" class="lf-modalDialog">
@@ -1001,31 +1530,34 @@ function lfb_ShowAllLeadThisFormDate(){
                 </div>
                 </div>';
 
-                $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
+                // $table_body .= '<tbody id="lead-id-' . $lead_id . '">';
                 $table_body .= '<tr><td><span class="lead-count"><a href="#lf-openModal-' . $lead_id . '" title="View Detail">#' . $sn_counter . '</a></td>'. $table_row .'</tr>';
             }
 
-            echo wp_kses($thHead . $table_body . '</tbody></table>' . $popupTab, $showLeadsObj->expanded_alowed_tags());
+            echo wp_kses($thHead . $table_body . '</table>' . $popupTab, $showLeadsObj->expanded_alowed_tags());
 
             $rows = count($rows);
-            $total = ceil($rows / $limit);
-            if ($id > 1) {
-                echo "<a href=''  onclick='lead_pagination_datewise(" . intval($id - 1) . "," . intval($form_id) . ",\"" . $datewise . "\");' class='button'><i class='fa fa-chevron-right'></i></a>";
-            }
-            if ($id != $total) {
-                echo "<a href='' onclick='lead_pagination_datewise(" . intval($id + 1) . "," . intval($form_id) . ",\"" . $datewise . "\");' class='button'><i class='fa fa-chevron-left'></i></a>";
-            }
-            echo "<ul class='page'>";
-            for ($i = 1; $i <= $total; $i++) {
-                if ($i == $id) {
-                    echo "<li class='lf-current'><a>" . intval($i) . "</a></li>";
-                } else {
-                    echo "<li><a href='' onclick='lead_pagination_datewise(" . intval($i) . "," . intval($form_id) . ",\"" . $datewise . "\");'>" . intval($i) . "</a></li>";
-                }
-            }
-            echo '</ul>';
+            // $total = ceil($rows / $limit);
+
+            // if ($id > 1) {
+            //     echo "<a href=''  onclick='lead_pagination_datewise(" . intval($id - 1) . "," . intval($form_id) . ",\"" . $datewise . "\");' class='button'><i class='fa fa-chevron-right'></i></a>";
+            // }
+
+            // if ($id != $total) {
+            //     echo "<a href='' onclick='lead_pagination_datewise(" . intval($id + 1) . "," . intval($form_id) . ",\"" . $datewise . "\");' class='button'><i class='fa fa-chevron-left'></i></a>";
+            // }
+
+            // echo "<ul class='page'>";
+            // for ($i = 1; $i <= $total; $i++) {
+            //     if ($i == $id) {
+            //         echo "<li class='lf-current'><a>" . intval($i) . "</a></li>";
+            //     } else {
+            //         echo "<li><a href='' onclick='lead_pagination_datewise(" . intval($i) . "," . intval($form_id) . ",\"" . $datewise . "\");'>" . intval($i) . "</a></li>";
+            //     }
+            // }
+            // echo '</ul>';
         } else {
-            esc_html_e('No leads..!', 'sejoli-lead-form');
+            esc_html_e('No leads founds..!', 'sejoli-lead-form');
         }
         die();
     }
@@ -1070,7 +1602,9 @@ function lfb_lead_sanitize($leads){
     if (is_array($leads)) {
 
         foreach ($leads as $key => $value) {
+
             $rKey = preg_replace("/[^a-zA-Z]+/", "", $key);
+
             if ($rKey === 'name' || $rKey === 'text' || $rKey === 'radio' || $rKey === 'option') {
                 $leads[$key] = sanitize_text_field($value);
             } elseif ($rKey === 'email') {
@@ -1089,11 +1623,28 @@ function lfb_lead_sanitize($leads){
                 }
                 $leads[$key] = $value;
             }
+
         } // end foreach
 
         return $leads;
 
     }
+
+}
+
+function lfb_get_previous_email($form_product, $form_id) {
+
+    $unix_limit   = current_time( 'timestamp' ) - ( 5 * 60 );
+    $day_limit    = date('Y-m-d H:i:s', $unix_limit);
+
+    global $wpdb;
+
+    $table_name = LFB_FORM_DATA_TBL;
+
+    $rows = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND product = %d AND `date` > '".$day_limit."'", $form_id, $form_product);
+    $posts = $wpdb->get_results($rows);
+
+    return $posts;
 
 }
 
@@ -1109,6 +1660,7 @@ function lfb_Save_Form_Data(){
         wp_parse_str($_POST['fdata'], $fromData);
 
         $form_id = intval($fromData['hidden_field']);
+        $form_title = $fromData['form_title'];
         $form_product = intval($fromData['product']);
         $form_affiliate = intval($fromData['affiliate_id']);
         unset($fromData['g-recaptcha-response']);
@@ -1119,21 +1671,31 @@ function lfb_Save_Form_Data(){
 
         $en = lfb_form_name_email_filter($fromData);
 
-
         if ((isset($en['email'])) && ($en['email'] != '')) {
             $user_emailid = sanitize_email($en['email']);
         } else {
             $user_emailid = esc_html__('invalid_email', 'sejoli-lead-form');
         }
-        $sanitize_leads =  lfb_lead_sanitize($fromData);
-        $form_data = maybe_serialize($sanitize_leads);
 
-        $lf_store   = new LFB_LeadStoreType();
-        $th_save_db = new LFB_SAVE_DB();
+        $entries   = lfb_get_previous_email( $form_product, $form_id);
 
-        $lf_store->lfb_mail_type($form_id, $form_product, $form_affiliate, $form_data, $th_save_db, $user_emailid);
-        
-        lfb_register_autoresponder($form_id, $form_product, $form_data);
+        if (count($entries) !== 0) {
+
+            wp_send_json(__('sudah isi data'));
+
+        } else {
+
+            $sanitize_leads =  lfb_lead_sanitize($fromData);
+            $form_data = maybe_serialize($sanitize_leads);
+
+            $lf_store   = new LFB_LeadStoreType();
+            $th_save_db = new LFB_SAVE_DB();
+
+            $lf_store->lfb_mail_type($form_id, $form_title, $form_product, $form_affiliate, $form_data, $th_save_db, $user_emailid);
+            
+            lfb_register_autoresponder($form_id, $form_product, $form_data);
+
+        }
 
     }
 
@@ -1170,25 +1732,19 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
 
         foreach ($form_datas as $results) {
 
-            $type = $results['field_type']['type'];
+            $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
             $field_id = $results['field_id'];
 
-            $default_phonenumber = isset($results['default_phonenumber']) ? $results['default_phonenumber'] : 0;
+            $data_email = '';
+            $data_name  = '';
+            $data_phone  = '';
 
             if ($type === 'email') { 
                 $data_email = $form_data['email_'.$field_id];
-            } elseif($type === 'number') { 
-                $data_phone = '+62'.$form_data['number_'.$field_id];
             } elseif($type === 'name') { 
                 $data_name = $form_data['name_'.$field_id];
-            }
-
-            if ( $default_phonenumber !== 0 ) {
-                if ($type === 'text') { 
-                    $data_phone = $form_data['text_'.$field_id];
-                } else {
-                    $data_phone = '+62'.$form_data['number_'.$field_id];
-                }
+            } elseif ( $type === 'phonenumber' ) {
+                $data_phone = '+62'.$form_data['phonenumber_'.$field_id];
             }
 
         }
@@ -1196,7 +1752,7 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
         foreach($autoresponder['fields'] as $field) :
 
             if('email' === $field['type']) :
-                $body_fields[$field['name']] = 'asd@gmail.com';//$data_email;
+                $body_fields[$field['name']] = $data_email;
             elseif('name' === $field['type']) :
                 $body_fields[$field['name']] = $data_name;
             else :
@@ -1212,7 +1768,7 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
                 'Referer'    => site_url(),
                 'User-Agent' => $_SERVER['HTTP_USER_AGENT']
             ),
-            'body'    => $body_fields
+            'body' => $body_fields
         ]);
 
         do_action('sejoli/log/write', 'response autoresponder subscription', [
@@ -1235,6 +1791,7 @@ function lfb_verifyFormCaptcha(){
     if ((isset($_POST['captcha_res'])) && (!empty($_POST['captcha_res']))) {
         $captcha = stripslashes($_POST['captcha_res']);
         $secret_key = get_option('captcha-setting-secret');
+        
         $response = wp_remote_post(
             'https://www.google.com/recaptcha/api/siteverify',
             array(
@@ -1305,3 +1862,567 @@ function lfb_emailsettings_sanitize($email_settings){
     return $email_settings;
 
 }
+
+/**
+ * Send Data into Customer Email
+ * @since   1.0.0
+ */
+function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form_affiliate,$customer_emailid){
+
+    $th_save_db = new LFB_SAVE_DB();
+    $leadform_store = new LFB_LeadStoreType();
+    $form_entry_data = $leadform_store->lfb_mail_filter($form_id,$form_data);
+    $posts = $th_save_db->lfb_mail_store_type($form_id);
+    $storeType = $posts[0]->storeType;
+    $customer_setting = $posts[0]->customer_setting;
+    $customermail = maybe_unserialize($customer_setting);
+    $customer_email = array('customer_email_settings'=>$customermail,'emailid'=>$customer_emailid);
+    $customer_email['leads'] = $form_entry_data;
+    $form_entry_data .= "<br/>";
+
+    $customer_setting = $customer_email['customer_email_settings'];
+    $headers[] = 'Content-Type: text/html; charset=UTF-8';
+    $to = $customer_email['emailid'];
+    $header = (isset($customer_setting['customer_email_setting']['header']))?$customer_setting['customer_email_setting']['header']:'Submit Form';
+    $subject = $customer_setting['customer_email_setting']['subject'];
+    $message = $customer_setting['customer_email_setting']['message'];
+    $shortcodes_a = '[lf-new-form-data]';
+    $shortcodes_b = $form_entry_data; 
+    $shortcode_form_name = '[form-name]';
+    $shortcode_lead_id = '[lead-id]';
+    $shortcode_lead_name = '[lead-name]';
+    $shortcode_lead_email = '[lead-email]';
+    $shortcode_lead_phone = '[lead-phone]';
+    $shortcode_affiliate_name = '[affiliate-name]';
+    $shortcode_affiliate_phone = '[affiliate-phone]';
+    $shortcode_affiliate_email = '[affiliate-email]';
+    $shortcode_product_name = '[product-name]';
+    $shortcode_product_price = '[product-price]';
+
+    if($form_affiliate > 0) {
+        $affiliate       = sejolisa_get_user($form_affiliate);
+        $affiliate_email = $affiliate->user_email;
+        $affiliate_name  = $affiliate->display_name;
+        $affiliate_phone = $affiliate->meta->phone;
+    } else {
+        $affiliate_email = '';
+        $affiliate_name  = '';
+        $affiliate_phone = '';
+    }            
+
+    if($form_product > 0) {
+        $product = sejolisa_get_product($form_product);
+        $product_name  = $product->post_title;
+        $product_price = trim(sejolisa_price_format($product->price));
+    } else {
+        $product_name  = '';
+        $product_price = '';
+    }
+    $th_save_db = new LFB_SAVE_DB();
+    $form = $th_save_db->lfb_get_form_data($form_id);
+    $form_datas = maybe_unserialize($form[0]->form_data);
+    $form_title = $form[0]->form_title;
+
+    $form_field = $th_save_db->lfb_admin_email_send($form_id);
+    $form_data  = maybe_unserialize($form_data);
+    $lead_email = '';
+    $lead_name  = '';
+    $lead_phone = '';
+
+    foreach ($form_datas as $results) {
+
+        $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+        $field_id = $results['field_id'];
+
+        if ($type === 'email') { 
+            $lead_email = $form_data['email_'.$field_id];
+        } elseif($type === 'name') { 
+            $lead_name = $form_data['name_'.$field_id];
+        } elseif ( $type === 'phonenumber' ) {
+            $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+        }
+
+    }
+
+    $message = ($message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $message);
+    $message = str_replace($shortcode_form_name, $form_title, $message);
+    $message = str_replace($shortcode_lead_id, $lead_id, $message);
+    $message = str_replace($shortcode_lead_name, $lead_name, $message);
+    $message = str_replace($shortcode_lead_email, $lead_email, $message);
+    $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+    $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
+    $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
+    $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
+    $message = str_replace($shortcode_product_name, $product_name, $message);
+    $message = str_replace($shortcode_product_price, $product_price, $message);
+
+    $headers[] = "From:".$header." <".$customer_setting['customer_email_setting']['from'].">";
+    $headers[] = "Reply-To:".$header." <".$customer_setting['customer_email_setting']['from'].">";  
+    
+    if($message) {
+        $email = new LeadFormEmail();
+        $email->send(
+            array($to),
+            $message,
+            $subject
+        );
+    }
+
+}
+
+/**
+ * Send Data into WhatsApp
+ * @since   1.0.0
+ */
+function lfb_send_data_wa($form_id,$form_data,$lead_id,$form_product,$form_affiliate){
+    
+    $th_save_db           = new LFB_SAVE_DB();
+    $leadform_store       = new LFB_LeadStoreType();
+    $form_entry_data      = $leadform_store->lfb_data_filter($form_id,$form_data);
+    $posts                = $th_save_db->lfb_mail_store_type($form_id);
+    $storeType            = $posts[0]->storeType;
+    $customer_wa_setting  = $posts[0]->customer_wa_setting;
+    $customerwa           = maybe_unserialize($customer_wa_setting);
+    $customer_wa          = array('customer_wa_settings'=>$customerwa);
+    $customer_wa['leads'] = $form_entry_data;
+    $form_entry_data     .= "<br/>";
+
+    if(!empty($customer_wa['customer_wa_settings'])){
+
+        $get_customer_wa_number = $leadform_store->lfb_wa_filter($form_id,$form_data);
+        $th_save_db = new LFB_SAVE_DB();
+        $user_message = $customer_wa['customer_wa_settings']['customer_wa_setting']['message'];
+
+        $shortcodes_a = '[lf-new-form-data]';
+        $shortcodes_b = $form_entry_data; 
+        $shortcode_form_name = '[form-name]';
+        $shortcode_lead_id = '[lead-id]';
+        $shortcode_lead_name = '[lead-name]';
+        $shortcode_lead_email = '[lead-email]';
+        $shortcode_lead_phone = '[lead-phone]';
+        $shortcode_affiliate_name = '[affiliate-name]';
+        $shortcode_affiliate_phone = '[affiliate-phone]';
+        $shortcode_affiliate_email = '[affiliate-email]';
+        $shortcode_product_name = '[product-name]';
+        $shortcode_product_price = '[product-price]';
+
+        if($form_affiliate > 0) {
+            $affiliate       = sejolisa_get_user($form_affiliate);
+            $affiliate_email = $affiliate->user_email;
+            $affiliate_name  = $affiliate->display_name;
+            $affiliate_phone = $affiliate->meta->phone;
+        } else {
+            $affiliate_email = '';
+            $affiliate_name  = '';
+            $affiliate_phone = '';
+        }            
+
+        if($form_product > 0) {
+            $product = sejolisa_get_product($form_product);
+            $product_name  = $product->post_title;
+            $product_price = trim(sejolisa_price_format($product->price));
+        } else {
+            $product_name  = '';
+            $product_price = '';
+        }
+
+        $th_save_db = new LFB_SAVE_DB();
+        $form = $th_save_db->lfb_get_form_data($form_id);
+        $form_datas = maybe_unserialize($form[0]->form_data);
+        $form_title = $form[0]->form_title;
+
+        $form_field = $th_save_db->lfb_admin_email_send($form_id);
+        $form_data  = maybe_unserialize($form_data);
+        $lead_email = '';
+        $lead_name  = '';
+        $lead_phone = '';
+
+        foreach ($form_datas as $results) {
+
+            $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+            $field_id = $results['field_id'];
+
+            if ($type === 'email') { 
+                $lead_email = $form_data['email_'.$field_id];
+            } elseif($type === 'name') { 
+                $lead_name = $form_data['name_'.$field_id];
+            } elseif ( $type === 'phonenumber' ) {
+                $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+            }
+
+        }
+
+        $user_message = ($user_message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $user_message);
+        $user_message = str_replace($shortcode_form_name, $form_title, $user_message);
+        $user_message = str_replace($shortcode_lead_id, $lead_id, $user_message);
+        $user_message = str_replace($shortcode_lead_name, $lead_name, $user_message);
+        $user_message = str_replace($shortcode_lead_email, $lead_email, $user_message);
+        $user_message = str_replace($shortcode_lead_phone, $lead_phone, $user_message);
+        $user_message = str_replace($shortcode_affiliate_name, $affiliate_name, $user_message);
+        $user_message = str_replace($shortcode_affiliate_email, $affiliate_email, $user_message);
+        $user_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $user_message);
+        $user_message = str_replace($shortcode_product_name, $product_name, $user_message);
+        $user_message = str_replace($shortcode_product_price, $product_price, $user_message);
+
+        if($user_message) {
+            $whatsapp = new LeadFormWhatsApp();
+            $whatsapp->send($get_customer_wa_number, strip_tags($user_message), $title = '');
+        }
+
+    }
+
+}
+
+/**
+ * Send Data into SMS
+ * @since   1.0.0
+ */
+function lfb_send_data_sms($form_id,$form_data,$lead_id,$form_product,$form_affiliate){
+    
+    $th_save_db            = new LFB_SAVE_DB();
+    $leadform_store        = new LFB_LeadStoreType();
+    $form_entry_data       = $leadform_store->lfb_data_filter($form_id,$form_data);
+    $posts                 = $th_save_db->lfb_mail_store_type($form_id);
+    $storeType             = $posts[0]->storeType;
+    $customer_sms_setting  = $posts[0]->customer_sms_setting;
+    $customersms           = maybe_unserialize($customer_sms_setting);
+    $customer_sms          = array('customer_sms_settings'=>$customersms);
+    $customer_sms['leads'] = $form_entry_data;
+    $form_entry_data      .= "<br/>";
+
+    //user sms send
+    if(!empty($customer_sms['customer_sms_settings'])){
+        $get_customer_sms_number = $leadform_store->lfb_wa_filter($form_id,$form_data);
+        $th_save_db = new LFB_SAVE_DB();
+        $user_message = $customer_sms['customer_sms_settings']['customer_sms_setting']['message'];
+        
+        $shortcodes_a = '[lf-new-form-data]';
+        $shortcodes_b = $form_entry_data; 
+        $shortcode_form_name = '[form-name]';
+        $shortcode_lead_id = '[lead-id]';
+        $shortcode_lead_name = '[lead-name]';
+        $shortcode_lead_email = '[lead-email]';
+        $shortcode_lead_phone = '[lead-phone]';
+        $shortcode_affiliate_name = '[affiliate-name]';
+        $shortcode_affiliate_phone = '[affiliate-phone]';
+        $shortcode_affiliate_email = '[affiliate-email]';
+        $shortcode_product_name = '[product-name]';
+        $shortcode_product_price = '[product-price]';
+
+        if($form_affiliate > 0) {
+            $affiliate       = sejolisa_get_user($form_affiliate);
+            $affiliate_email = $affiliate->user_email;
+            $affiliate_name  = $affiliate->display_name;
+            $affiliate_phone = $affiliate->meta->phone;
+        } else {
+            $affiliate_email = '';
+            $affiliate_name  = '';
+            $affiliate_phone = '';
+        }            
+
+        if($form_product > 0) {
+            $product = sejolisa_get_product($form_product);
+            $product_name  = $product->post_title;
+            $product_price = trim(sejolisa_price_format($product->price));
+        } else {
+            $product_name  = '';
+            $product_price = '';
+        }
+
+        $th_save_db = new LFB_SAVE_DB();
+        $form = $th_save_db->lfb_get_form_data($form_id);
+        $form_datas = maybe_unserialize($form[0]->form_data);
+        $form_title = $form[0]->form_title;
+
+        $form_field = $th_save_db->lfb_admin_email_send($form_id);
+        $form_data  = maybe_unserialize($form_data);
+        $lead_email = '';
+        $lead_name  = '';
+        $lead_phone = '';
+
+        foreach ($form_datas as $results) {
+
+            $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+            $field_id = $results['field_id'];
+
+            if ($type === 'email') { 
+                $lead_email = $form_data['email_'.$field_id];
+            } elseif($type === 'name') { 
+                $lead_name = $form_data['name_'.$field_id];
+            } elseif ( $type === 'phonenumber' ) {
+                $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+            }
+
+        }
+
+        $user_message = ($user_message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $user_message);
+        $user_message = str_replace($shortcode_form_name, $form_title, $user_message);
+        $user_message = str_replace($shortcode_lead_id, $lead_id, $user_message);
+        $user_message = str_replace($shortcode_lead_name, $lead_name, $user_message);
+        $user_message = str_replace($shortcode_lead_email, $lead_email, $user_message);
+        $user_message = str_replace($shortcode_lead_phone, $lead_phone, $user_message);
+        $user_message = str_replace($shortcode_affiliate_name, $affiliate_name, $user_message);
+        $user_message = str_replace($shortcode_affiliate_email, $affiliate_email, $user_message);
+        $user_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $user_message);
+        $user_message = str_replace($shortcode_product_name, $product_name, $user_message);
+        $user_message = str_replace($shortcode_product_price, $product_price, $user_message);
+
+        if($user_message) {
+            $sms = new LeadFormSMS();
+            $sms->send($get_customer_sms_number, strip_tags($user_message), $title = '');
+        }
+    }
+
+}
+
+
+/**
+ * Proceed to Customer
+ * Hooked via action wp_ajax_ProceedToCustomer
+ * @since   1.0.0
+ */
+function lfb_ProceedToCustomer(){
+
+    global $wpdb;
+
+    if ( isset( $_POST['lead-id'] )  && lfb_user_permission_check() ) {
+
+        $leadID     = intval( $_POST['lead-id'] );
+        $th_save_db = new LFB_SAVE_DB();
+        $getArray   = $th_save_db->lfb_get_single_leads_db( $leadID );
+        $posts      = $getArray['posts'];
+
+        foreach ( $posts as $results ) {
+
+            $form_data    = $results->form_data;
+            $lead_id      = $results->id;
+            $product_id   = $results->product;
+            $affiliate_id = $results->affiliate;
+            $affiliate    = sejolisa_get_user( $affiliate_id );
+            $form_data    = maybe_unserialize( $form_data );
+            $form_id      = $results->form_id;
+            $lead_date    = date("j M Y", strtotime( $results->date ));
+            $get_status   = $results->status;
+
+            $form = $th_save_db->lfb_get_form_data( $results->form_id );
+            $form_data_result = maybe_unserialize( $form[0]->form_data );
+            $email = $phone_number = $email = '';
+
+            foreach( $form_data_result as $results ) {
+
+                $type = isset( $results['field_type']['type'] ) ? $results['field_type']['type'] : '';
+
+                if ( $type === 'phonenumber' ) {
+
+                    $field_id = $results['field_id'];
+                    $phone_number = isset( $form_data['phonenumber_'.$field_id] ) ? $form_data['phonenumber_'.$field_id] : '';
+                
+                }
+
+                if ( $type === 'email' ) {
+                
+                    $field_id = $results['field_id'];
+                    $email = isset( $form_data['email_'.$field_id] ) ? $form_data['email_'.$field_id] : '';
+                
+                }
+                
+                if ( $type === 'name' ) {
+                
+                    $field_id = $results['field_id'];
+                    $name = isset( $form_data['name_'.$field_id] ) ? $form_data['name_'.$field_id] : '';
+                
+                }
+
+            }
+
+        }
+        
+        if($email) {
+            $userMail = $email;
+        } else {
+            if($_SERVER['HTTP_HOST'] === 'localhost'){
+                $userMail = $phone_number.'@'.$_SERVER['HTTP_HOST'].'.com';
+            } else {
+                $userMail = $phone_number.'@'.$_SERVER['HTTP_HOST'];
+            }
+        }
+
+        $product = sejolisa_get_product( $product_id );
+        $enable_register = $valid = true;
+
+        if( $product->type === "physical" ) :
+            $user = sejolisa_get_user( $phone_number );
+        else:
+            $user = sejolisa_get_user( $userMail );
+        endif;
+
+        $user_id = $user->ID;
+
+        $post_data = [
+            'product_id'    => $product_id,
+            'user_id'       => $user_id,
+            'user_name'     => $name,
+            'user_email'    => $userMail,
+            'user_password' => NULL,
+            'user_phone'    => $phone_number,
+            'affiliate_id'  => $affiliate_id
+        ];
+
+        $post_data = wp_parse_args($post_data, [
+            'user_id'            => NULL,
+            'affiliate_id'       => NULL,
+            'coupon'             => NULL,
+            'payment_gateway'    => 'manual',
+            'quantity'           => 1,
+            'user_email'         => NULL,
+            'user_name'          => NULL,
+            'user_password'      => NULL,
+            'postal_code'        => NULL,
+            'user_phone'         => NULL,
+            'shipment'           => NULL,
+            'markup_price'       => NULL,
+            'shipping_own_value' => NULL,
+            'product_id'         => NULL,
+            'meta_data'          => [],
+            'address'            => NULL,
+            'variants'           => NULL,
+            'wallet'             => NULL,
+        ]);
+
+        $product = sejolisa_get_product( $post_data['product_id'] );
+
+        if( is_a( $product, 'WP_Post' ) ) :
+
+            // validate product
+            $valid = apply_filters( 'sejoli/checkout/is-product-valid', $valid, $product, $post_data );
+
+            // validate shipping
+            $valid = apply_filters( 'sejoli/checkout/is-shipping-valid', $valid, $product, $post_data );
+
+            // validate coupon
+            $valid = apply_filters( 'sejoli/checkout/is-coupon-valid', $valid, $product, $post_data, 'checkout' );
+
+            // validate variant
+            $valid = apply_filters( 'sejoli/variant/are-variants-valid', $valid, $post_data );
+
+            // Processing checkout complete
+            // Everything is valid
+            // Now we move to order 
+
+            if( false !== $valid ) :
+
+                $order_data = [
+                    'product_id'         => $product->ID,
+                    'quantity'           => $post_data['quantity'],
+                    'payment_gateway'    => $post_data['payment_gateway'],
+                    'meta_data'          => $post_data['meta_data'],
+                    'type'               => 'regular',
+                    'affiliate_id'       => $affiliate_id,
+                    'coupon'             => $post_data['coupon'],
+                    'shipment'           => $post_data['shipment'],
+                    'markup_price'       => $post_data['markup_price'],
+                    'shipping_own_value' => $post_data['shipping_own_value'],
+                    'wallet'             => $post_data['wallet']
+                ];
+
+
+                //affiliate link simulation
+                if( defined( 'WP_CLI' ) && !empty( $post_data['affiliate_id'] ) ) :
+
+                    do_action( 'sejoli/checkout/affiliate/set', $post_data['affiliate_id'], 'link' );
+
+                else :
+
+                    do_action( 'sejoli/checkout/check-cookie', $post_data );
+                
+                endif;
+
+                // user is not registered
+                if( $product->type === "physical" ) :
+
+                    do_action('sejoli/user/register', $post_data);
+                    $user_data = sejolisa_get_user( $post_data['user_phone'] );
+
+                else:
+
+                    do_action('sejoli/user/register', $post_data);
+                    $user_data = sejolisa_get_user( $post_data['user_email'] );
+
+                endif;
+
+                if($user_data){
+                    $order_data['user_id'] = $user_data->ID;
+                }
+                $order_data['status'] = 'completed';
+
+                // Order type checking must be first before set grand total
+                $order_data['type'] = apply_filters('sejoli/order/type', 'regular', $order_data);
+
+                // calculate grand total
+                if(!isset($order_data['grand_total'])) :
+                    $order_data['grand_total'] = apply_filters('sejoli/order/grand-total', 0, $order_data);
+                endif;
+
+                $respond = sejolisa_create_order($order_data);
+
+                $respond['messages']['info']    = sejolisa_get_messages('info');
+                $respond['messages']['warning'] = sejolisa_get_messages('warning');
+
+                sejolisa_set_respond($respond, 'order');
+
+                if(false !== $respond['valid']) :
+
+                    do_action('sejoli/log/write', 'order created', $order_data);
+
+                    if(!empty($order_data['coupon'])) :
+                        do_action('sejoli/coupon/update-usage', $order_data['coupon']);
+                    endif;
+
+                    $order_data = $respond['order'];
+
+                    do_action('sejoli/order/new', $order_data);
+                    do_action('sejoli/order/set-status/'.$order_data['status'], $order_data);
+
+                    $update_query = "update " . LFB_FORM_DATA_TBL . " set status='customer' where id='" . $leadID . "'";
+                    $th_save_db = new LFB_SAVE_DB( $wpdb );
+                    $update_leads = $th_save_db->lfb_update_form_data( $update_query );
+
+                    echo lfb_customeremail_send( $form_data, $form_id, $lead_id, $product_id, $affiliate_id, $email );
+
+                    echo lfb_send_data_wa( $form_id, $form_data, $lead_id, $product_id, $affiliate_id );
+
+                    echo lfb_send_data_sms( $form_id, $form_data, $lead_id, $product_id, $affiliate_id );
+
+                    return wp_send_json(true);
+
+                    die();
+
+                else:
+
+                    return wp_send_json(false);
+
+                    die();
+
+                endif;
+
+            else :
+    
+                sejolisa_set_respond([
+                    'valid' => false,
+                    'messages' => [
+                        'error' => sejolisa_get_messages()
+                    ]
+                ], 'checkout');
+
+                return wp_send_json(false);
+
+                die();
+        
+            endif;
+
+        endif;
+
+    }
+
+}
+add_action('wp_ajax_ProceedToCustomer', 'lfb_ProceedToCustomer');

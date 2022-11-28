@@ -43,11 +43,27 @@ class LFB_SMSSettingForm{
         }
         $asmss_nonce = wp_create_nonce( 'asmss-nonce' );
 
-        echo "<div>";
-        echo '<div><b>Shortcode</b>: <pre><i><code title="'.__('Shortcode untuk menampilkan semua entri dari form.', 'sejoli-lead-form').'"> [lf-new-form-data]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama affiliasi.', 'sejoli-lead-form').'">[affiliate-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan no. telepon affiliasi.', 'sejoli-lead-form').'">[affiliate-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email affiliasi.', 'sejoli-lead-form').'">[affiliate-email]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama produk.', 'sejoli-lead-form').'">[product-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan harga produk.', 'sejoli-lead-form').'">[product-price]</code> </i></pre></br></div>';
-        echo "<form id='form-sms-setting' action='' method='post'>
+        echo '<div id="wrap-sms-setting">';
+
+        echo "<div style='margin-top: 1em;'>";
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block">';
+        }
+        echo '<h2>'.esc_html__('SMS Setting','sejoli-lead-form').'</h2>';
+        
+        echo '<div><b>Shortcode</b>: <pre style="margin: 19px 0 0 0;"><i><code title="'.__('Shortcode untuk menampilkan semua entri dari form.', 'sejoli-lead-form').'">[lf-new-form-data]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama form.', 'sejoli-lead-form').'">[form-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan ID lead.', 'sejoli-lead-form').'">[lead-id]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan Nama lead.', 'sejoli-lead-form').'">[lead-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan No. Telepon lead.', 'sejoli-lead-form').'">[lead-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email lead.', 'sejoli-lead-form').'">[lead-email]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama affiliasi.', 'sejoli-lead-form').'">[affiliate-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan no. telepon affiliasi.', 'sejoli-lead-form').'">[affiliate-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email affiliasi.', 'sejoli-lead-form').'">[affiliate-email]</code> </i><i><code title="'.__('Shortcode untuk menampilkan nama produk.', 'sejoli-lead-form').'">[product-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan harga produk.', 'sejoli-lead-form').'">[product-price]</code> </i></pre></br></div>';
+        echo '</div>';
+        
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="display: inline-block; width: 47%;float: left;">';
+        }
+        echo "<form id='form-sms-setting' action='' method='post' style='width: 100%;'>
             <div class='inside sms_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('Admin SMS Notifications', 'sejoli-lead-form') . "</h2><br>
             <table class='form-table'>
@@ -62,17 +78,17 @@ class LFB_SMSSettingForm{
                             <textarea name='sms_setting[message]' id='sms_setting_message' rows='5' cols='46' required>" . esc_html($sms_setting_message) . "</textarea></label>
                         </td>
                     </tr>
-                    <tr>
-                        <td><input type='hidden' name='sms_setting[form-id]' required value='" . intval($this_form_id) . "'> 
-                        <input type='hidden' name='asmss_nonce' value='".$asmss_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='Save'></p>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
+            <input type='hidden' name='sms_setting[form-id]' required value='" . intval($this_form_id) . "'> 
+            <input type='hidden' name='asmss_nonce' value='".$asmss_nonce."'>
+
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            </p>
             </div><div id='error-message-sms-setting'></div></div></div>
             </form>";
+            echo "</div>";
         echo "</div>";
 
         $usersms_setting_message   = esc_html('Form Submitted Successfully');
@@ -83,9 +99,14 @@ class LFB_SMSSettingForm{
         $usmss_nonce = wp_create_nonce( 'usmss-nonce' );
 
         echo "<div>";
-        echo "<form id='form-user-sms-setting' action='' method='post'>
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="display: inline-block; width: 47%;float: right;">';
+        }
+        echo "<form id='form-user-sms-setting' action='' method='post' style='width: 100%;'>
             <div class='inside sms_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('User SMS Notifications', 'sejoli-lead-form') . " </h2><br>
             <table class='form-table'>
@@ -96,19 +117,19 @@ class LFB_SMSSettingForm{
                             <textarea name='user_sms_setting[message]' id='user_sms_setting_message' rows='5' cols='46' required>" . esc_html($usersms_setting_message) . "</textarea></label>
                         </td>
                     </tr>
-                    <tr>
-                        <td><input type='hidden' name='user_sms_setting[form-id]' required value='" . $this_form_id . "'> 
-                        
-                        <input type='hidden' name='usmss_nonce' value='".$usmss_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'></p>
-                        </td>
-                    </tr>
                 </tbody>
             </table> 
+            <input type='hidden' name='user_sms_setting[form-id]' required value='" . $this_form_id . "'> 
+            
+            <input type='hidden' name='usmss_nonce' value='".$usmss_nonce."'>
+
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            </p>
             </div>
             <div id='error-message-user-sms-setting'></div></div> </div>
             </form>";
+            echo "</div>";
         echo "</div>";
 
         $affiliatesms_setting_message   = esc_html('Form Submitted Successfully');
@@ -119,9 +140,14 @@ class LFB_SMSSettingForm{
         $affsmss_nonce = wp_create_nonce( 'affsmss-nonce' );
 
         echo "<div>";
-        echo "<form id='form-affiliate-sms-setting' action='' method='post'>
+        if(wp_is_mobile()){
+            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        } else {
+            echo '<div class="form-block" style="display: inline-block; width: 47%;float: right;">';
+        }
+        echo "<form id='form-affiliate-sms-setting' action='' method='post' style='width: 100%;'>
             <div class='inside sms_setting_section'>
-            <div class='card'>
+            <div class='cards'>
             <div class='infobox'>
             <h2>" . esc_html__('Affiliate SMS Notifications', 'sejoli-lead-form') . " </h2><br>
             <table class='form-table'>
@@ -132,19 +158,21 @@ class LFB_SMSSettingForm{
                             <textarea name='affiliate_sms_setting[message]' id='affiliate_sms_setting_message' rows='5' cols='46' required>" . esc_html($affiliatesms_setting_message) . "</textarea></label>
                         </td>
                     </tr>
-                    <tr>
-                        <td><input type='hidden' name='affiliate_sms_setting[form-id]' required value='" . $this_form_id . "'> 
-                        
-                        <input type='hidden' name='affsmss_nonce' value='".$affsmss_nonce."'>
-
-                        <input type='submit' class='button-primary' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'></p>
-                        </td>
-                    </tr>
                 </tbody>
             </table> 
+            <input type='hidden' name='affiliate_sms_setting[form-id]' required value='" . $this_form_id . "'> 
+            
+            <input type='hidden' name='affsmss_nonce' value='".$affsmss_nonce."'>
+
+            <p style='text-align:right'>
+            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+            </p>
             </div>
             <div id='error-message-affiliate-sms-setting'></div></div> </div>
             </form>";
+            echo "</div>";
+        echo "</div>";
+
         echo "</div>";
     }
 
