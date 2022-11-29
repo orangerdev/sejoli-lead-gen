@@ -2,6 +2,39 @@
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
+ * Convert Number into Phone Number Format
+ * @since   1.0.0
+ */
+function phone_number_format($nomorhp) {
+
+    // Terlebih dahulu kita trim dl
+    $nomorhp = trim($nomorhp);
+    // Bersihkan dari karakter yang tidak perlu
+    $nomorhp = strip_tags($nomorhp);     
+    // Berishkan dari spasi
+    $nomorhp= str_replace(" ","",$nomorhp);
+    // Bersihkan dari bentuk seperti  (022) 66677788
+    $nomorhp= str_replace("(","",$nomorhp);
+    // Bersihkan dari format yang ada titik seperti 0811.222.333.4
+    $nomorhp= str_replace(".","",$nomorhp); 
+
+    //cek apakah mengandung karakter + dan 0-9
+    if(!preg_match('/[^+0-9]/',trim($nomorhp))){
+        // cek apakah no hp karakter 1-3 adalah +62
+        if(substr(trim($nomorhp), 0, 3) == '+62'){
+            $nomorhp= trim($nomorhp);
+        }
+        // cek apakah no hp karakter 1 adalah 0
+        elseif(substr($nomorhp, 0, 1) == '0'){
+            $nomorhp= '+62'.substr($nomorhp, 1);
+        }
+    }
+
+    return $nomorhp;
+
+}
+
+/**
  * Check User Permission
  * Hooked via action admin_menu
  * @since   1.0.0
@@ -904,7 +937,7 @@ function lfb_ShowAllLeadThisForm(){
                         $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
                         if ( $type === 'phonenumber' ) {
                             $field_id = $results['field_id'];
-                            $phone_number = isset($form_data['phonenumber_'.$field_id]) ? $form_data['phonenumber_'.$field_id] : '';
+                            $phone_number = isset($form_data['phonenumber_'.$field_id]) ? phone_number_format($form_data['phonenumber_'.$field_id]) : '';
                             if ( wp_is_mobile() ) :
                                 $table_row .= '<td><a target="_blank" class="lead-followup-wa" href="https://wa.me/'.$phone_number  . '?text='. $followup_text .'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
                             else :
@@ -1234,7 +1267,7 @@ function lfb_ShowLeadPagi(){
                     $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
                     if ( $type === 'phonenumber' ) {
                         $field_id = $results['field_id'];
-                        $phone_number = isset($form_data['phonenumber_'.$field_id]) ? $form_data['phonenumber_'.$field_id] : '';
+                        $phone_number = isset($form_data['phonenumber_'.$field_id]) ? phone_number_format($form_data['phonenumber_'.$field_id]) : '';
                         if ( wp_is_mobile() ) :
                             $table_row .= '<td><a target="_blank" class="lead-followup-wa" href="https://wa.me/'.$phone_number  . '?text='. $followup_text .'"><i class="fa fa-whatsapp" aria-hidden="true" title="Follow Up via WhatsApp"></i></a></td>';
                         else :
@@ -2048,7 +2081,7 @@ function lfb_ProceedToCustomer(){
                 if ( $type === 'phonenumber' ) {
 
                     $field_id = $results['field_id'];
-                    $phone_number = isset( $form_data['phonenumber_'.$field_id] ) ? $form_data['phonenumber_'.$field_id] : '';
+                    $phone_number = isset( $form_data['phonenumber_'.$field_id] ) ? phone_number_format($form_data['phonenumber_'.$field_id]) : '';
                 
                 }
 
