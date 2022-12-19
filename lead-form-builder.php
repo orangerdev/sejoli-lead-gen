@@ -6,9 +6,9 @@
  * @package           Sejoli
  *
  * @wordpress-plugin
- * Plugin Name:       Sejoli - Lead Form
+ * Plugin Name:       Sejoli - Lead Campaign
  * Plugin URI:        https://sejoli.co.id
- * Description:       Integrate Sejoli Premium WordPress Membership Plugin with Lead Form Addon.
+ * Description:       Integrate Sejoli Premium WordPress Membership Plugin with Lead Campaign Addon.
  * Version:           1.0.0
  * Requires PHP:      7.4.1
  * Author:            Sejoli
