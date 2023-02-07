@@ -16,9 +16,6 @@ function lfb_create_form_sanitize($form_data){
             $form_data[$key]['default_value'] = sanitize_text_field($value['default_value']);
             $form_data[$key]['field_id'] = intval($value['field_id']);
 
-            // if(isset($value['default_phonenumber'])){
-            //     $form_data[$key]['default_phonenumber'] = intval($value['default_phonenumber']);
-            // }
             if(isset($value['is_required'])){
                 $form_data[$key]['is_required'] = intval($value['is_required']);
 
@@ -260,8 +257,6 @@ Class LFB_AddNewForm {
             $html .= '<div class="field-form"><select id="sejoli_lead_select2_products" name="product">';
             $html .= '<option value="">Select a Product</option>';
             foreach( $products as $product ) {
-                // $selected = ( is_array( $appended_tags ) && in_array( $product->term_id, $appended_tags ) ) ? ' selected="selected"' : '';
-                // $html .= '<option value="' . $product->ID . '"' . $selected . '>' . $product->post_title . '</option>';
                 $html .= '<option value="' . $product->ID . '">' . $product->post_title . '</option>';
             }
             $html .= '<select></div></div><!-- #titlewrap -->';

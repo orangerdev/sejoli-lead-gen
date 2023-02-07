@@ -220,7 +220,6 @@ Class LFB_LeadStoreType{
 
             }
             
-
             $i++;
         }
 
@@ -394,7 +393,6 @@ Class LFB_LeadStoreType{
         }
            
         // Admin Email Send
-        // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
 
@@ -524,7 +522,6 @@ Class LFB_LeadStoreType{
 
         $message  =  $usermail_setting['user_email_setting']['message'];
 
-        // $message = '';
         $message = ($message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $message);
         $message = str_replace($shortcode_form_name, $form_title, $message);
         $message = str_replace($shortcode_lead_id, $lead_id, $message);
@@ -540,7 +537,6 @@ Class LFB_LeadStoreType{
         $headers[] = "From:".$header." <".$usermail_setting['user_email_setting']['from'].">";
         $headers[] = "Reply-To:".$header." <".$usermail_setting['user_email_setting']['from'].">";  
         
-        // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
 
@@ -652,7 +648,6 @@ Class LFB_LeadStoreType{
 
         $message  =  $affiliate_form['affiliate_email_setting']['message'];
 
-        // $message = '';
         $message = ($message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $message);
         $message = str_replace($shortcode_form_name, $form_title, $message);
         $message = str_replace($shortcode_lead_id, $lead_id, $message);
@@ -668,7 +663,6 @@ Class LFB_LeadStoreType{
         $headers[] = "From:".$header." <".$affiliate_form['affiliate_email_setting']['from'].">";
         $headers[] = "Reply-To:".$header." <".$affiliate_form['affiliate_email_setting']['from'].">";  
             
-        // wp_mail( $to, $subject, $new_message, $headers);
         if($message) {
             $email = new LeadFormEmail();
 
@@ -753,7 +747,6 @@ Class LFB_LeadStoreType{
 
             }
 
-            // $message = '';
             $message = ($message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $message);
             $message = str_replace($shortcode_form_name, $form_title, $message);
             $message = str_replace($shortcode_lead_id, $lead_id, $message);
@@ -782,7 +775,6 @@ Class LFB_LeadStoreType{
             }
 
         }
-
 
         if(!empty($user_wa['user_wa_settings'])){
 
@@ -931,7 +923,6 @@ Class LFB_LeadStoreType{
 
             }
 
-            // $message = '';
             $affiliate_message = ($affiliate_message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $affiliate_message);
             $affiliate_message = str_replace($shortcode_form_name, $form_title, $affiliate_message);
             $affiliate_message = str_replace($shortcode_lead_id, $lead_id, $affiliate_message);
@@ -1024,7 +1015,6 @@ Class LFB_LeadStoreType{
 
             }
 
-            // $message = '';
             $message = ($message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $message);
             $message = str_replace($shortcode_form_name, $form_title, $message);
             $message = str_replace($shortcode_lead_id, $lead_id, $message);
@@ -1053,7 +1043,6 @@ Class LFB_LeadStoreType{
             }
         }
         
-
         //user sms send
         if(!empty($user_sms['user_sms_settings'])){
             $get_user_sms_number = $this->lfb_wa_filter($form_id,$form_data);
@@ -1118,7 +1107,6 @@ Class LFB_LeadStoreType{
 
             }
 
-            // $message = '';
             $user_message = ($user_message=='')?esc_html('New Leads'):str_replace($shortcodes_a, $shortcodes_b, $user_message);
             $user_message = str_replace($shortcode_form_name, $form_title, $user_message);
             $user_message = str_replace($shortcode_lead_id, $lead_id, $user_message);

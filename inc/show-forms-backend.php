@@ -109,25 +109,7 @@ Class LFB_SHOW_FORMS {
         $prepare_15 = $wpdb->prepare("SELECT * FROM $table_name WHERE form_status = %s ", 'ACTIVE' );
         $rows = $th_save_db->lfb_get_form_content($prepare_15);
         $rows = count($rows);
-        // $total = ceil($rows / $limit);
-
-        // if ($id > 1) {
-        //     echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id - 1) ). "' class='button'><i class='fa fa-chevron-right'></i></a>";
-        // }
-
-        // if ($id != $total) {
-        //     echo "<a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" . intval($id + 1) ). "' class='button'><i class='fa fa-chevron-left'></i></a>";
-        // }
-
-        // echo "<ul class='page'>";
-        // for ($i = 1; $i <= $total; $i++) {
-        //     if ($i == $id) {
-        //         echo "<li class='lf-current'><a href='#'>" . intval($i) . "</a></li>";
-        //     } else {
-        //         echo "<li><a href='". esc_url($lfb_admin_url . "admin.php?page=lead-forms&page_id=" .intval($i) ). "'>" . intval($i) . "</a></li>";
-        //     }
-        // }
-        // echo '</ul>';
+        
         echo '</div> </div></div>';
 
     }

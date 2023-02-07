@@ -584,7 +584,6 @@ jQuery(function() {
             saveButtonActive();
             var arrColor = [];
 
-
             //Button background color
             $lfb_color_button_text = jQuery('#lfb_color_button_text').val();
             $lfb_color_button_bg = jQuery('#lfb_color_button_bg').val();
@@ -596,12 +595,7 @@ jQuery(function() {
                 "border-color": $lfb_color_button_border
             });
 
-
-
             $lfb_color_bg = jQuery('#lfb_color_bg').val();
-
-            //jQuery(".leadform-show-form .lead-form-front").css("background-color", $lfb_color_bg);
-            //jQuery(".leadform-show-form .lead-form-front:before").css("background-color", $lfb_color_bg);
 
             //heading color
             $lfb_color_heading = jQuery('#lfb_color_heading').val();
@@ -646,7 +640,6 @@ jQuery(function() {
         jQuery('input.alpha-color-picker').alphaColorPicker();
         jQuery('input.alpha-color-picker').wpColorPicker(myOptions);
 
-
         // save color settings
         jQuery(document).on('click', '#saveColor', function(event) {
             jQuery(".spinner").css({
@@ -661,7 +654,6 @@ jQuery(function() {
             $form_data = $serialize + "&colorid=" + $colorid + "&action=SaveColorsSettings";
 
             SaveByAjaxRequest($form_data, 'POST').success(function(response) {
-                //alert(response);
                 if (jQuery.trim(response) == 1) {
                     setTimeout(function() {
                         //do something special
@@ -728,7 +720,6 @@ function add_new_form_fields(this_field_id) {
 
         var field_remove_button = "<td><input type='button' class='button lf_remove' name='remove_field' id='remove_field_" + field_id + "' onclick='remove_form_fields(" + field_id + ")' value='Remove'></td>";
 
-
         var field_hidden_id = "<input type='hidden' value=" + field_id + " name='lfb_form[form_field_" + field_id + "][field_id]'>";
         var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_placeholder + field_required + field_remove_button + field_hidden_id + "</tr>";
         jQuery(".append_new").append(new_form_field);
@@ -768,12 +759,10 @@ jQuery("form#new_lead_form").submit(function(event) {
         jQuery(".new_form_heading").focus();
     }
 })
+
 /*
  *Add dynamic sub-fields according to Field Type
  */
-
-
-
 function htmlfield(parent_id, this_parent_id) {
     jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
     jQuery(parent_id).find('input.default_value').hide();
@@ -849,8 +838,6 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             jQuery(parent_id).find('#delete_option_1').css("display", "none");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
-
-
         }
     } else if (str == 'checkbox') {
         jQuery(parent_id).find(' #add_checkbox').css("display", "block");

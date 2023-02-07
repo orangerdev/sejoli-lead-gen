@@ -126,26 +126,26 @@ function lfb_wp_assets() {
 
     global $wp;
 
-    wp_enqueue_style('lfb_f_css', LFB_PLUGIN_URL . 'css/f-style.css');
-    wp_enqueue_script('jquery-ui-datepicker');        
-
-    wp_enqueue_script('lfb_f_js', LFB_PLUGIN_URL . 'js/f-script.js', array('jquery'), LFB_VER, true);
-    wp_localize_script('lfb_f_js', 'frontendajax', 
-        array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'affiliate' => array(
-                'link' => array(
-                    'ajaxurl' => add_query_arg([
-                        'action' => 'sejoli-form-lead-affiliate-link-list'
-                    ], admin_url('admin-ajax.php')),
-                    'nonce' => wp_create_nonce('sejoli-list-form-lead-affiliate-link')
-                ),
-                'placeholder' => __('Pencarian Form Lead', 'sejoli-lead-form')
-            )
-        ));
-    wp_enqueue_style('font-awesome', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
-
     if($wp->request === 'member-area/lead-entries' || $wp->request === 'member-area/lead-affiliasi') {
+        wp_enqueue_style('lfb_f_css', LFB_PLUGIN_URL . 'css/f-style.css');
+        wp_enqueue_script('jquery-ui-datepicker');        
+
+        wp_enqueue_script('lfb_f_js', LFB_PLUGIN_URL . 'js/f-script.js', array('jquery'), LFB_VER, true);
+        wp_localize_script('lfb_f_js', 'frontendajax', 
+            array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'affiliate' => array(
+                    'link' => array(
+                        'ajaxurl' => add_query_arg([
+                            'action' => 'sejoli-form-lead-affiliate-link-list'
+                        ], admin_url('admin-ajax.php')),
+                        'nonce' => wp_create_nonce('sejoli-list-form-lead-affiliate-link')
+                    ),
+                    'placeholder' => __('Pencarian Form Lead', 'sejoli-lead-form')
+                )
+            ));
+        wp_enqueue_style('font-awesome', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
+
         wp_enqueue_style('wpth_fa_css', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
         wp_enqueue_style('lfb-option-css', LFB_PLUGIN_URL . 'css/option-style.css');
         wp_enqueue_style('sweet-dropdown.min', LFB_PLUGIN_URL . 'css/jquery.sweet-dropdown.min.css');
@@ -219,15 +219,16 @@ function lfb_wp_assets() {
             "zeroRecords"    => __("Tidak ditemukan data yang sesuai","sejoli-lead-form"),
             "paginate"       =>
                 array(
-                "first"    => __("Pertama","sejoli-lead-form"),
-                "last"     => __("Terakhir","sejoli-lead-form"),
-                "next"     => __("Selanjutnya","sejoli-lead-form"),
-                "previous" => __("Sebelumnya","sejoli-lead-form")
-            ),
-            "aria"           => array(
-                "sortAscending"  => __("Klik untuk mengurutkan kolom naik","sejoli-lead-form"),
-                "sortDescending" => __("Klik untuk mengurutkan kolom turun","sejoli-lead-form")
-            ),
+                    "first"    => __("Pertama","sejoli-lead-form"),
+                    "last"     => __("Terakhir","sejoli-lead-form"),
+                    "next"     => __("Selanjutnya","sejoli-lead-form"),
+                    "previous" => __("Sebelumnya","sejoli-lead-form")
+                ),
+            "aria"           => 
+                array(
+                    "sortAscending"  => __("Klik untuk mengurutkan kolom naik","sejoli-lead-form"),
+                    "sortDescending" => __("Klik untuk mengurutkan kolom turun","sejoli-lead-form")
+                ),
             "fixedcolumn"  => $fixedcolumn
         ));
         // wp_enqueue_script( 'semantic-ui');
@@ -333,7 +334,7 @@ function lfb_add_contact_forms() {
         $table_name,
         array( 
             'form_title' => $title,
-          'form_data' => maybe_serialize($data_form)
+            'form_data' => maybe_serialize($data_form)
         ), 
         array( 'id' => $update_form_id ));
         $rd_url = esc_url(admin_url().'admin.php?page=add-new-form&action=edit&redirect=update&formid='.$update_form_id);

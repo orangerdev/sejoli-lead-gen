@@ -103,12 +103,12 @@ Class LFB_Front_end_FORMS {
             $error_msg = '';
             $redirect_url = $this->lfb_redirect_url($posts);
             $this_form_size = (isset($posts[0]->form_size)?$posts[0]->form_size:'');
-            $submit_field_type=0;
+            $submit_field_type = 0;
+            
             foreach ($form_data_result as $results) {
                 $field_name = '';
                 $field_type = '';
                 $default_value = '';
-                // $default_phonenumber = '';
                 $is_required = '';
                 if (isset($results['field_name'])) {
                     $field_name = $results['field_name'];
@@ -134,12 +134,6 @@ Class LFB_Front_end_FORMS {
                         $default_value = $default_value;
                     }
                 }
-
-                // if (isset($results['default_phonenumber'])) {
-                //     $default_phonenumber = $results['default_phonenumber'];
-                // } else {
-                //     $default_phonenumber = 0;
-                // }
 
                 if (isset($results['is_required'])) {
                     $is_required = $results['is_required'];

@@ -441,7 +441,6 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbFieldName($fieldv,$fieldID);
         $return .= $this->lfbFieldTypeDefault($fieldtype,$value,$fieldID);
         $return .= $this->lfbFieldDefaultValue($fieldv,$fieldID,$fieldtype);
-        // $return .= $this->lfbFieldPlaceholder($fieldv,$fieldID,$fieldtype);
         $return .= $this->lfbFieldIsRequired($fieldv,$fieldID);
         $return .= $this->lfbRemoveField($fieldID);
         
@@ -460,7 +459,6 @@ Class LFB_EDIT_DEL_FORM {
         $return .= $this->lfbFieldName($fieldv,$fieldID);
         $return .= $this->lfbFieldTypeDefault('message','Message',$fieldID);
         $return .= $this->lfbFieldDefaultValue($fieldv,$fieldID,$fieldtype);
-        // $return .= $this->lfbFieldPlaceholder($fieldv,$fieldID,$fieldtype);
         $return .= $this->lfbFieldIsRequired($fieldv,$fieldID);
         $return .= $this->lfbRemoveField($fieldID);
 
@@ -528,8 +526,6 @@ Class LFB_EDIT_DEL_FORM {
             <div class="" id="default_add_option">' . $isChecked . '</div>
             </div>
             </td>';
-
-        // $return .= '<td>-</td>';
            
         $return .= $this->lfbFieldIsRequired($fieldv,$fieldID);
 
@@ -554,7 +550,6 @@ Class LFB_EDIT_DEL_FORM {
             $checked = isset($fieldv['default_value']['field']) && $fieldv['default_value']['field']==$checkboxId?'checked':'';
 
             $fieldMinus = '<p class="button lf_minus" id="delete_radio_' . $checkboxId . '" onclick="delete_radio_fields(' . $fieldID . ',' . $checkboxId . ')"><i class="fa fa-minus" aria-hidden="true"></i></p>';
-
 
             if($lastFieldID < $checkboxId){
                 $lastFieldID = $checkboxId;
