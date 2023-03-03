@@ -126,25 +126,34 @@ function lfb_wp_assets() {
 
     global $wp;
 
-    if($wp->request === 'member-area/lead-entries' || $wp->request === 'member-area/lead-affiliasi') {
-        wp_enqueue_style('lfb_f_css', LFB_PLUGIN_URL . 'css/f-style.css');
-        wp_enqueue_script('jquery-ui-datepicker');        
+    wp_enqueue_script('jquery-ui-datepicker');        
 
-        wp_enqueue_script('lfb_f_js', LFB_PLUGIN_URL . 'js/f-script.js', array('jquery'), LFB_VER, true);
-        wp_localize_script('lfb_f_js', 'frontendajax', 
-            array(
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'affiliate' => array(
-                    'link' => array(
-                        'ajaxurl' => add_query_arg([
-                            'action' => 'sejoli-form-lead-affiliate-link-list'
-                        ], admin_url('admin-ajax.php')),
-                        'nonce' => wp_create_nonce('sejoli-list-form-lead-affiliate-link')
-                    ),
-                    'placeholder' => __('Pencarian Form Lead', 'sejoli-lead-form')
-                )
-            ));
-        wp_enqueue_style('font-awesome', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
+    wp_enqueue_script('lfb_f_js', LFB_PLUGIN_URL . 'js/f-script.js', array('jquery'), LFB_VER, true);
+    wp_localize_script('lfb_f_js', 'frontendajax', 
+        array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'affiliate' => array(
+                'link' => array(
+                    'ajaxurl' => add_query_arg([
+                        'action' => 'sejoli-form-lead-affiliate-link-list'
+                    ], admin_url('admin-ajax.php')),
+                    'nonce' => wp_create_nonce('sejoli-list-form-lead-affiliate-link')
+                ),
+                'placeholder' => __('Pencarian Form Lead', 'sejoli-lead-form')
+            )
+        ));
+    wp_enqueue_style('font-awesome', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
+
+    $pagename = isset($wp->query_vars['pagename']) ? $wp->query_vars['pagename'] : '';
+    if( $pagename !== "" ) :
+
+        wp_enqueue_style('lfb_f_css', LFB_PLUGIN_URL . 'css/f-style.css');
+
+    endif;
+
+    if( $wp->request === 'member-area/lead-entries' || $wp->request === 'member-area/lead-affiliasi' ) :
+
+        wp_enqueue_style('lfb_f_css', LFB_PLUGIN_URL . 'css/f-style.css');
 
         wp_enqueue_style('wpth_fa_css', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
         wp_enqueue_style('lfb-option-css', LFB_PLUGIN_URL . 'css/option-style.css');
@@ -219,16 +228,15 @@ function lfb_wp_assets() {
             "zeroRecords"    => __("Tidak ditemukan data yang sesuai","sejoli-lead-form"),
             "paginate"       =>
                 array(
-                    "first"    => __("Pertama","sejoli-lead-form"),
-                    "last"     => __("Terakhir","sejoli-lead-form"),
-                    "next"     => __("Selanjutnya","sejoli-lead-form"),
-                    "previous" => __("Sebelumnya","sejoli-lead-form")
-                ),
-            "aria"           => 
-                array(
-                    "sortAscending"  => __("Klik untuk mengurutkan kolom naik","sejoli-lead-form"),
-                    "sortDescending" => __("Klik untuk mengurutkan kolom turun","sejoli-lead-form")
-                ),
+                "first"    => __("Pertama","sejoli-lead-form"),
+                "last"     => __("Terakhir","sejoli-lead-form"),
+                "next"     => __("Selanjutnya","sejoli-lead-form"),
+                "previous" => __("Sebelumnya","sejoli-lead-form")
+            ),
+            "aria"           => array(
+                "sortAscending"  => __("Klik untuk mengurutkan kolom naik","sejoli-lead-form"),
+                "sortDescending" => __("Klik untuk mengurutkan kolom turun","sejoli-lead-form")
+            ),
             "fixedcolumn"  => $fixedcolumn
         ));
         // wp_enqueue_script( 'semantic-ui');
@@ -239,7 +247,9 @@ function lfb_wp_assets() {
         wp_enqueue_script('sweet-dropdown.min', LFB_PLUGIN_URL . 'js/jquery.sweet-dropdown.min.js', '', LFB_VER, true);
         // wp_enqueue_script('lfb_b_js', LFB_PLUGIN_URL . 'js/b-script.js', array('jquery'), LFB_VER, true);
         wp_localize_script('lfb_f_js', 'backendajax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    }
+    
+    endif;
+
 }
 add_action('wp_enqueue_scripts', 'lfb_wp_assets', 15);
 
