@@ -1500,8 +1500,8 @@ function lfb_lead_sanitize($leads){
 
 function lfb_get_previous_email($form_product, $form_id) {
 
-    $unix_limit   = current_time( 'timestamp' ) - ( 5 * 60 );
-    $day_limit    = date('Y-m-d H:i:s', $unix_limit);
+    $unix_limit = current_time( 'timestamp' ) - ( 30 );
+    $day_limit  = date('Y-m-d H:i:s', $unix_limit);
 
     global $wpdb;
 
@@ -1543,9 +1543,11 @@ function lfb_Save_Form_Data(){
             $user_emailid = esc_html__('invalid_email', 'sejoli-lead-form');
         }
 
-        $entries   = lfb_get_previous_email( $form_product, $form_id);
+        $entries       = lfb_get_previous_email( $form_product, $form_id);
+        $get_latest_ip = isset($entries[0]->ip_address) ? $entries[0]->ip_address : '';
+        $lp            = new LFB_LeadStoreType();
 
-        if (count($entries) !== 0) {
+        if ( $lp->lfb_get_user_ip_addres() === $get_latest_ip ) {
 
             wp_send_json(__('sudah isi data'));
 
