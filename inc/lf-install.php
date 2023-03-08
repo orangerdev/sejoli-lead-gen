@@ -143,9 +143,9 @@ function lfb_wp_assets() {
             )
         ));
     wp_enqueue_style('font-awesome', LFB_PLUGIN_URL . 'font-awesome/css/font-awesome.css');
-
+    
     $pagename = isset($wp->query_vars['pagename']) ? $wp->query_vars['pagename'] : '';
-    if( $pagename !== "" ) :
+    if( $pagename !== "" || empty($wp->query_vars) ) :
 
         wp_enqueue_style('lfb_f_css', LFB_PLUGIN_URL . 'css/f-style.css');
 
