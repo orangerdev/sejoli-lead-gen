@@ -127,6 +127,7 @@ Class LFB_Show_Leads {
                 echo '</div>';
             }
             $this->lfb_show_leads_first_form($first_form_id);
+            echo '<div class="loading" style="display: none;">'.esc_html__('Please Wait...', 'sejoli-lead-form').'</div>';
             echo '</div>';
         echo '</div>';
     }
@@ -312,7 +313,7 @@ Class LFB_Show_Leads {
                 <label for="select_form_lead"><b>'.esc_html__('Select From','sejoli-lead-form').'</b></label></th>
                 <td><select name="select_form_lead" id="select_form_lead">' . wp_kses($option_form,$this->expanded_alowed_tags()) . '</select>
                 <td><input rem_nonce = "'.$rem_nonce.'" type="button" value="'.esc_html__('Show Entries','sejoli-lead-form').'" onclick="remember_this_form_id();" id="remember_this_form_id"></td>
-                </tr><tr><td><div id="remember_this_message" ></div></td></tr></tbody></table></div></div></div><div class="wrap" id="form-leads-shows-box">';
+                </tr><tr><td colspan="3"><div id="remember_this_message" ></div></td></tr></tbody></table></div></div></div><div class="wrap" id="form-leads-shows-box">';
             if(wp_is_mobile()){
                 echo '<div class="wrap" style="display: inline-block;width: 100%; margin-bottom: 1.5em !important;">';
                     echo '<h3 style="margin-bottom: 0;float: none;">'.$query_forms[0]->form_title.'</h3>';
@@ -327,6 +328,7 @@ Class LFB_Show_Leads {
                 echo '</div>';
             }
             $this->lfb_show_leads_first_form_by_affiliate($first_form_id);
+            echo '<div class="loading" style="display: none;">'.esc_html__('Please Wait...', 'sejoli-lead-form').'</div>';
             echo '</div>';
         echo '</div>';
     }
