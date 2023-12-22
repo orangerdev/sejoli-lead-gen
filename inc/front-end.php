@@ -236,8 +236,8 @@ Class LFB_Front_end_FORMS {
                 </div>
                 </form>
                 <p wppb-add-style="display:none;" style="display:none;" class="errormsg_'.intval($this_form_id).' errormsg">'.esc_html($error_msg).'</p>
-                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="infomsg_'.intval($this_form_id).' infomsg">'.esc_html($success_msg).'</p></div>
-                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p></div>'.$show_affiliate;
+                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="infomsg_'.intval($this_form_id).' infomsg">'.esc_html($success_msg).'</p>
+                <p wppb-add-style="display:none;" style="display:none;" redirect="'.esc_url($redirect_url).'" class="successmsg_'.intval($this_form_id).' successmsg">'.esc_html($success_msg).'</p>'.$show_affiliate;
 
             return $return;
 
