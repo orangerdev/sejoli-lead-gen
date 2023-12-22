@@ -1757,8 +1757,8 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $to = $customer_email['emailid'];
     $header = (isset($customer_setting['customer_email_setting']['header']))?$customer_setting['customer_email_setting']['header']:'Submit Form';
-    $subject = $customer_setting['customer_email_setting']['subject'];
-    $message = $customer_setting['customer_email_setting']['message'];
+    $subject = (isset($customer_setting['customer_email_setting']['subject']))?$customer_setting['customer_email_setting']['subject']:'';
+    $message = (isset($customer_setting['customer_email_setting']['message']))?$customer_setting['customer_email_setting']['message']:'';
     $shortcodes_a = '[lf-new-form-data]';
     $shortcodes_b = $form_entry_data; 
     $shortcode_form_name = '[form-name]';
@@ -1829,10 +1829,12 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
     $message = str_replace($shortcode_product_name, $product_name, $message);
     $message = str_replace($shortcode_product_price, $product_price, $message);
 
-    $headers[] = "From:".$header." <".$customer_setting['customer_email_setting']['from'].">";
-    $headers[] = "Reply-To:".$header." <".$customer_setting['customer_email_setting']['from'].">";  
+    $customer_email_setting_form = (isset($customer_setting['customer_email_setting']['form']))?$customer_setting['customer_email_setting']['form']:'';
+
+    $headers[] = "From:".$header." <".$customer_email_setting_form.">";
+    $headers[] = "Reply-To:".$header." <".$customer_email_setting_form.">";  
     
-    if($message && $to) {
+    if($message && $to && $subject) {
         $email = new LeadFormEmail();
         $email->send(
             array($to),

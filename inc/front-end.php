@@ -270,8 +270,10 @@ Class LFB_Front_end_FORMS {
         $fieldType = $data_array['field_type'];
         $fieldIdName = $data_array['field_type'].'_'.$data_array['field_id'];
 
+        $default_phone_number = $data_array['default_phonenumber'] ?? null;
+
         $text_email_url_number ='<div class="text-type lf-field"><label>' . $data_array['field_name'] . '</label>
-        <span class="lfb-date-parent" ><input id="' .  $fieldIdName . '" type="text" class="lf-form-text ' . ((($data_array['field_type'] == "date" )||($data_array['field_type'] == "dob"))? "lf-jquery-datepicker" : "" ) . '" name="' .  $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' value="' . ($data_array['default_phonenumber'] == 1 ? "" : $data_array['default_value'] ) . '" placeholder="' . ($data_array['default_phonenumber'] == 1 ? $data_array['default_value'] : "" ) . '" />
+        <span class="lfb-date-parent" ><input id="' .  $fieldIdName . '" type="text" class="lf-form-text ' . ((($data_array['field_type'] == "date" )||($data_array['field_type'] == "dob"))? "lf-jquery-datepicker" : "" ) . '" name="' .  $fieldIdName . '" ' . ($data_array['is_required'] == 1 ? 'required' : "" ) . ' value="' . ($default_phone_number == 1 ? "" : $data_array['default_value'] ) . '" placeholder="' . ($default_phone_number == 1 ? $data_array['default_value'] : "" ) . '" />
         </span></div>';
         // <span class="lfb-date-icon"><i class="fa fa-calendar"></i></span>
         
