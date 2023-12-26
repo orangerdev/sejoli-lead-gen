@@ -235,7 +235,6 @@ function lfb_SaveUserEmailSettings(){
 
         if ($update_leads) {
             echo esc_html("updated");
-        }
     }
 
     die();
