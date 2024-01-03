@@ -846,7 +846,7 @@ function lfb_ShowAllLeadThisForm(){
 
         $posts      = $getArray['posts'];
         $rows       = $getArray['rows'];
-        $limit      = $getArray['limit'];
+        $limit      = isset($getArray['limit']) ? $getArray['limit'] : '';
         $fieldData  = $getArray['fieldId'];
         $tableHead  = '';
         $headcount  = 1;
@@ -1585,67 +1585,72 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
     $th_save_db = new LFB_SAVE_DB();
     $posts = $th_save_db->lfb_get_form_data($form_id);
 
-    $code          = $posts[0]->autoresponder_setting;
-    $autoresponder = sejolisa_parsing_form_html_code( $code );
+    $code = $posts[0]->autoresponder_setting;
+    if($code) :
 
-    if( false !== $autoresponder['valid'] ) :
+        $autoresponder = sejolisa_parsing_form_html_code( $code );
+        
+        if( false !== $autoresponder['valid'] ) :
 
-        $body_fields = [];
+            $body_fields = [];
 
-        $form = $th_save_db->lfb_get_form_data($form_id);
-        $form_datas = maybe_unserialize($form[0]->form_data);
+            $form = $th_save_db->lfb_get_form_data($form_id);
+            $form_datas = maybe_unserialize($form[0]->form_data);
 
-        $form_field = $th_save_db->lfb_admin_email_send($form_id);
-        $form_data = maybe_unserialize($form_data);
+            $form_field = $th_save_db->lfb_admin_email_send($form_id);
+            $form_data = maybe_unserialize($form_data);
 
-        foreach ($form_datas as $results) {
+            foreach ($form_datas as $results) {
 
-            $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
-            $field_id = $results['field_id'];
+                $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
+                $field_id = $results['field_id'];
 
-            $data_email = '';
-            $data_name  = '';
-            $data_phone  = '';
+                $data_email = '';
+                $data_name  = '';
+                $data_phone  = '';
 
-            if ($type === 'email') { 
-                $data_email = $form_data['email_'.$field_id];
-            } elseif($type === 'name') { 
-                $data_name = $form_data['name_'.$field_id];
-            } elseif ( $type === 'phonenumber' ) {
-                $data_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                if ($type === 'email') { 
+                    $data_email = $form_data['email_'.$field_id];
+                } elseif($type === 'name') { 
+                    $data_name = $form_data['name_'.$field_id];
+                } elseif ( $type === 'phonenumber' ) {
+                    $data_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                }
+
             }
 
-        }
+            foreach($autoresponder['fields'] as $field) :
 
-        foreach($autoresponder['fields'] as $field) :
+                if('email' === $field['type']) :
+                    $body_fields[$field['name']] = $data_email;
+                elseif('name' === $field['type']) :
+                    $body_fields[$field['name']] = $data_name;
+                else :
+                    $body_fields[$field['name']] = $field['value'];
+                endif;
 
-            if('email' === $field['type']) :
-                $body_fields[$field['name']] = $data_email;
-            elseif('name' === $field['type']) :
-                $body_fields[$field['name']] = $data_name;
-            else :
-                $body_fields[$field['name']] = $field['value'];
-            endif;
+            endforeach;
 
-        endforeach;
+            $response = wp_remote_post( $autoresponder['form']['action'][0], [
+                'method'  => 'POST',
+                'timeout' => 30,
+                'headers' => array(
+                    'Referer'    => site_url(),
+                    'User-Agent' => $_SERVER['HTTP_USER_AGENT']
+                ),
+                'body' => $body_fields
+            ]);
 
-        $response = wp_remote_post( $autoresponder['form']['action'][0], [
-            'method'  => 'POST',
-            'timeout' => 30,
-            'headers' => array(
-                'Referer'    => site_url(),
-                'User-Agent' => $_SERVER['HTTP_USER_AGENT']
-            ),
-            'body' => $body_fields
-        ]);
+            do_action('sejoli/log/write', 'response autoresponder subscription', [
+                'url'         => $autoresponder['form']['action'][0],
+                'body_fields' => $body_fields,
+                'response'    => strip_tags(wp_remote_retrieve_body($response))
+            ]);
 
-        do_action('sejoli/log/write', 'response autoresponder subscription', [
-            'url'         => $autoresponder['form']['action'][0],
-            'body_fields' => $body_fields,
-            'response'    => strip_tags(wp_remote_retrieve_body($response))
-        ]);
+        endif;
 
     endif;
+
 
 }
 
@@ -1752,8 +1757,8 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
     $headers[] = 'Content-Type: text/html; charset=UTF-8';
     $to = $customer_email['emailid'];
     $header = (isset($customer_setting['customer_email_setting']['header']))?$customer_setting['customer_email_setting']['header']:'Submit Form';
-    $subject = $customer_setting['customer_email_setting']['subject'];
-    $message = $customer_setting['customer_email_setting']['message'];
+    $subject = (isset($customer_setting['customer_email_setting']['subject']))?$customer_setting['customer_email_setting']['subject']:'';
+    $message = (isset($customer_setting['customer_email_setting']['message']))?$customer_setting['customer_email_setting']['message']:'';
     $shortcodes_a = '[lf-new-form-data]';
     $shortcodes_b = $form_entry_data; 
     $shortcode_form_name = '[form-name]';
@@ -1824,10 +1829,12 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
     $message = str_replace($shortcode_product_name, $product_name, $message);
     $message = str_replace($shortcode_product_price, $product_price, $message);
 
-    $headers[] = "From:".$header." <".$customer_setting['customer_email_setting']['from'].">";
-    $headers[] = "Reply-To:".$header." <".$customer_setting['customer_email_setting']['from'].">";  
+    $customer_email_setting_form = (isset($customer_setting['customer_email_setting']['form']))?$customer_setting['customer_email_setting']['form']:'';
+
+    $headers[] = "From:".$header." <".$customer_email_setting_form.">";
+    $headers[] = "Reply-To:".$header." <".$customer_email_setting_form.">";  
     
-    if($message) {
+    if($message && $to && $subject) {
         $email = new LeadFormEmail();
         $email->send(
             array($to),
@@ -2124,7 +2131,7 @@ function lfb_ProceedToCustomer(){
             $user = sejolisa_get_user( $userMail );
         endif;
 
-        $user_id = $user->ID;
+        $user_id = ($user) ? $user->ID : null;
 
         $post_data = [
             'product_id'    => $product_id,
