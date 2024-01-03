@@ -1,6 +1,34 @@
-/*
- *Tabs in admin area
- */
+function SavedataByAjaxRequest(data, method) {
+
+    return jQuery.ajax({
+        url: frontendajax.ajaxurl,
+        type: method,
+        data: data,
+        cache: false
+    });
+
+}
+
+function lfbErrorCheck(){
+
+    var termaccept = true;
+    if(jQuery('.term_accept').length){
+        var termaccept = false;
+        var numItems = jQuery('.term_accept').length;
+        jQuery('.term_accept').css("outline", "2px solid #f50808");
+
+        jQuery("input:checkbox[class=term_accept]:checked").each(function () {
+            --numItems;
+            jQuery('#'+jQuery(this).attr("id")).css("outline", "none");
+            if(numItems==false){
+                termaccept = true;
+            }
+        });
+    }
+
+    return termaccept;
+}
+
 function showLoading() {
     jQuery(".loading").show();
 }
@@ -8,205 +36,206 @@ function hideLoading() {
     jQuery(".loading").hide();    
 }
 
-jQuery(function() {
 
-    jQuery('.button-status-lead').click(function() {
+jQuery(document).ready(function(){
 
-        var leadID = jQuery(this).attr('data-lead-id');
+    var dateToday = new Date();
 
-        if (confirm('Proses data #'+leadID+' ke Customer?')) {
-            showLoading();
+    jQuery('.lf-jquery-datepicker').datepicker({
+        dateFormat: "mm/dd/yy",
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        autoclose: true,
+        changeMonth: true,
+        changeYear: true,
+        gotoCurrent: true,
+        yearRange:  (dateToday.getFullYear()-200) +":" + (dateToday.getFullYear()),
+    });
+});
 
-            var form_data = "lead-id=" + leadID + "&action=ProceedToCustomer";
-            SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-                if (true === response) {
-                    alert("Data Berhasil di Proses ke Customer!");
-                    window.location.reload();
-                } else {
-                    alert("Data Gagal di Proses ke Customer!");
-                    window.location.reload();
-                }
+ var CaptchaCallback = function(){  
+        var recaptcha = jQuery(".g-recaptcha").attr('data-sitekey'); 
+        jQuery('.g-recaptcha').each(function(){
+            grecaptcha.render(this,{
+                'sitekey' : recaptcha,
+                'callback' : correctCaptcha,
             });
+        })
+  };
 
-            // var url = jQuery(this).attr('href');
-            // $('#content').load(url);
+ var correctCaptcha = function(response) {
+ };
+
+ function lfb_upload_button(newthis){
+
+    $id = jQuery(newthis).attr('filetext');
+    $var = jQuery(newthis).val();
+
+    $newValue = $var.replace("C:\\fakepath\\", "");
+    
+    jQuery("."+$id).val($newValue);
+    //jQuery("."+$id).val($var);
+    
+}
+
+/*
+ *Save form data from front-end
+ */
+ // inser form data
+function lfbInserForm(element,form_id,uploaddata='') {
+
+    var this_form_data = element.serialize();
+
+    if(uploaddata!=''){
+        this_form_data = this_form_data + '&' + uploaddata;
+    } 
+
+    var lfbFormData = { fdata : this_form_data, action : 'Save_Form_Data' };
+
+    jQuery.ajax({
+        type: 'POST',
+        url: frontendajax.ajaxurl,
+        data: lfbFormData,
+        cache: false,
+        success: function(response) {
             
-        }
-    });
+            element.find('#loading_image').hide();
 
-    var colCount = jQuery("#show-leads-table tr th").length;
-    if(colCount > 9){
-        $scrollInnerWidth = "170%";
-    } else {
-        $scrollInnerWidth = "110%";
-    }
+            if (jQuery.trim(response) == "sudah isi data") {
+                element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Anda sudah pernah isi data sebelumnya, silahkan tunggu beberapa saat untuk melakukan pengisian lagi.</p></div>");
 
-    jQuery('#show-leads-table').DataTable({
-        language   : dataTableTranslation,
-        responsive : false,
-        scrollX    : true,
-        scrollCollapse: true,
-        sScrollXInner: $scrollInnerWidth,
-        autoWidth   : true,
-        fixedColumns: {
-            leftColumns: dataTableTranslation.fixedcolumn
-        },
-        paging     : true,
-        searching  : false,
-        processing : true,
-        pageLength : 10,
-        order      : [],
-        dom: 'Blfrtip',
-        buttons: [ 
-            { 
-                extend: 'collection',
-                text: '<i class="fa fa-download"></i> Download Data',
-                className: 'btn btn-sm btn-outline-dark no-round-right',
-                buttons: [ 
-                    {
-                        extend:    'csv',
-                        text:      '<i class="fa fa-file-o"></i>',
-                        titleAttr: 'Download as CSV',
-                        className: 'btn btn-md mr-2 btn-csv'
-                    },
-                    {
-                        extend:    'excel',
-                        text:      '<i class="fa fa-file-excel-o"></i>',
-                        titleAttr: 'Download as Excel',
-                        className: 'btn btn-md mr-2 btn-excel'
-                    },
-                    {
-                        extend:    'pdf',
-                        text:      '<i class="fa fa-file-pdf-o"></i>',
-                        titleAttr: 'Download as PDF',
-                        className: 'btn btn-md mr-2 btn-pdf'
-                    },
-                    {
-                        extend:    'print',
-                        text:      '<i class="fa fa-print"></i>',
-                        titleAttr: 'Print',
-                        className: 'btn btn-md mr-2 btn-print'
+            } else if (jQuery.trim(response) == 'invalidcaptcha') {
+
+                element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
+                grecaptcha.reset();
+
+            } else if (jQuery.trim(response) > 0) {
+                var redirect = jQuery(".successmsg_"+form_id).attr('redirect');
+                if(jQuery.trim(redirect)!=''){
+                    element.siblings(".successmsg_"+form_id).css('display','none');
+                    jQuery('#lfb-submit').trigger('click');
+                    // element.hide();
+                    element.siblings(".text-affiliate-by").hide();
+                    if (typeof grecaptcha === "function") { 
+                        grecaptcha.reset();
                     }
-                ],
+                    window.location.href = redirect;
+                } else {
+                    element.siblings(".successmsg_"+form_id).css('display','block');
+                    jQuery('#lfb-submit').trigger('click');
+                    element.hide();
+                    element.siblings(".text-affiliate-by").hide();
+                    if (typeof grecaptcha === "function") { 
+                        grecaptcha.reset();
+                    }
+                }
             }
-        ],
+
+        }
     });
+}
 
-    jQuery('#lead-form-list').DataTable({
-        language   : dataTableTranslation,
-        searching  : false,
-        processing : true,
-        pageLength : 10,
-        autoWidth  : true,
-        order      : [],
-    });
+function lfbfileUpload(element,form_id) {
 
-    var start = moment().subtract(29, 'days');
-    var end = moment();
-
-    function cb(start, end) {
-        jQuery('input[name="filter-lead-entries"]').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+    var fd = new FormData();
+    var file = element.find('input[type="file"]');
+    for (var i = 0, len = file.length; i < len; i++) {
+        if(file[i].files[0]!=undefined){
+            //console.log(file[i].name);
+            //console.log(file[i].files[0].name);
+            fd.append(file[i].name, file[i].files[0]);
+        }
     }
 
-    jQuery('input[name="filter-lead-entries"]').daterangepicker({
-        startDate: start,
-        endDate: end,
-        locale: {
-          format: 'YYYY-MM-DD'
-        },
-        ranges: {
-           'Today': [moment(), moment()],
-           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-           'This Month': [moment().startOf('month'), moment().endOf('month')],
-           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    fd.append('action', 'fileupload');  
+    fd.append('fid', form_id);  
+    jQuery.ajax({
+        type: 'POST',
+        url: frontendajax.ajaxurl,
+        data: fd,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            var uploaddata = jQuery.trim(response);
+            lfbInserForm(element,form_id,uploaddata);
         }
-    }, cb);
+    });
+}
 
-    cb(start, end);
+//captcha validation check
+function lfbCaptchaCheck(element,form_id) {
 
-    jQuery("#filter_lead_entries").on('change', function() {
-        var startDate = jQuery(this).data('daterangepicker').startDate.format('Y-M-D');
-        var endDate = jQuery(this).data('daterangepicker').endDate.format('Y-M-D');
+    var captcha_res = element.find(".g-recaptcha-response").val();
+    form_data = "captcha_res="+captcha_res+"&action=verifyFormCaptcha";
 
-        event.preventDefault();
-        showLoading();
-
-        var form_id = jQuery('input[name="form_id_filter"]').val();
-        var form_data = "startDate=" + startDate + "&endDate=" + endDate + "&form_id=" + form_id + "&id=10&detailview=1&action=ShowAllLeadThisForm";
-        SaveByAjaxRequest(form_data, 'GET').success(function(response) {
-            hideLoading();
-            jQuery('#show-leads-table').empty();
-            jQuery('#show-leads-table').append(response);
-            jQuery('#show-leads-table').DataTable().clear().destroy();
-            var colCount = jQuery("#show-leads-table tr th").length;
-            if(colCount > 9){
-                $scrollInnerWidth = "170%";
+    SavedataByAjaxRequest(form_data, 'POST').success(function(response) {
+        element.find('#loading_image').hide();
+        if (jQuery.trim(response) == 'Yes') {
+            if(element.find('.upload-type').length) {
+                lfbfileUpload(element,form_id);
             } else {
-                $scrollInnerWidth = "110%";
+                lfbInserForm(element,form_id);
             }
-            jQuery('#show-leads-table').DataTable({
-                language   : dataTableTranslation,
-                responsive : false,
-                scrollX    : true,
-                scrollCollapse: true,
-                sScrollXInner: $scrollInnerWidth,
-                autoWidth   : true,
-                fixedColumns: {
-                    leftColumns: dataTableTranslation.fixedcolumn
-                },
-                paging     : true,
-                searching  : false,
-                processing : true,
-                pageLength : 10,
-                order      : [],
-                dom: 'Blfrtip',
-                buttons: [ 
-                    { 
-                        extend: 'collection',
-                        text: '<i class="fa fa-download"></i> Download Data',
-                        className: 'btn btn-sm btn-outline-dark no-round-right',
-                        buttons: [ 
-                            {
-                                extend:    'csv',
-                                text:      '<i class="fa fa-file-o"></i>',
-                                titleAttr: 'Download as CSV',
-                                className: 'btn btn-md mr-2 btn-csv'
-                            },
-                            {
-                                extend:    'excel',
-                                text:      '<i class="fa fa-file-excel-o"></i>',
-                                titleAttr: 'Download as Excel',
-                                className: 'btn btn-md mr-2 btn-excel'
-                            },
-                            {
-                                extend:    'pdf',
-                                text:      '<i class="fa fa-file-pdf-o"></i>',
-                                titleAttr: 'Download as PDF',
-                                className: 'btn btn-md mr-2 btn-pdf'
-                            },
-                            {
-                                extend:    'print',
-                                text:      '<i class="fa fa-print"></i>',
-                                titleAttr: 'Print',
-                                className: 'btn btn-md mr-2 btn-print'
-                            }
-                        ],
-                    }
-                ],
-            });
-
-            jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
-        });
+        } else {
+            element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
+            grecaptcha.reset();
+        }
     });
 
-    jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
+}
 
-    jQuery('.button-status-customer').click(function(e) {
-        e.preventDefault();
+// form submit
+jQuery(document).on('submit', "form.lead-form-front", function(event) {
+    
+    if(!lfbErrorCheck()) {
+        return false;
+    }
+
+    event.preventDefault(); 
+
+    var element = jQuery(this);
+    element.find('input[type=submit]').prop('disabled', true);
+
+    var form_id = element.find(".hidden_field").val();   
+    var captcha_status = element.find(".this_form_captcha_status").val();
+    
+    element.find('#loading_image').show();  
+    element.find(".leadform-show-message-form-"+form_id).empty();
+
+    if(captcha_status=='disable'){
+        if(element.find('.upload-type').length){
+            lfbfileUpload(element,form_id);
+        } else{
+            lfbInserForm(element,form_id);
+        }
+    } else {
+            lfbCaptchaCheck(element,form_id);
+    }
+
+    element.find('input[type=submit]').prop('disabled', false);
+
+});
+
+// required-field-function
+jQuery(function(){
+
+    var requiredCheckboxes = jQuery('.lead-form-front :checkbox[required]');
+    requiredCheckboxes.change(function(){
+        if(requiredCheckboxes.is(':checked')) {
+            requiredCheckboxes.removeAttr('required');
+        }
+        else {
+            requiredCheckboxes.attr('required', 'required');
+        }
     });
+    
+});
 
+
+/*
+ *Tabs in admin area
+ */
+jQuery(function() {
     // *Send data to save by Ajax 
     if (jQuery('#sortable').length) {
         jQuery("#sortable tbody").sortable();
@@ -284,6 +313,7 @@ jQuery(function() {
             }
         });
 
+
         // heading manage
         var handleHead = jQuery("#lfb-heading-handle");
         var valueHead = jQuery('#lfb_heading_font_size').val();
@@ -306,7 +336,6 @@ jQuery(function() {
                 saveButtonActive();
             }
         });
-
         // header top/bottom aligment
         var handleHeadTB = jQuery("#lfb-header-algmnt-tb-handle");
         var valueHeadTB = jQuery('#lfb_header_algmnt_tb').val();
@@ -617,7 +646,6 @@ jQuery(function() {
         jQuery('input.alpha-color-picker').alphaColorPicker();
         jQuery('input.alpha-color-picker').wpColorPicker(myOptions);
 
-
         // save color settings
         jQuery(document).on('click', '#saveColor', function(event) {
             jQuery(".spinner").css({
@@ -632,7 +660,6 @@ jQuery(function() {
             $form_data = $serialize + "&colorid=" + $colorid + "&action=SaveColorsSettings";
 
             SaveByAjaxRequest($form_data, 'POST').success(function(response) {
-                //alert(response);
                 if (jQuery.trim(response) == 1) {
                     setTimeout(function() {
                         //do something special
@@ -690,18 +717,17 @@ function add_new_form_fields(this_field_id) {
         var field_id = this_field_id + 1;
         var field_sr = "<td>" + field_id + "</td>";
         var field_name = "<td><input type='text' name='lfb_form[form_field_" + field_id + "][field_name]' id='field_name_" + field_id + "' value=''></td>";
-        var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='phonenumber'>Phone Number</option><option value='upload'>Upload File/Image</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
+        var field_type = "<td><select name='lfb_form[form_field_" + field_id + "][field_type][type]' id='field_type_" + field_id + "'><option value='select'>Select Field Type</option><option value='name'>Name</option><option value='email'>Email</option><option value='message'>Message</option><option value='dob'>DOB</option><option value='date'>Date</option><option value='text'>Text (Single Line Text)</option><option value='textarea'>Textarea (Multiple Line Text)</option><option value='htmlfield'>Content Area (Read only Text)</option><option value='url'>Url (Website url)</option><option value='number'>Number (Only Numeric 0-9 )</option><option value='radio'>Radio (Choose Single Option)</option><option value='option'>Option (Choose Single Option)</option><option value='checkbox'>Checkbox (Choose Multiple Option)</option><option value='terms'>Checkbox (Terms & condition)</option></select><div class='add_radio_checkbox_" + field_id + "' id='add_radio_checkbox'><div class='' id='add_radio'></div><div class='' id='add_checkbox'></div><div class='' id='add_option'></div></div></td>";
         var field_default = "<td><input type='text' class='default_value' name='lfb_form[form_field_" + field_id + "][default_value]' id='default_value_" + field_id + "' value=''><div class='default_htmlfield_" + field_id + "'' id='default_htmlfield'></div><div class='default_terms_" + field_id + "'' id='default_terms'></div><div class='add_default_radio_checkbox_" + field_id + "' id='add_default_radio_checkbox'><div class='' id='default_add_radio'></div><div class='' id='default_add_checkbox'></div><div class='' id='default_add_option'></div></div></td>";
+        var field_placeholder = "<td><input type='checkbox' class='default_placeholder' name='lfb_form[form_field_" + field_id + "][default_placeholder]' id='default_placeholder_" + field_id + "' value='1'></td>";
         var field_required = "<td><input type='checkbox' class='is_required' name='lfb_form[form_field_" + field_id + "][is_required]' id='is_required_" + field_id + "' value='1'></td>";
 
         // var field_add_button = "<td id='wpth_add_form_table_" + field_id + "'><input type='button' class='button lf_addnew' name='save' id='add_new_" + field_id + "' onclick='add_new_form_fields(" + field_id + ")' value='Add New'></td>";
 
         var field_remove_button = "<td><input type='button' class='button lf_remove' name='remove_field' id='remove_field_" + field_id + "' onclick='remove_form_fields(" + field_id + ")' value='Remove'></td>";
 
-
         var field_hidden_id = "<input type='hidden' value=" + field_id + " name='lfb_form[form_field_" + field_id + "][field_id]'>";
-        // var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_placeholder + field_required + field_remove_button + field_hidden_id + "</tr>";
-        var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_required + field_remove_button + field_hidden_id + "</tr>";
+        var new_form_field = "<tr id='form_field_row_" + field_id + "'>" + field_name + field_type + field_default + field_placeholder + field_required + field_remove_button + field_hidden_id + "</tr>";
         jQuery(".append_new").append(new_form_field);
 
         jQuery('.add-field').html("<span><input type='button' class='button lf_addnew' name='save' id='add_new_" + field_id + "' onclick='add_new_form_fields(" + field_id + ")' value='Add New'></span>");
@@ -714,9 +740,9 @@ function add_new_form_fields(this_field_id) {
 function remove_form_fields(field_id) {
     jQuery("#form_field_row_" + field_id).remove();
 }
-
 /*
  *Save forms in admin area
+
 function save_new_form() {
     var form_heading = jQuery(".new_form_heading").val();
     if (form_heading != '') {
@@ -739,15 +765,16 @@ jQuery("form#new_lead_form").submit(function(event) {
         jQuery(".new_form_heading").focus();
     }
 })
+
 /*
  *Add dynamic sub-fields according to Field Type
  */
-
 function htmlfield(parent_id, this_parent_id) {
     jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
     jQuery(parent_id).find('input.default_value').hide();
     jQuery(parent_id).find('input.is_required').hide();
     jQuery(parent_id).find('#default_htmlfield').show();
+
 
     var html_text = jQuery(parent_id).find('#default_htmlfield textarea').length;
     if (html_text < 1) {
@@ -755,6 +782,7 @@ function htmlfield(parent_id, this_parent_id) {
         jQuery(parent_id).find('#default_htmlfield').append(html_fields);
         jQuery(parent_id).find('input.default_value').hide();
         jQuery(parent_id).find('input.default_placeholder').hide();
+
     }
 }
 
@@ -794,7 +822,7 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             var default_add_radio = "<p id='default_radio_value_1'>radio name 1 <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_radio_value_1' value='1'></p>";
             jQuery(parent_id).find('#add_radio').append(radio_fields);
             jQuery(parent_id).find('#default_add_radio').append(default_add_radio);
-            jQuery(parent_id).find('#delete_radio_1').css("display", "inline-block");
+            jQuery(parent_id).find('#delete_radio_1').css("display", "none");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
 
@@ -813,11 +841,9 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             var default_add_option = "<p id='default_option_value_1'>option name 1 <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_option_value_1' value='1'></p>";
             jQuery(parent_id).find('#add_option').append(option_fields);
             jQuery(parent_id).find('#default_add_option').append(default_add_option);
-            jQuery(parent_id).find('#delete_option_1').css("display", "inline-block");
+            jQuery(parent_id).find('#delete_option_1').css("display", "none");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
-
-
         }
     } else if (str == 'checkbox') {
         jQuery(parent_id).find(' #add_checkbox').css("display", "block");
@@ -832,7 +858,7 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
             var default_add_checkbox = "<p id='default_checkbox_value_1'>checkbox name 1 <input type='checkbox' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field_1]' id='default_checkbox_value_1' value='1'></p>";
             jQuery(parent_id).find('#add_checkbox').append(checkbox_fields);
             jQuery(parent_id).find('#default_add_checkbox').append(default_add_checkbox);
-            jQuery(parent_id).find('#delete_checkbox_1').css("display", "inline-block");
+            jQuery(parent_id).find('#delete_checkbox_1').css("display", "none");
             jQuery(parent_id).find('input.default_value').attr('disabled', 'disabled');
             jQuery(parent_id).find('input.default_placeholder').attr('disabled', 'disabled');
 
@@ -845,7 +871,6 @@ jQuery("#wpth_add_form").on('change', 'select', function() {
         multioptionFieldHide(parent_id);
     }
 });
-
 /*
  *Delete dynamic sub-fields of Radio
  */
@@ -859,7 +884,6 @@ function delete_radio_fields(this_parent_id, radio_id) {
         jQuery(parent_id + " #default_radio_value_" + radio_id).remove();
     }
 }
-
 /*
  *Add dynamic sub-fields of Radio
  */
@@ -875,9 +899,8 @@ function add_new_radio_fields(this_parent_id, radio_id) {
     jQuery(parent_id + ' #add_radio').append(radio_fields);
     var default_add_radio = "<p id='default_radio_value_" + new_radio_id + "'>radio name " + new_radio_id + " <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_radio_val_" + new_radio_id + "' value='" + new_radio_id + "'></p>";
     jQuery(parent_id + ' #default_add_radio').append(default_add_radio);
-    jQuery(parent_id + ' #delete_radio_' + new_radio_id).css("display", "inline-block");
+    jQuery(parent_id + ' #delete_radio_' + new_radio_id).css("display", "none");
 }
-
 /*
  *Delete dynamic sub-fields of Checkbox
  */
@@ -891,7 +914,6 @@ function delete_checkbox_fields(this_parent_id, checkbox_id) {
         jQuery(parent_id + " #default_checkbox_value_" + checkbox_id).remove();
     }
 }
-
 /*
  *Add dynamic sub-fields of Checkbox
  */
@@ -907,9 +929,8 @@ function add_new_checkbox_fields(this_parent_id, checkbox_id) {
     jQuery(parent_id + ' #add_checkbox').append(checkbox_fields);
     var default_add_checkbox = "<p id='default_checkbox_value_" + new_checkbox_id + "'>checkbox name " + new_checkbox_id + " <input type='checkbox' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field_" + new_checkbox_id + "]' id='default_checkbox_val_" + new_checkbox_id + "' value='1'></p>";
     jQuery(parent_id + ' #default_add_checkbox').append(default_add_checkbox);
-    jQuery(parent_id + ' #delete_checkbox_' + new_checkbox_id).css("display", "inline-block");
+    jQuery(parent_id + ' #delete_checkbox_' + new_checkbox_id).css("display", "none");
 }
-
 /*
  *Delete dynamic sub-fields of Option
  */
@@ -923,7 +944,6 @@ function delete_option_fields(this_parent_id, option_id) {
         jQuery(parent_id + " #default_option_value_" + option_id).remove();
     }
 }
-
 /*
  *Add dynamic sub-fields of Option
  */
@@ -939,9 +959,8 @@ function add_new_option_fields(this_parent_id, option_id) {
     jQuery(parent_id + ' #add_option').append(option_fields);
     var default_add_option = "<p id='default_option_value_" + new_option_id + "'>option name " + new_option_id + " <input type='radio' class='' name='lfb_form[form_field_" + this_parent_id + "][default_value][field]' id='default_option_val_" + new_option_id + "' value=" + new_option_id + "></p>";
     jQuery(parent_id + ' #default_add_option').append(default_add_option);
-    jQuery(parent_id + ' #delete_option_' + new_option_id).css("display", "inline-block");
+    jQuery(parent_id + ' #delete_option_' + new_option_id).css("display", "none");
 }
-
 /*
  *Save email setting for each form
  */
@@ -951,6 +970,7 @@ jQuery("form#form-email-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-email-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -958,7 +978,6 @@ jQuery("form#form-email-setting").submit(function(event) {
         }
     });
 })
-
 /*
  *Save user email setting for each form
  */
@@ -968,6 +987,7 @@ jQuery("form#form-user-email-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-user-email-setting").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-user-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -975,24 +995,6 @@ jQuery("form#form-user-email-setting").submit(function(event) {
         }
     });
 })
-
-/*
- *Save affiliate email setting for each form
- */
-jQuery("form#form-affiliate-email-setting").submit(function(event) {
-    var form_data = jQuery("form#form-affiliate-email-setting").serialize();
-    form_data = form_data + "&action=SaveAffiliateEmailSettings";
-    event.preventDefault();
-    jQuery("#error-message-affiliate-email-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-affiliate-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-affiliate-email-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
 /*
  *Save captcha setting for each form
  */
@@ -1008,194 +1010,6 @@ jQuery("form#captcha-form").submit(function(event) {
     });
     event.preventDefault();
 })
-
-/*
- *Save wa setting for each form
- */
-jQuery("form#form-wa-setting").submit(function(event) {
-    var form_data = jQuery("form#form-wa-setting").serialize();
-    form_data = form_data + "&action=SaveWaSettings";
-    event.preventDefault();
-    jQuery("#error-message-wa-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-wa-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save user wa setting for each form
- */
-jQuery("form#form-user-wa-setting").submit(function(event) {
-    var form_data = jQuery("form#form-user-wa-setting").serialize();
-    form_data = form_data + "&action=SaveUserWaSettings";
-    event.preventDefault();
-    jQuery("#error-message-user-wa-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-user-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-user-wa-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save affiliate wa setting for each form
- */
-jQuery("form#form-affiliate-wa-setting").submit(function(event) {
-    var form_data = jQuery("form#form-affiliate-wa-setting").serialize();
-    form_data = form_data + "&action=SaveAffiliateWaSettings";
-    event.preventDefault();
-    jQuery("#error-message-affiliate-wa-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-affiliate-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-affiliate-wa-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save sms setting for each form
- */
-jQuery("form#form-sms-setting").submit(function(event) {
-    var form_data = jQuery("form#form-sms-setting").serialize();
-    form_data = form_data + "&action=SaveSMSSettings";
-    event.preventDefault();
-    jQuery("#error-message-sms-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-sms-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-/*
- *Save user sms setting for each form
- */
-jQuery("form#form-user-sms-setting").submit(function(event) {
-    var form_data = jQuery("form#form-user-sms-setting").serialize();
-    form_data = form_data + "&action=SaveUserSMSSettings";
-    event.preventDefault();
-    jQuery("#error-message-user-sms-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-user-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-user-sms-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save affiliate sms setting for each form
- */
-jQuery("form#form-affiliate-sms-setting").submit(function(event) {
-    var form_data = jQuery("form#form-affiliate-sms-setting").serialize();
-    form_data = form_data + "&action=SaveAffiliateSMSSettings";
-    event.preventDefault();
-    jQuery("#error-message-affiliate-sms-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-affiliate-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-affiliate-sms-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save customer email setting for each form
- */
-jQuery("form#form-customer-email-setting").submit(function(event) {
-    var form_data = jQuery("form#form-customer-email-setting").serialize();
-    form_data = form_data + "&action=SaveCustomerEmailSettings";
-    event.preventDefault();
-    jQuery("#error-message-customer-email-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-customer-email-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-customer-email-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save customer wa setting for each form
- */
-jQuery("form#form-customer-wa-setting").submit(function(event) {
-    var form_data = jQuery("form#form-customer-wa-setting").serialize();
-    form_data = form_data + "&action=SaveCustomerWaSettings";
-    event.preventDefault();
-    jQuery("#error-message-customer-wa-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-customer-wa-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-customer-wa-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save customer sms setting for each form
- */
-jQuery("form#form-customer-sms-setting").submit(function(event) {
-    var form_data = jQuery("form#form-customer-sms-setting").serialize();
-    form_data = form_data + "&action=SaveCustomerSMSSettings";
-    event.preventDefault();
-    jQuery("#error-message-customer-sms-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-customer-sms-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-customer-sms-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save autoresponder setting for each form
- */
-jQuery("form#form-autoresponder-setting").submit(function(event) {
-    var form_data = jQuery("form#form-autoresponder-setting").serialize();
-    form_data = form_data + "&action=SaveAutoresponderSettings";
-    event.preventDefault();
-    jQuery("#error-message-autoresponder-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-autoresponder-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-autoresponder-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save followup setting for each form
- */
-jQuery("form#form-followup-setting").submit(function(event) {
-    var form_data = jQuery("form#form-followup-setting").serialize();
-    form_data = form_data + "&action=SaveFollowUpSettings";
-    event.preventDefault();
-    jQuery("#error-message-followup-setting").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-followup-setting").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-followup-setting").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
 /*
  *Save leads setting for each form
  */
@@ -1205,27 +1019,11 @@ jQuery("form#lead-email-setting").submit(function(event) {
     form_data = form_data + "&action=SaveLeadSettings";
     jQuery("#error-message-lead-store").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+        // console.log(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-lead-store").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
             jQuery("#error-message-lead-store").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
-        }
-    });
-})
-
-/*
- *Save form display setting for each form
- */
-jQuery("form#form-option-setting").submit(function(event) {
-    var form_data = jQuery("form#form-option-setting").serialize();
-    event.preventDefault();
-    form_data = form_data + "&action=SaveFormOptionSettings";
-    jQuery("#error-message-form-option").find("div").remove();
-    SaveByAjaxRequest(form_data, 'POST').success(function(response) {
-        if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
-            jQuery("#error-message-form-option").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
-        } else {
-            jQuery("#error-message-form-option").append("<div class='error'><p>Something Went Wrong..!!</p></div>");
         }
     });
 })
@@ -1239,6 +1037,7 @@ jQuery("form#captcha-on-off-setting").submit(function(event) {
     event.preventDefault();
     jQuery("#error-message-captcha-option").find("div").remove();
     SaveByAjaxRequest(form_data, 'POST').success(function(response) {
+        //alert(response);
         if (jQuery.trim(response) == 'updated' || jQuery.trim(response) == '') {
             jQuery("#error-message-captcha-option").append("<div class='success'><p>Updated Succesfully..!!</p></div>");
         } else {
@@ -1274,7 +1073,6 @@ jQuery("form#lfb-form-success-msg").submit(function(event) {
         }
     });
 })
-
 /*
  *Delete particular Leads
  */
@@ -1320,11 +1118,10 @@ function lead_pagination_datewise(page_id, form_id, datewise) {
 
 function show_all_leads(page_id, form_id) {
     event.preventDefault();
-    var form_data = "form_id=" + form_id + "&id=" + page_id + "&detailview=1&action=ShowAllLeadThisForm";
+    var form_data = "form_id=" + form_id + "&id=" + page_id + "&detailview=1&action=ShowAllLeadThisFormByAffiliate";
     SaveByAjaxRequest(form_data, 'GET').success(function(response) {
         jQuery('#form-leads-show').empty();
         jQuery('#form-leads-show').append(response);
-
         var colCount = jQuery("#show-leads-table tr th").length;
         if(colCount > 9){
             $scrollInnerWidth = "170%";
@@ -1346,43 +1143,10 @@ function show_all_leads(page_id, form_id) {
             processing : true,
             pageLength : 10,
             order      : [],
-            dom: 'Blfrtip',
-            buttons: [ 
-                { 
-                    extend: 'collection',
-                    text: '<i class="fa fa-download"></i> Download Data',
-                    className: 'btn btn-sm btn-outline-dark no-round-right',
-                    buttons: [ 
-                        {
-                            extend:    'csv',
-                            text:      '<i class="fa fa-file-o"></i>',
-                            titleAttr: 'Download as CSV',
-                            className: 'btn btn-md mr-2 btn-csv'
-                        },
-                        {
-                            extend:    'excel',
-                            text:      '<i class="fa fa-file-excel-o"></i>',
-                            titleAttr: 'Download as Excel',
-                            className: 'btn btn-md mr-2 btn-excel'
-                        },
-                        {
-                            extend:    'pdf',
-                            text:      '<i class="fa fa-file-pdf-o"></i>',
-                            titleAttr: 'Download as PDF',
-                            className: 'btn btn-md mr-2 btn-pdf'
-                        },
-                        {
-                            extend:    'print',
-                            text:      '<i class="fa fa-print"></i>',
-                            titleAttr: 'Print',
-                            className: 'btn btn-md mr-2 btn-print'
-                        }
-                    ],
-                }
-            ],
         });
     });
 }
+
 
 function remember_this_form_id() {
     if (confirm("Show this entries?")) {
@@ -1393,7 +1157,7 @@ function remember_this_form_id() {
         var form_data = "rem_nonce=" + rem_nonce + "&form_id=" + form_id + "&action=RememberMeThisForm";
         SaveByAjaxRequest(form_data, 'POST').success(function(response) {
             if (jQuery.trim(form_id) == jQuery.trim(response)) {
-                // jQuery('#remember_this_message').append("<div><i>Please Wait...</i></div>");
+                // jQuery('#remember_this_message').append("<div><i>Please Wait...    </i></div>");
                 window.location.reload();
             }
         });
@@ -1419,11 +1183,11 @@ for (var i = 0; i < deleteLinks.length; i++) {
         }
     });
 }
-
 // customize-form backend content fix size
 jQuery(document).ready(function() {
     jQuery('#lfb_formColor').append('<style>#wpbody-content{width:800px;}</style>');
 });
+
 
 function openCity(cityName, elmnt, color) {
     // Hide all elements with class="tabcontent" by default */
@@ -1449,37 +1213,161 @@ if (document.getElementById("defaultOpen")) {
 }
 
 jQuery(function($) {
-    // simple multiple select
-    // multiple select with AJAX search
-    $('#sejoli_lead_select2_products').select2({
-        ajax: {
-            url: ajaxurl, // AJAX URL is predefined in WordPress admin
-            dataType: 'json',
-            delay: 250, // delay in ms while typing when to perform a AJAX search
-            data: function(params) {
-                return {
-                    q: params.term, // search query
-                    action: 'sejoli_lead_product' // AJAX action for admin-ajax.php
-                };
-            },
-            processResults: function(data) {
-                var options = [];
-                if (data) {
 
-                    // data is the array of arrays, and each of them contains ID and the Label of the option
-                    $.each(data, function(index, text) { // do not forget that "index" is just auto incremented value
-                        options.push({
-                            id: text[0],
-                            text: text[1]
-                        });
-                    });
-                }
-                return {
-                    results: options
-                };
-            },
-            cache: true
+    $.ajax({
+        url : frontendajax.ajaxurl,
+        data : {
+            action : 'sejoli_lead_form',
         },
-        minimumInputLength: 3 // the minimum of symbols to input before perform a search
+        type : 'GET',
+        dataType : 'json',
+        beforeSend : function() {
+
+        },
+        success : function(response) {
+            $('#lead_form_id').select2({
+                allowClear: true,
+                placeholder: frontendajax.affiliate.placeholder,
+                width:'100%',
+                data : response.results,
+                templateResult : function(data) {
+                    return $("<textarea/>").html(data.text).text();
+                },
+                templateSelection : function(data) {
+                    return $("<textarea/>").html(data.text).text();
+                }
+            });
+        }
     });
+
+    $(document).on("click",'#lead-affiliate-link-generator-button', function(e){
+        e.preventDefault();
+
+        if ( $('#lead_form_id').val() !== '' ) {
+            
+            $.ajax({
+                url : frontendajax.ajaxurl,
+                method: 'POST',
+                dataType : 'json',
+                data : {
+                    lead_form_id : $('#lead_form_id').val(),
+                    action: 'sejoli-form-lead-affiliate-link-list',
+                    nonce : frontendajax.affiliate.link.nonce,
+                },
+                beforeSend : function() {
+                    // sejoli.block();
+                    showLoading();
+                },
+                success : function(data) {
+                    hideLoading();
+                    if ( !$.isEmptyObject( data ) ) {
+                        var template = $.templates("#affiliate-link-tmpl");
+                        var htmlOutput = template.render({'data':data});
+                        $("#affiliate-link-holder").html(htmlOutput);
+                    } else {
+                        $('#affiliate-link-holder').html('<div class="ui red message">Data not found!</div>');
+                    }
+                }
+            });
+
+        } else {
+
+            $('#affiliate-link-holder').html('<div class="ui red message">Please select a lead form</div>');
+
+        }
+    });
+
+    $(document).ready(function(){
+        var colCount = jQuery("#show-leads-table tr th").length;
+        if(colCount > 9){
+            $scrollInnerWidth = "170%";
+        } else {
+            $scrollInnerWidth = "110%";
+        }
+        $('#show-leads-table').DataTable({
+            language   : dataTableTranslation,
+            responsive : false,
+            scrollX    : true,
+            scrollCollapse: true,
+            sScrollXInner: $scrollInnerWidth,
+            autoWidth   : true,
+            fixedColumns: {
+                leftColumns: dataTableTranslation.fixedcolumn
+            },
+            paging     : true,
+            searching  : false,
+            processing : true,
+            pageLength : 10,
+            order      : [],
+        });
+
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('input[name="filter-lead-entries"]').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+        }
+
+        $('input[name="filter-lead-entries"]').daterangepicker({
+            startDate: start,
+            endDate: end,
+            locale: {
+              format: 'YYYY-MM-DD'
+            },
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+
+        $("#filter_lead_entries").on('change', function() {
+            var startDate = jQuery(this).data('daterangepicker').startDate.format('Y-M-D');
+            var endDate = jQuery(this).data('daterangepicker').endDate.format('Y-M-D');
+
+            event.preventDefault();
+            showLoading();
+
+            var form_id = jQuery('input[name="form_id_filter"]').val();
+            var form_data = "startDate=" + startDate + "&endDate=" + endDate + "&form_id=" + form_id + "&id=10&detailview=1&action=ShowAllLeadThisForm";
+            SaveByAjaxRequest(form_data, 'GET').success(function(response) {
+                hideLoading();
+                jQuery('#show-leads-table').empty();
+                jQuery('#show-leads-table').append(response);
+                jQuery('#show-leads-table').DataTable().clear().destroy();
+
+                var colCount = jQuery("#show-leads-table tr th").length;
+                if(colCount > 9){
+                    $scrollInnerWidth = "170%";
+                } else {
+                    $scrollInnerWidth = "110%";
+                }
+                jQuery('#show-leads-table').DataTable({
+                    language   : dataTableTranslation,
+                    responsive : false,
+                    scrollX    : true,
+                    scrollCollapse: true,
+                    sScrollXInner: $scrollInnerWidth,
+                    autoWidth   : true,
+                    fixedColumns: {
+                        leftColumns: dataTableTranslation.fixedcolumn
+                    },
+                    paging     : true,
+                    searching  : false,
+                    processing : true,
+                    pageLength : 10,
+                    order      : [],
+                });
+
+                jQuery("#show-leads-table_wrapper > .dt-buttons").appendTo("div.export-button");
+            });
+        });
+
+    });
+
 });
