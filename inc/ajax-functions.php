@@ -1440,17 +1440,22 @@ function lfb_form_name_email_filter($form_data){
     $name_email = array();
     $e = false;
     $n = false;
+    $p = false;
     foreach ($form_data as $key => $value) {
         $email = strpos($key, 'email_');
         $name = strpos($key, 'name_');
+        $phone = strpos($key, 'phonenumber_');
         if ($email !== false) {
             $name_email['email'] = $value;
             $e = true;
         } elseif ($name !== false) {
             $name_email['name'] = $value;
             $n = true;
+        }elseif ($phone !== false) {
+            $name_email['phonenumber'] = phone_number_format($value);
+            $p = true;
         }
-        if ($e === true && $n === true) {
+        if ($e === true && $n === true && $p === true) {
             break;
         }
     }
@@ -1498,16 +1503,55 @@ function lfb_lead_sanitize($leads){
 
 }
 
-function lfb_get_previous_email($form_product, $form_id) {
-
-    $unix_limit = current_time( 'timestamp' ) - ( 30 );
-    $day_limit  = date('Y-m-d H:i:s', $unix_limit);
+function lfb_get_previous_submit_data($form_product, $form_id) {
 
     global $wpdb;
+
+    $limit_minute = 1;
+    $unix_limit   = current_time( 'timestamp' ) - ( $limit_minute * 60 );
+    $day_limit    = date('Y-m-d H:i:s', $unix_limit);
 
     $table_name = LFB_FORM_DATA_TBL;
 
     $rows = $wpdb->prepare(" SELECT * FROM $table_name WHERE form_id = %d AND product = %d AND `date` > '".$day_limit."'", $form_id, $form_product);
+    $posts = $wpdb->get_results($rows);
+
+    return $posts;
+
+}
+
+function lfb_check_user_has_submited_data($form_product, $form_id) {
+
+    global $wpdb;
+
+    $table_name = LFB_FORM_DATA_TBL;
+    
+    wp_parse_str($_POST['fdata'], $fromData);
+
+    $en = lfb_form_name_email_filter($fromData);
+
+    if($en['email'] && $en['phonenumber'] ) :
+
+        $rows = $wpdb->prepare("
+            SELECT * FROM $table_name 
+            WHERE form_id = $form_id 
+            AND product = $form_product
+            AND (form_data LIKE '%" . $en['email'] . "%' AND form_data LIKE '%" . str_replace("+62","0", $en['phonenumber']) . "%')
+            OR form_data LIKE '%" . $en['email'] . "%' 
+            OR form_data LIKE '%" . str_replace("+62","0", $en['phonenumber']) . "%'
+        ");
+
+    elseif($en['email'] || $en['phonenumber'] ) :
+
+        $rows = $wpdb->prepare("
+            SELECT * FROM $table_name 
+            WHERE form_id = $form_id 
+            AND product = $form_product
+            AND (form_data LIKE '%" . $en['email'] . "%' OR form_data LIKE '%" . str_replace("+62","0", $en['phonenumber']) . "%')
+        ");
+
+    endif;
+
     $posts = $wpdb->get_results($rows);
 
     return $posts;
@@ -1543,13 +1587,19 @@ function lfb_Save_Form_Data(){
             $user_emailid = esc_html__('invalid_email', 'sejoli-lead-form');
         }
 
-        $entries       = lfb_get_previous_email( $form_product, $form_id);
-        $get_latest_ip = isset($entries[0]->ip_address) ? $entries[0]->ip_address : '';
-        $lp            = new LFB_LeadStoreType();
+        $entries                     = lfb_get_previous_submit_data($form_product, $form_id);
+        $get_previous_submit_data_ip = isset($entries[0]->ip_address) ? $entries[0]->ip_address : '';
+        $user_entries                = lfb_check_user_has_submited_data($form_product, $form_id);
+        $get_user_has_submit_data_ip = isset($user_entries[0]->ip_address) ? $user_entries[0]->ip_address : '';
+        $lp                          = new LFB_LeadStoreType();
 
-        if ( $lp->lfb_get_user_ip_addres() === $get_latest_ip ) {
+        if ( $lp->lfb_get_user_ip_addres() === $get_previous_submit_data_ip ) {
 
             wp_send_json(__('sudah isi data'));
+
+        } else if ( $lp->lfb_get_user_ip_addres() === $get_user_has_submit_data_ip ) {
+
+            wp_send_json(__('data sudah ada'));
 
         } else {
 
@@ -1614,7 +1664,7 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
                 } elseif($type === 'name') { 
                     $data_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $data_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $data_phone = phone_number_format($form_data['phonenumber_'.$field_id]);
                 }
 
             }
