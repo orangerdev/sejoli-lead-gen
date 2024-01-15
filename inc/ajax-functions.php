@@ -1593,11 +1593,11 @@ function lfb_Save_Form_Data(){
         $get_user_has_submit_data_ip = isset($user_entries[0]->ip_address) ? $user_entries[0]->ip_address : '';
         $lp                          = new LFB_LeadStoreType();
 
-        if ( $lp->lfb_get_user_ip_addres() === $get_previous_submit_data_ip ) {
+        if ( $get_previous_submit_data_ip ) {
 
             wp_send_json(__('sudah isi data'));
 
-        } else if ( $lp->lfb_get_user_ip_addres() === $get_user_has_submit_data_ip ) {
+        } else if ( $get_user_has_submit_data_ip ) {
 
             wp_send_json(__('data sudah ada'));
 

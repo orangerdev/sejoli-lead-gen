@@ -33,6 +33,9 @@ Coming soon
 
 == Changelog ==
 
+= 1.0.2
+* Fix validasi input inquiry berkali-kali
+* Fix integrasi akses menu sesuai user group
 
 = 1.0.1
 * Fix error update lead to customer
