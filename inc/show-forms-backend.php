@@ -78,7 +78,8 @@ Class LFB_SHOW_FORMS {
                 $form_color = $lfb_admin_url . 'admin.php?page=lead-forms&action=show&formid=' . $form_id;
 
                 echo '<tr><td class="title column-title has-row-actions column-primary" data-colname="Title"><strong><a class="row-title" href="'.esc_url($edit_url_nonce).'" title="Edit “' . esc_html($form_title) . '”">' . esc_html($form_title) . '</a></strong>
-            		<div class="row-actions"><span class="edit"><a href="' . esc_url($edit_url_nonce). '">Edit</a></span>|<span class="edit"><a href="' . esc_url($lfb_admin_url) . 'admin.php?page=lead-forms&action=delete&page_id='.$id.'&formid=' . $form_id . '">Delete</a></span>|<span class="edit"><a href="'.esc_url($form_color).'" target="_blank" >View Form</a></span>
+            		<div class="row-actions"><span class="edit"><a href="' . esc_url($edit_url_nonce). '">Edit</a></span>|
+                    <span class="edit"><a onclick="return confirm(\'Anda yakin ingin menghapus form “' . esc_html($form_title) . '”?\');" href="' . esc_url($lfb_admin_url) . 'admin.php?page=lead-forms&action=delete&page_id='.$id.'&formid=' . $form_id . '">Delete</a></span>|<span class="edit"><a href="'.esc_url($form_color).'" target="_blank" >View Form</a></span>
             		</div>
             		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','sejoli-lead-form').' </span></button>
             		<button type="button" class="toggle-row"><span class="screen-reader-text">'.esc_html__('Show more details','sejoli-lead-form').' </span></button>
