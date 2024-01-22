@@ -1507,7 +1507,7 @@ function lfb_get_previous_submit_data($form_product, $form_id) {
 
     global $wpdb;
 
-    $limit_minute = 1;
+    $limit_minute = 5;
     $unix_limit   = current_time( 'timestamp' ) - ( $limit_minute * 60 );
     $day_limit    = date('Y-m-d H:i:s', $unix_limit);
 
