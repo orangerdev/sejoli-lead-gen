@@ -9,7 +9,7 @@
  * Plugin Name:       Sejoli - Lead Campaign
  * Plugin URI:        https://sejoli.co.id
  * Description:       Integrate Sejoli Premium WordPress Membership Plugin with Lead Campaign Addon.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires PHP:      7.4.1
  * Author:            Sejoli
  * Author URI:        https://sejoli.co.id
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if (!function_exists('lfb_plugin_action_links')){
 
-define('LFB_VER', '1.0.2');
+define('LFB_VER', '1.0.3');
 
 define('LFB_PLUGIN_URL', plugin_dir_url(__FILE__));
 define( 'LFB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -62,7 +62,4 @@ if(!function_exists('lfb_include_file')) {
 }
 
 include_once( plugin_dir_path(__FILE__) . 'inc/lfb-widget.php' );
-// include_once( plugin_dir_path(__FILE__) . 'elementor/lfb-addon-elementor.php' );
-// show notify
-// include_once( plugin_dir_path(__FILE__) . 'notify/notify.php' );
 }

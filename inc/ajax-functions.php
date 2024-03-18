@@ -2306,7 +2306,6 @@ function lfb_ProceedToCustomer(){
                     $order_data = $respond['order'];
 
                     do_action('sejoli/order/new', $order_data);
-                    do_action('sejoli/order/set-status/'.$order_data['status'], $order_data);
 
                     $update_query = "update " . LFB_FORM_DATA_TBL . " set status='customer' where id='" . $leadID . "'";
                     $th_save_db = new LFB_SAVE_DB( $wpdb );
