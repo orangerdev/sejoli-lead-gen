@@ -32,8 +32,8 @@ define('LFB_VER', '1.0.3');
 define('LFB_PLUGIN_URL', plugin_dir_url(__FILE__));
 define( 'LFB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
-include_once(plugin_dir_path(__FILE__) . 'inc/themehunk-menu/admin-menu.php');
-include_once( plugin_dir_path(__FILE__) . 'inc/lfb-constant.php' );
+include_once(LFB_PLUGIN_DIR . 'inc/themehunk-menu/admin-menu.php');
+include_once( LFB_PLUGIN_DIR . 'inc/lfb-constant.php' );
 
 /**
  * Add the settings link to the Lead Form Plugin plugin row
@@ -49,17 +49,17 @@ function lfb_plugin_action_links($links){
     return $links;
 }
 
-include_once( plugin_dir_path(__FILE__) . 'inc/lf-db.php' );
+include_once( LFB_PLUGIN_DIR . 'inc/lf-db.php' );
 register_activation_hook(__FILE__, 'lfb_plugin_activate');
 
 if(!function_exists('lfb_include_file')) {
 
     function lfb_include_file(){
-        include_once( plugin_dir_path(__FILE__) . 'inc/inc.php' );
+        include_once( LFB_PLUGIN_DIR . 'inc/inc.php' );
     }
     add_action('init','lfb_include_file');
     
 }
 
-include_once( plugin_dir_path(__FILE__) . 'inc/lfb-widget.php' );
+include_once( LFB_PLUGIN_DIR . 'inc/lfb-widget.php' );
 }
