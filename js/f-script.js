@@ -98,6 +98,9 @@ function lfbInserForm(element,form_id,uploaddata='') {
             if (jQuery.trim(response) == "sudah isi data") {
                 element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Anda sudah pernah isi data sebelumnya, silahkan tunggu beberapa saat untuk melakukan pengisian lagi.</p></div>");
 
+            } else if (jQuery.trim(response) == "data sudah ada") {
+                element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Data Email atau No Telepon Anda sudah terdaftar!.</p></div>");
+
             } else if (jQuery.trim(response) == 'invalidcaptcha') {
 
                 element.find(".leadform-show-message-form-"+form_id).append("<div class='error'><p>Invalid Captcha</p></div>");
