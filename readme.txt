@@ -33,6 +33,9 @@ Coming soon
 
 == Changelog ==
 
+= 1.1.8
+* Fix bug converting phone number
+
 = 1.1.2
 * Add Autoresponder
 * Add radio panggilan field
