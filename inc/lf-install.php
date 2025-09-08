@@ -1,5 +1,71 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+/**
+ * Check sejoli license
+ * @since   1.0.0
+ */
+// function sejolisa_lead_check_own_license() {
+
+//     global $sejolisa;
+
+//     return boolval($sejolisa['license']['valid']);
+
+// }
+
+function sejolisa_lead_check_valid_transient_license() {
+
+    $get_sejoli_license_status = get_transient( 'sejoli_lead_subscription_validate_licensed' );
+
+    if( empty($get_sejoli_license_status) || !empty($get_sejoli_license_status) ) :
+
+        $host   = $_SERVER['HTTP_HOST'];
+
+        if( empty($host) ) :
+            $host = str_replace(array( 'https://', 'http://', 'www.' ), '', get_option('site_url'));
+        endif;
+
+        $post_data = [
+            'host' => $host
+        ];
+        
+        $link = add_query_arg(array(
+                    'string'    => $host
+                ), 'https://member.sejoli.co.id/sejoli-validate-license/');
+        $response = wp_remote_get($link);
+        $response = json_decode(wp_remote_retrieve_body($response), true);
+        
+        if (isset($response['detail']['status']) && $response['detail']['status'] === "active" || $response['detail']['status'] === "expired" || empty($response['detail']['status'])) :
+
+            set_transient( 'sejoli_lead_subscription_validate_licensed', "subscribed", 30 * DAY_IN_SECONDS );
+            
+            return;
+
+        else:
+
+            set_transient( 'sejoli_lead_subscription_validate_licensed', "not_subscribed", 30 * DAY_IN_SECONDS );
+
+        endif;
+    
+    endif;
+
+}
+add_filter( "admin_init", 'sejolisa_lead_check_valid_transient_license' );
+
+function sejolisa_lead_check_own_license() {
+
+    $get_tracking_updater = get_transient( 'sejoli_lead_subscription_validate_license' );
+
+    if( $get_tracking_updater === "subscribed" ) :
+        $status = true;
+    else:
+        $status = false;
+    endif;
+    
+    return $status;
+
+}
+
 /**
  * Set Asstes Admin
  * Hooked via action admin_enqueue_scripts

@@ -55,7 +55,7 @@ class LFB_CustomerSettingForm{
         }
         echo '<h2>'.esc_html__('Customer Setting','sejoli-lead-form').'</h2>';
         
-        echo '<div><b>Shortcode</b>: <pre style="margin: 19px 0 0 0;"><i><code title="'.__('Shortcode untuk menampilkan semua entri dari form.', 'sejoli-lead-form').'">[lf-new-form-data]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama form.', 'sejoli-lead-form').'">[form-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan ID lead.', 'sejoli-lead-form').'">[lead-id]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan Nama lead.', 'sejoli-lead-form').'">[lead-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan No. Telepon lead.', 'sejoli-lead-form').'">[lead-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email lead.', 'sejoli-lead-form').'">[lead-email]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama affiliasi.', 'sejoli-lead-form').'">[affiliate-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan no. telepon affiliasi.', 'sejoli-lead-form').'">[affiliate-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email affiliasi.', 'sejoli-lead-form').'">[affiliate-email]</code> </i><i><code title="'.__('Shortcode untuk menampilkan nama produk.', 'sejoli-lead-form').'">[product-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan harga produk.', 'sejoli-lead-form').'">[product-price]</code> </i></pre></br></div>';
+        echo '<div><b>Shortcode</b>: <pre style="margin: 19px 0 0 0;"><i><code title="'.__('Shortcode untuk menampilkan semua entri dari form.', 'sejoli-lead-form').'">[lf-new-form-data]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama form.', 'sejoli-lead-form').'">[form-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan ID lead.', 'sejoli-lead-form').'">[lead-id]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan Nama lead.', 'sejoli-lead-form').'">[lead-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan No. Telepon lead.', 'sejoli-lead-form').'">[lead-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan informasi panggilan/sapaan.', 'sejoli-lead-form').'">[lead-panggilan]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email lead.', 'sejoli-lead-form').'">[lead-email]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan nama affiliasi.', 'sejoli-lead-form').'">[affiliate-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan no. telepon affiliasi.', 'sejoli-lead-form').'">[affiliate-phone]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan email affiliasi.', 'sejoli-lead-form').'">[affiliate-email]</code> </i><i><code title="'.__('Shortcode untuk menampilkan nama produk.', 'sejoli-lead-form').'">[product-name]</code> </i> <i><code title="'.__('Shortcode untuk menampilkan harga produk.', 'sejoli-lead-form').'">[product-price]</code> </i></pre></br></div>';
         echo '</div>';
 
         if(wp_is_mobile()){
@@ -143,46 +143,46 @@ class LFB_CustomerSettingForm{
             echo "</div>";
         echo "</div>";
 
-        $customer_sms_setting_message   = esc_html('Form Submitted Successfully');
-        if (!empty($customer_sms_setting_result)) {
-            $customer_sms_setting = maybe_unserialize($customer_sms_setting_result);
-            $customer_sms_setting_message = $customer_sms_setting['customer_sms_setting']['message'];
-        }
-        $css_nonce = wp_create_nonce( 'css-nonce' );
+        // $customer_sms_setting_message   = esc_html('Form Submitted Successfully');
+        // if (!empty($customer_sms_setting_result)) {
+        //     $customer_sms_setting = maybe_unserialize($customer_sms_setting_result);
+        //     $customer_sms_setting_message = $customer_sms_setting['customer_sms_setting']['message'];
+        // }
+        // $css_nonce = wp_create_nonce( 'css-nonce' );
 
-        echo "<div>";
-        if(wp_is_mobile()){
-            echo '<div class="form-block" style="display: inline-block; width:90.5%">';
-        } else {
-            echo '<div class="form-block" style="display: inline-block; width: 47%;float: right;">';
-        }
-        echo "<form id='form-customer-sms-setting' action='' method='post' style='width: 100%;'>
-            <div class='inside customer_sms_setting_section'>
-            <div class='cards'>
-            <div class='infobox'>
-            <h2>" . esc_html__('Customer SMS Notifications', 'sejoli-lead-form') . " </h2><br>
-            <table class='form-table'>
-                <tbody>
-                    <tr>
-                        <th scope='row'><label for='customer_sms_setting_message'>Message" . LFB_REQUIRED_SIGN . "</th>
-                        <td>
-                            <textarea name='customer_sms_setting[message]' id='customer_sms_setting_message' rows='10' cols='70' required>" . esc_html($customer_sms_setting_message) . "</textarea></label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table> 
-            <input type='hidden' name='customer_sms_setting[form-id]' required value='" . $this_form_id . "'> 
+        // echo "<div>";
+        // if(wp_is_mobile()){
+        //     echo '<div class="form-block" style="display: inline-block; width:90.5%">';
+        // } else {
+        //     echo '<div class="form-block" style="display: inline-block; width: 47%;float: right;">';
+        // }
+        // echo "<form id='form-customer-sms-setting' action='' method='post' style='width: 100%;'>
+        //     <div class='inside customer_sms_setting_section'>
+        //     <div class='cards'>
+        //     <div class='infobox'>
+        //     <h2>" . esc_html__('Customer SMS Notifications', 'sejoli-lead-form') . " </h2><br>
+        //     <table class='form-table'>
+        //         <tbody>
+        //             <tr>
+        //                 <th scope='row'><label for='customer_sms_setting_message'>Message" . LFB_REQUIRED_SIGN . "</th>
+        //                 <td>
+        //                     <textarea name='customer_sms_setting[message]' id='customer_sms_setting_message' rows='10' cols='70' required>" . esc_html($customer_sms_setting_message) . "</textarea></label>
+        //                 </td>
+        //             </tr>
+        //         </tbody>
+        //     </table> 
+        //     <input type='hidden' name='customer_sms_setting[form-id]' required value='" . $this_form_id . "'> 
             
-            <input type='hidden' name='css_nonce' value='".$css_nonce."'>
+        //     <input type='hidden' name='css_nonce' value='".$css_nonce."'>
 
-            <p style='text-align:right'>
-            <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
-            </p>
-            </div>
-            <div id='error-message-customer-sms-setting'></div></div> </div>
-            </form>";
-            echo "</div>";
-        echo "</div>";
+        //     <p style='text-align:right'>
+        //     <input type='submit' class='button-primary' style='background: #ff4545; margin: 0em 10px 0 8px;' id='button' value='" . esc_html__('Save', 'sejoli-lead-form') . "'>
+        //     </p>
+        //     </div>
+        //     <div id='error-message-customer-sms-setting'></div></div> </div>
+        //     </form>";
+        //     echo "</div>";
+        // echo "</div>";
 
         echo "</div>";
     }

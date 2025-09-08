@@ -8,13 +8,21 @@ echo '<div class="form-block">';
         </tr><tr><td><div id="remember_this_message" ></div></td></tr></tbody></table></div></div></div><div class="wrap" id="form-leads-shows-box">';
     if(wp_is_mobile()){
         echo '<div class="wrap" style="display: inline-block;width: 100%; margin-bottom: 2em !important;">';
-            echo '<h3 style="margin-bottom: 0;float: none;">'.$query_forms[0]->form_title.'</h3>';
+            if (!empty($query_forms) && isset($query_forms[0]->form_title)) {
+                echo '<h3 style="margin-bottom: 3em; margin-top: 1em;float: left;">' . esc_html($query_forms[0]->form_title) . '</h3>';
+            } else {
+                echo '<h3 style="margin-bottom: 3em; margin-top: 1em;float: left;">Form Tidak Ditemukan</h3>';
+            }
             echo '<div class="export-button"></div><table class="form-table" style="margin-bottom: 1.5em; float: none;width: `00%;clear: inherit; margin: 0;"><tbody><tr><th scope="row" style="width: auto !important; padding: 20px 0; text-align: left;">
             <label for="filter_lead_entries">'.esc_html__('Filter Data','sejoli-lead-form').'</label></th><td><input type="text" name="filter-lead-entries" id="filter_lead_entries"/><input type="hidden" name="form_id_filter" value="'.$first_form_id.'"/></td></tr></tbody></table>';
         echo '</div>';
     } else {
         echo '<div class="wrap" style="display: inline-block;width: 100%; margin-bottom: 1.5em !important;">';
-            echo '<h3 style="margin-bottom: 3em; margin-top: 1em;float: left;">'.$query_forms[0]->form_title.'</h3>';
+            if (!empty($query_forms) && isset($query_forms[0]->form_title)) {
+                echo '<h3 style="margin-bottom: 3em; margin-top: 1em;float: left;">' . esc_html($query_forms[0]->form_title) . '</h3>';
+            } else {
+                echo '<h3 style="margin-bottom: 3em; margin-top: 1em;float: left;">Form Tidak Ditemukan</h3>';
+            }
             echo '<div class="export-button"></div><table class="form-table" style="float: right;width: 23%;clear: inherit; margin: 0;"><tbody><tr><th scope="row" style="width: auto !important; padding: 20px 0; text-align: right;">
             <label for="filter_lead_entries">'.esc_html__('Filter Data','sejoli-lead-form').'</label></th><td><input type="text" name="filter-lead-entries" id="filter_lead_entries"/><input type="hidden" name="form_id_filter" value="'.$first_form_id.'"/></td></tr></tbody></table>';
         echo '</div>';

@@ -288,6 +288,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -335,10 +336,14 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
                 } elseif ($type === 'upload') { 
                     $lead_uploaded_file = $form_data['upload_'.$field_id];
                     $getFileUploadSource[] = $lead_uploaded_file['url'];
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -349,6 +354,7 @@ Class LFB_LeadStoreType{
             $header = str_replace($shortcode_lead_name, $lead_name, $header);
             $header = str_replace($shortcode_lead_email, $lead_email, $header);
             $header = str_replace($shortcode_lead_phone, $lead_phone, $header);
+            $header = str_replace($shortcode_lead_panggilan, $lead_panggilan, $header);
             $header = str_replace($shortcode_affiliate_name, $affiliate_name, $header);
             $header = str_replace($shortcode_affiliate_email, $affiliate_email, $header);
             $header = str_replace($shortcode_affiliate_phone, $affiliate_phone, $header);
@@ -361,6 +367,7 @@ Class LFB_LeadStoreType{
             $subject = str_replace($shortcode_lead_name, $lead_name, $subject);
             $subject = str_replace($shortcode_lead_email, $lead_email, $subject);
             $subject = str_replace($shortcode_lead_phone, $lead_phone, $subject);
+            $subject = str_replace($shortcode_lead_panggilan, $lead_panggilan, $subject);
             $subject = str_replace($shortcode_affiliate_name, $affiliate_name, $subject);
             $subject = str_replace($shortcode_affiliate_email, $affiliate_email, $subject);
             $subject = str_replace($shortcode_affiliate_phone, $affiliate_phone, $subject);
@@ -376,6 +383,7 @@ Class LFB_LeadStoreType{
             $message = str_replace($shortcode_lead_name, $lead_name, $message);
             $message = str_replace($shortcode_lead_email, $lead_email, $message);
             $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+            $message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $message);
             $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
             $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
             $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
@@ -447,6 +455,7 @@ Class LFB_LeadStoreType{
         $shortcode_lead_name = '[lead-name]';
         $shortcode_lead_email = '[lead-email]';
         $shortcode_lead_phone = '[lead-phone]';
+        $shortcode_lead_panggilan = '[lead-panggilan]';
         $shortcode_affiliate_name = '[affiliate-name]';
         $shortcode_affiliate_phone = '[affiliate-phone]';
         $shortcode_affiliate_email = '[affiliate-email]';
@@ -494,10 +503,14 @@ Class LFB_LeadStoreType{
             } elseif($type === 'name') { 
                 $lead_name = $form_data['name_'.$field_id];
             } elseif ( $type === 'phonenumber' ) {
-                $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                // Menambahkan +62 di depan
+                $lead_phone = '+62' . $phone_number;
             } elseif ($type === 'upload') { 
                 $lead_uploaded_file = $form_data['upload_'.$field_id];
                 $getFileUploadSource[] = $lead_uploaded_file['url'];
+            } elseif ( $type === 'radiopanggilan' ) {
+                $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
             }
 
         }
@@ -508,6 +521,7 @@ Class LFB_LeadStoreType{
         $header = str_replace($shortcode_lead_name, $lead_name, $header);
         $header = str_replace($shortcode_lead_email, $lead_email, $header);
         $header = str_replace($shortcode_lead_phone, $lead_phone, $header);
+        $header = str_replace($shortcode_lead_panggilan, $lead_panggilan, $header);
         $header = str_replace($shortcode_affiliate_name, $affiliate_name, $header);
         $header = str_replace($shortcode_affiliate_email, $affiliate_email, $header);
         $header = str_replace($shortcode_affiliate_phone, $affiliate_phone, $header);
@@ -520,6 +534,7 @@ Class LFB_LeadStoreType{
         $subject = str_replace($shortcode_lead_name, $lead_name, $subject);
         $subject = str_replace($shortcode_lead_email, $lead_email, $subject);
         $subject = str_replace($shortcode_lead_phone, $lead_phone, $subject);
+        $subject = str_replace($shortcode_lead_panggilan, $lead_panggilan, $subject);
         $subject = str_replace($shortcode_affiliate_name, $affiliate_name, $subject);
         $subject = str_replace($shortcode_affiliate_email, $affiliate_email, $subject);
         $subject = str_replace($shortcode_affiliate_phone, $affiliate_phone, $subject);
@@ -534,6 +549,7 @@ Class LFB_LeadStoreType{
         $message = str_replace($shortcode_lead_name, $lead_name, $message);
         $message = str_replace($shortcode_lead_email, $lead_email, $message);
         $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+        $message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $message);
         $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
         $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
         $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
@@ -573,6 +589,7 @@ Class LFB_LeadStoreType{
         $shortcode_lead_name = '[lead-name]';
         $shortcode_lead_email = '[lead-email]';
         $shortcode_lead_phone = '[lead-phone]';
+        $shortcode_lead_panggilan = '[lead-panggilan]';
         $shortcode_affiliate_name = '[affiliate-name]';
         $shortcode_affiliate_phone = '[affiliate-phone]';
         $shortcode_affiliate_email = '[affiliate-email]';
@@ -620,10 +637,14 @@ Class LFB_LeadStoreType{
             } elseif($type === 'name') { 
                 $lead_name = $form_data['name_'.$field_id];
             } elseif ( $type === 'phonenumber' ) {
-                $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                // Menambahkan +62 di depan
+                $lead_phone = '+62' . $phone_number;
             } elseif ($type === 'upload') { 
                 $lead_uploaded_file = $form_data['upload_'.$field_id];
                 $getFileUploadSource[] = $lead_uploaded_file['url'];
+            } elseif ( $type === 'radiopanggilan' ) {
+                $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
             }
 
         }
@@ -634,6 +655,7 @@ Class LFB_LeadStoreType{
         $header = str_replace($shortcode_lead_name, $lead_name, $header);
         $header = str_replace($shortcode_lead_email, $lead_email, $header);
         $header = str_replace($shortcode_lead_phone, $lead_phone, $header);
+        $header = str_replace($shortcode_lead_panggilan, $lead_panggilan, $header);
         $header = str_replace($shortcode_affiliate_name, $affiliate_name, $header);
         $header = str_replace($shortcode_affiliate_email, $affiliate_email, $header);
         $header = str_replace($shortcode_affiliate_phone, $affiliate_phone, $header);
@@ -646,6 +668,7 @@ Class LFB_LeadStoreType{
         $subject = str_replace($shortcode_lead_name, $lead_name, $subject);
         $subject = str_replace($shortcode_lead_email, $lead_email, $subject);
         $subject = str_replace($shortcode_lead_phone, $lead_phone, $subject);
+        $subject = str_replace($shortcode_lead_panggilan, $lead_panggilan, $subject);
         $subject = str_replace($shortcode_affiliate_name, $affiliate_name, $subject);
         $subject = str_replace($shortcode_affiliate_email, $affiliate_email, $subject);
         $subject = str_replace($shortcode_affiliate_phone, $affiliate_phone, $subject);
@@ -660,6 +683,7 @@ Class LFB_LeadStoreType{
         $message = str_replace($shortcode_lead_name, $lead_name, $message);
         $message = str_replace($shortcode_lead_email, $lead_email, $message);
         $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+        $message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $message);
         $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
         $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
         $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
@@ -702,6 +726,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -748,7 +773,11 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -759,6 +788,7 @@ Class LFB_LeadStoreType{
             $message = str_replace($shortcode_lead_name, $lead_name, $message);
             $message = str_replace($shortcode_lead_email, $lead_email, $message);
             $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+            $message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $message);
             $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
             $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
             $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
@@ -795,6 +825,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -841,7 +872,11 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -852,6 +887,7 @@ Class LFB_LeadStoreType{
             $user_message = str_replace($shortcode_lead_name, $lead_name, $user_message);
             $user_message = str_replace($shortcode_lead_email, $lead_email, $user_message);
             $user_message = str_replace($shortcode_lead_phone, $lead_phone, $user_message);
+            $user_message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $user_message);
             $user_message = str_replace($shortcode_affiliate_name, $affiliate_name, $user_message);
             $user_message = str_replace($shortcode_affiliate_email, $affiliate_email, $user_message);
             $user_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $user_message);
@@ -878,6 +914,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -924,7 +961,11 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -935,6 +976,7 @@ Class LFB_LeadStoreType{
             $affiliate_message = str_replace($shortcode_lead_name, $lead_name, $affiliate_message);
             $affiliate_message = str_replace($shortcode_lead_email, $lead_email, $affiliate_message);
             $affiliate_message = str_replace($shortcode_lead_phone, $lead_phone, $affiliate_message);
+            $affiliate_message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $affiliate_message);
             $affiliate_message = str_replace($shortcode_affiliate_name, $affiliate_name, $affiliate_message);
             $affiliate_message = str_replace($shortcode_affiliate_email, $affiliate_email, $affiliate_message);
             $affiliate_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $affiliate_message);
@@ -970,6 +1012,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -1016,7 +1059,11 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -1027,6 +1074,7 @@ Class LFB_LeadStoreType{
             $message = str_replace($shortcode_lead_name, $lead_name, $message);
             $message = str_replace($shortcode_lead_email, $lead_email, $message);
             $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+            $message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $message);
             $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
             $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
             $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
@@ -1062,6 +1110,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -1108,7 +1157,11 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -1119,6 +1172,7 @@ Class LFB_LeadStoreType{
             $user_message = str_replace($shortcode_lead_name, $lead_name, $user_message);
             $user_message = str_replace($shortcode_lead_email, $lead_email, $user_message);
             $user_message = str_replace($shortcode_lead_phone, $lead_phone, $user_message);
+            $user_message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $user_message);
             $user_message = str_replace($shortcode_affiliate_name, $affiliate_name, $user_message);
             $user_message = str_replace($shortcode_affiliate_email, $affiliate_email, $user_message);
             $user_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $user_message);
@@ -1144,6 +1198,7 @@ Class LFB_LeadStoreType{
             $shortcode_lead_name = '[lead-name]';
             $shortcode_lead_email = '[lead-email]';
             $shortcode_lead_phone = '[lead-phone]';
+            $shortcode_lead_panggilan = '[lead-panggilan]';
             $shortcode_affiliate_name = '[affiliate-name]';
             $shortcode_affiliate_phone = '[affiliate-phone]';
             $shortcode_affiliate_email = '[affiliate-email]';
@@ -1190,7 +1245,11 @@ Class LFB_LeadStoreType{
                 } elseif($type === 'name') { 
                     $lead_name = $form_data['name_'.$field_id];
                 } elseif ( $type === 'phonenumber' ) {
-                    $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                    $phone_number = ltrim($form_data['phonenumber_'.$field_id], '0');
+                    // Menambahkan +62 di depan
+                    $lead_phone = '+62' . $phone_number;
+                } elseif ( $type === 'radiopanggilan' ) {
+                    $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
                 }
 
             }
@@ -1201,6 +1260,7 @@ Class LFB_LeadStoreType{
             $affiliate_message = str_replace($shortcode_lead_name, $lead_name, $affiliate_message);
             $affiliate_message = str_replace($shortcode_lead_email, $lead_email, $affiliate_message);
             $affiliate_message = str_replace($shortcode_lead_phone, $lead_phone, $affiliate_message);
+            $affiliate_message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $affiliate_message);
             $affiliate_message = str_replace($shortcode_affiliate_name, $affiliate_name, $affiliate_message);
             $affiliate_message = str_replace($shortcode_affiliate_email, $affiliate_email, $affiliate_message);
             $affiliate_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $affiliate_message);

@@ -144,9 +144,7 @@ Class LFB_EDIT_DEL_FORM {
             <a class="nav-tab edit-lead-form '.esc_attr($_active).'" href="#">'.esc_html__("Edit Form","sejoli-lead-form").'</a>
             <a class="nav-tab lead-form-email-setting  '.esc_attr($email_active).'" href="#">'.esc_html__("Email Setting","sejoli-lead-form").'</a>
             <a class="nav-tab lead-form-wa-setting  '.esc_attr($wa_active).'" href="#">'.esc_html__("WhatsApp Setting","sejoli-lead-form").'</a>
-            <a class="nav-tab lead-form-sms-setting  '.esc_attr($sms_active).'" href="#">'.esc_html__("SMS Setting","sejoli-lead-form").'</a>
-            <a class="nav-tab lead-form-autoresponder-setting  '.esc_attr($autoresponder_active).'" href="#">'.esc_html__("Autoresponder Setting","sejoli-lead-form").'</a>
-            <a class="nav-tab lead-form-followup-setting  '.esc_attr($followup_active).'" href="#">'.esc_html__("Follow Up Setting","sejoli-lead-form").'</a>
+            <a class="nav-tab lead-form-autoresponder-setting  '.esc_attr($customer_active).'" href="#">'.esc_html__("Autoresponder Setting","sejoli-lead-form").'</a>
             <a class="nav-tab lead-form-customer-setting  '.esc_attr($customer_active).'" href="#">'.esc_html__("Customer Setting","sejoli-lead-form").'</a>
             <a class="nav-tab lead-form-captcha-setting  '.esc_attr($captcha_active).'" href="#">'.esc_html__("Captcha Setting","sejoli-lead-form").'</a>
             <a class="nav-tab lead-form-setting  '.esc_attr($form_active).'" href="#">'.esc_html__("Setting","sejoli-lead-form").'</a>
@@ -200,24 +198,24 @@ Class LFB_EDIT_DEL_FORM {
                 $lf_wa_setting_form = new LFB_WhatsAppSettingForm($this_form_id);
                 $lf_wa_setting_form->lfb_whatsapp_setting_form($this_form_id,$wa_setting_result,$userwa_setting_result,$affiliatewa_setting_result);
             }
-        echo '</section>
-            <section>';
-            if (is_admin()) {
-                $lf_sms_setting_form = new LFB_SMSSettingForm($this_form_id);
-                $lf_sms_setting_form->lfb_sms_setting_form($this_form_id,$sms_setting_result,$usersms_setting_result,$affiliatesms_setting_result);
-            }
+        // echo '</section>
+        //     <section>';
+        //     if (is_admin()) {
+        //         $lf_sms_setting_form = new LFB_SMSSettingForm($this_form_id);
+        //         $lf_sms_setting_form->lfb_sms_setting_form($this_form_id,$sms_setting_result,$usersms_setting_result,$affiliatesms_setting_result);
+        //     }
         echo '</section>
             <section>';
             if (is_admin()) {
                 $lf_autoresponder_setting_form = new LFB_AutoresponderSettingForm($this_form_id);
                 $lf_autoresponder_setting_form->lfb_autoresponder_setting_form($this_form_id, $autoresponder_setting_result);
             }
-        echo '</section>
-            <section>';
-            if (is_admin()) {
-                $lf_followup_setting_form = new LFB_FollowUpSettingForm($this_form_id);
-                $lf_followup_setting_form->lfb_followup_setting_form($this_form_id, $followup_setting_result);
-            }
+        // echo '</section>
+        //     <section>';
+        //     if (is_admin()) {
+        //         $lf_followup_setting_form = new LFB_FollowUpSettingForm($this_form_id);
+        //         $lf_followup_setting_form->lfb_followup_setting_form($this_form_id, $followup_setting_result);
+        //     }
         echo '</section>
             <section>';
             if (is_admin()) {
@@ -292,7 +290,7 @@ Class LFB_EDIT_DEL_FORM {
      */
     function lfbFormField($key){
 
-        $fields =  array('name'=>'Name','email'=>'Email','message'=>'Message','dob'=>'DOB(Date of Birth)','date'=>'Date','text'=>'Text (Single Line Text)','textarea'=>'Textarea (Multiple Line Text)','htmlfield'=>'Content Area (Read only Text)','url'=>'Link (Website Url)','phonenumber'=>'Phone Number','number'=>'Number (Only Numeric 0-9)','upload'=>'File Upload','radio'=>'Radio (Choose Single Option)','option'=>'Option (Choose Single Option)','checkbox'=>'Checkbox (Choose Multiple Option)','terms'=>'Checkbox (Terms & condition)');
+        $fields =  array('name'=>'Name','email'=>'Email','message'=>'Message','dob'=>'DOB(Date of Birth)','date'=>'Date','text'=>'Text (Single Line Text)','textarea'=>'Textarea (Multiple Line Text)','htmlfield'=>'Content Area (Read only Text)','url'=>'Link (Website Url)','phonenumber'=>'Phone Number','number'=>'Number (Only Numeric 0-9)','upload'=>'File Upload','radiopanggilan'=>'Radio (Panggilan)','radio'=>'Radio (Choose Single Option)','option'=>'Option (Choose Single Option)','checkbox'=>'Checkbox (Choose Multiple Option)','terms'=>'Checkbox (Terms & condition)');
         $return = isset($fields[$key])?$fields[$key]:'';
         
         return $return;
@@ -332,6 +330,7 @@ Class LFB_EDIT_DEL_FORM {
             <option value='phonenumber' ".( $fieldtype === 'phonenumber' ? 'selected="selected"' : '' ).">".esc_html__('Phone Number','sejoli-lead-form')." </option>
             <option value='number' ".( $fieldtype === 'number' ? 'selected="selected"' : '' ).">".esc_html__('Number (Only Numeric 0-9 )','sejoli-lead-form')." </option>
             <option value='upload' ".( $fieldtype === 'upload' ? 'selected="selected"' : '' ).">".esc_html__('Upload File/Image','sejoli-lead-form')." </option>
+            <option value='radiopanggilan' ".( $fieldtype === 'radiopanggilan' ? 'selected="selected"' : '' ).">".esc_html__('Radio (Panggilan)','sejoli-lead-form')."</option>    
             <option value='radio' ".( $fieldtype === 'radio' ? 'selected="selected"' : '' ).">".esc_html__('Radio (Choose Single Option)','sejoli-lead-form')."</option>    
             <option value='option' ".( $fieldtype === 'option' ? 'selected="selected"' : '' ).">".esc_html__('Option (Choose Single Option)','sejoli-lead-form')."</option>  
             <option value='checkbox' ".( $fieldtype === 'checkbox' ? 'selected="selected"' : '' ).">".esc_html__('Checkbox (Choose Multiple Option)','sejoli-lead-form')."</option>
@@ -539,6 +538,63 @@ Class LFB_EDIT_DEL_FORM {
      * Radio Button
      * @since   1.0.0
      */
+    function lfbRadioPanggilan($fieldv,$fieldtype,$fieldID){
+
+        $optionField = $isChecked = $return ='';
+        $lastFieldID = 0;
+        unset($fieldtype['type']);
+        
+        foreach ($fieldtype as $key => $value) {
+            $checkboxId = str_replace("field_", "", $key);
+            $checked = isset($fieldv['default_value']['field']) && $fieldv['default_value']['field']==$checkboxId?'checked':'';
+
+            $fieldMinus = '<p class="button lf_minus" id="delete_radio_' . $checkboxId . '" onclick="delete_radio_fields(' . $fieldID . ',' . $checkboxId . ')"><i class="fa fa-minus" aria-hidden="true"></i></p>';
+
+            if($lastFieldID < $checkboxId){
+                $lastFieldID = $checkboxId;
+                $fieldPlus = '<p class="button lf_plus" id="add_new_radio_' . $lastFieldID . '" onclick="add_new_radio_fields(' . $fieldID . ',' . $lastFieldID . ')"><i class="fa fa-plus" aria-hidden="true"></i></p>';
+            }
+        
+            $childOption = '<input type="text" class="input_radio_val" name="lfb_form[form_field_' . $fieldID . '][field_type][field_' . $checkboxId . ']" id="radio_field_' . $checkboxId . '" placeholder="'.esc_html__("First Choice","sejoli-lead-form").'" value="'.$value.'">';
+
+            // default checked
+            $isChecked .='<p id="default_radio_value_' . $checkboxId . '">'.$value.' <input type="radio" class="checked" name="lfb_form[form_field_' . $fieldID . '][default_value][field]" id="default_radio_value_' . $checkboxId . '" value="' . $checkboxId . '" '.$checked.'></p>';
+
+            $optionField .= $childOption.$fieldMinus;
+        }
+        
+        $optionField .= $fieldPlus;
+
+        $return .=$this->lfbFieldName($fieldv,$fieldID);
+
+        $return .= '<td>
+            <select class="form_field_select" name="lfb_form[form_field_' . $fieldID . '][field_type][type]" id="field_type_' . $fieldID . '" >
+            <option value="radiopanggilan" selected="selected" >'.esc_html__("Radio (Panggilan)","sejoli-lead-form").'</option>
+            </select>
+            <div class="add_radio_checkbox_' . $fieldID . '" id="add_radio_checkbox">
+            <div class="" id="add_radio">' . $optionField . '</div>
+            </div>
+            </td>
+            <td><input type="text" class="default_value" name="lfb_form[form_field_' . $fieldID . '][default_value]" id="default_value_' . $fieldID . '" value="'.esc_html__("Choose Default Value","sejoli-lead-form").'" disabled="disabled">
+            <div class="add_default_radio_checkbox_' . $fieldID . '" id="add_default_radio_checkbox">
+            <div class="" id="default_add_radio">' . $isChecked . '</div>
+            </div>
+            </td>';
+
+        $return .= '<td>-</td>';
+           
+        $return .= $this->lfbFieldIsRequired($fieldv,$fieldID);
+
+        $return .= $this->lfbRemoveField($fieldID);
+
+        return $return;
+
+    }
+
+    /**
+     * Radio Button
+     * @since   1.0.0
+     */
     function lfbRadio($fieldv,$fieldtype,$fieldID){
 
         $optionField = $isChecked = $return ='';
@@ -664,6 +720,8 @@ Class LFB_EDIT_DEL_FORM {
             return $this->lfbCheckbox($fieldv,$fieldtype,$fieldID);
         } elseif($fType=='option') {
             return $this->lfbSelectOption($fieldv,$fieldtype,$fieldID);
+        }  elseif($fType=='radiopanggilan') {
+            return $this->lfbRadioPanggilan($fieldv,$fieldtype,$fieldID);
         }  elseif($fType=='radio') {
             return $this->lfbRadio($fieldv,$fieldtype,$fieldID);
         } elseif($fType=='htmlfield') {

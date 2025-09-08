@@ -1,6 +1,11 @@
 <?php
     if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+    $get_sejoli_license_status = get_transient( 'sejoli_lead_subscription_validate_licensed' );
+    if('subscribed' !== $get_sejoli_license_status ) :
+        return;
+    endif;
+
     global $wpdb;
     
     // file include
@@ -18,10 +23,10 @@
     include_once( plugin_dir_path(__FILE__) . 'email-setting.php' );
     include_once( plugin_dir_path(__FILE__) . 'whatsapp.php' );
     include_once( plugin_dir_path(__FILE__) . 'whatsapp-setting.php' );
-    include_once( plugin_dir_path(__FILE__) . 'sms.php' );
-    include_once( plugin_dir_path(__FILE__) . 'sms-setting.php' );
+    // include_once( plugin_dir_path(__FILE__) . 'sms.php' );
+    // include_once( plugin_dir_path(__FILE__) . 'sms-setting.php' );
     include_once( plugin_dir_path(__FILE__) . 'autoresponder-setting.php' );
-    include_once( plugin_dir_path(__FILE__) . 'follow-up-setting.php' );
+    // include_once( plugin_dir_path(__FILE__) . 'follow-up-setting.php' );
     include_once( plugin_dir_path(__FILE__) . 'customer-setting.php' );
     include_once( plugin_dir_path(__FILE__) . 'show-forms-backend.php' );
     include_once( plugin_dir_path(__FILE__) . 'front-end.php' );

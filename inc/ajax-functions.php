@@ -7,28 +7,19 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  */
 function phone_number_format($nomorhp) {
 
-    // Terlebih dahulu kita trim dl
     $nomorhp = trim($nomorhp);
-    // Bersihkan dari karakter yang tidak perlu
     $nomorhp = strip_tags($nomorhp);     
-    // Berishkan dari spasi
     $nomorhp= str_replace(" ","",$nomorhp);
-    // Bersihkan dari bentuk seperti  (022) 66677788
     $nomorhp= str_replace("(","",$nomorhp);
-    // Bersihkan dari format yang ada titik seperti 0811.222.333.4
     $nomorhp= str_replace(".","",$nomorhp); 
 
-    //cek apakah mengandung karakter + dan 0-9
-    if(!preg_match('/[^+0-9]/',trim($nomorhp))){
-        // cek apakah no hp karakter 1-3 adalah +62
-        if(substr(trim($nomorhp), 0, 3) == '+62'){
+    if(!preg_match('/[^+0-9]/',trim($nomorhp))) :
+        if(substr(trim($nomorhp), 0, 3) == '+62') :
             $nomorhp= trim($nomorhp);
-        }
-        // cek apakah no hp karakter 1 adalah 0
-        elseif(substr($nomorhp, 0, 1) == '0'){
+        elseif(substr($nomorhp, 0, 1) == '0') :
             $nomorhp= '+62'.substr($nomorhp, 1);
-        }
-    }
+        endif;
+    endif;
 
     return $nomorhp;
 
@@ -411,7 +402,7 @@ function lfb_save_sms_settings(){
     }
 
 }
-add_action('wp_ajax_SaveSMSSettings', 'lfb_save_sms_settings');
+// add_action('wp_ajax_SaveSMSSettings', 'lfb_save_sms_settings');
 
 /**
  * Save User SMS Settings
@@ -445,7 +436,7 @@ function lfb_save_user_sms_settings(){
     }
 
 }
-add_action('wp_ajax_SaveUserSMSSettings', 'lfb_save_user_sms_settings');
+// add_action('wp_ajax_SaveUserSMSSettings', 'lfb_save_user_sms_settings');
 
 /**
  * Save Affiliate SMS Settings
@@ -479,7 +470,7 @@ function lfb_save_affiliate_sms_settings(){
     }
 
 }
-add_action('wp_ajax_SaveAffiliateSMSSettings', 'lfb_save_affiliate_sms_settings');
+// add_action('wp_ajax_SaveAffiliateSMSSettings', 'lfb_save_affiliate_sms_settings');
 
 /**
  * Save Customer Email Settings
@@ -584,7 +575,7 @@ function lfb_save_customer_sms_settings(){
     }
 
 }
-add_action('wp_ajax_SaveCustomerSMSSettings', 'lfb_save_customer_sms_settings');
+// add_action('wp_ajax_SaveCustomerSMSSettings', 'lfb_save_customer_sms_settings');
 
 /**
  * Save Captcha Keys
@@ -676,7 +667,7 @@ function lfb_save_followup_settings(){
     }
 
 }
-add_action('wp_ajax_SaveFollowUpSettings', 'lfb_save_followup_settings');
+// add_action('wp_ajax_SaveFollowUpSettings', 'lfb_save_followup_settings');
 
 /**
  * Delete Leads from Backend
@@ -1150,8 +1141,6 @@ function lfb_check_user_has_submited_data($form_product, $form_id) {
             OR form_data LIKE '%" . str_replace("+62","0", $en['phonenumber']) . "%'
         ");
 
-            error_log(print_r("AHAY", true));
-
     elseif( $en['email'] ) :
 
         $rows = $wpdb->prepare("
@@ -1256,6 +1245,7 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
     $posts = $th_save_db->lfb_get_form_data($form_id);
 
     $code = $posts[0]->autoresponder_setting;
+
     if($code) :
 
         $autoresponder = sejolisa_parsing_form_html_code( $code );
@@ -1270,57 +1260,59 @@ function lfb_register_autoresponder($form_id, $product, $form_data) {
             $form_field = $th_save_db->lfb_admin_email_send($form_id);
             $form_data = maybe_unserialize($form_data);
 
+            $data_email = '';
+            $data_name  = '';
+            $data_phone  = '';
             foreach ($form_datas as $results) {
 
                 $type = isset($results['field_type']['type']) ? $results['field_type']['type'] : '';
                 $field_id = $results['field_id'];
 
-                $data_email = '';
-                $data_name  = '';
-                $data_phone  = '';
+                $key = "{$type}_{$field_id}";
+                $value = isset($form_data[$key]) ? $form_data[$key] : '';
 
-                if ($type === 'email') { 
-                    $data_email = $form_data['email_'.$field_id];
-                } elseif($type === 'name') { 
-                    $data_name = $form_data['name_'.$field_id];
-                } elseif ( $type === 'phonenumber' ) {
-                    $data_phone = phone_number_format($form_data['phonenumber_'.$field_id]);
+                if ($type === 'email') {
+                    $data_email = $value;
+                } elseif ($type === 'name') {
+                    $data_name = $value;
+                } elseif ($type === 'phonenumber') {
+                    $data_phone = phone_number_format($value);
                 }
 
+                foreach($autoresponder['fields'] as $field) :
+
+                    if('email' === $field['type']) :
+                        $body_fields[$field['name']] = $data_email;
+                    elseif('name' === $field['type']) :
+                        $body_fields[$field['name']] = $data_name;
+                    elseif('hidden' === $field['type']) :
+                        $body_fields[$field['name']] = $field['value'];
+                    else :
+                        $body_fields[$field['name']] = $field['value']; // fallback
+                    endif;
+
+                endforeach;
+
+                $response = wp_remote_post( $autoresponder['form']['action'][0], [
+                    'method'  => 'POST',
+                    'timeout' => 30,
+                    'headers' => array(
+                        'Referer'    => site_url(),
+                        'User-Agent' => $_SERVER['HTTP_USER_AGENT']
+                    ),
+                    'body' => $body_fields
+                ]);
+
+                do_action('sejoli/log/write', 'response autoresponder subscription', [
+                    'url'         => $autoresponder['form']['action'][0],
+                    'body_fields' => $body_fields,
+                    'response'    => strip_tags(wp_remote_retrieve_body($response))
+                ]);
             }
-
-            foreach($autoresponder['fields'] as $field) :
-
-                if('email' === $field['type']) :
-                    $body_fields[$field['name']] = $data_email;
-                elseif('name' === $field['type']) :
-                    $body_fields[$field['name']] = $data_name;
-                else :
-                    $body_fields[$field['name']] = $field['value'];
-                endif;
-
-            endforeach;
-
-            $response = wp_remote_post( $autoresponder['form']['action'][0], [
-                'method'  => 'POST',
-                'timeout' => 30,
-                'headers' => array(
-                    'Referer'    => site_url(),
-                    'User-Agent' => $_SERVER['HTTP_USER_AGENT']
-                ),
-                'body' => $body_fields
-            ]);
-
-            do_action('sejoli/log/write', 'response autoresponder subscription', [
-                'url'         => $autoresponder['form']['action'][0],
-                'body_fields' => $body_fields,
-                'response'    => strip_tags(wp_remote_retrieve_body($response))
-            ]);
 
         endif;
 
     endif;
-
 
 }
 
@@ -1436,6 +1428,7 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
     $shortcode_lead_name = '[lead-name]';
     $shortcode_lead_email = '[lead-email]';
     $shortcode_lead_phone = '[lead-phone]';
+    $shortcode_lead_panggilan = '[lead-panggilan]';
     $shortcode_affiliate_name = '[affiliate-name]';
     $shortcode_affiliate_phone = '[affiliate-phone]';
     $shortcode_affiliate_email = '[affiliate-email]';
@@ -1482,7 +1475,10 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
         } elseif($type === 'name') { 
             $lead_name = $form_data['name_'.$field_id];
         } elseif ( $type === 'phonenumber' ) {
-            $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+            $lead_phone = phone_number_format($form_data['phonenumber_'.$field_id]);
+
+        } elseif ( $type === 'radiopanggilan' ) {
+            $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
         }
 
     }
@@ -1493,6 +1489,7 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
     $message = str_replace($shortcode_lead_name, $lead_name, $message);
     $message = str_replace($shortcode_lead_email, $lead_email, $message);
     $message = str_replace($shortcode_lead_phone, $lead_phone, $message);
+    $message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $message);
     $message = str_replace($shortcode_affiliate_name, $affiliate_name, $message);
     $message = str_replace($shortcode_affiliate_email, $affiliate_email, $message);
     $message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $message);
@@ -1503,13 +1500,15 @@ function lfb_customeremail_send($form_data,$form_id,$lead_id,$form_product,$form
 
     $headers[] = "From:".$header." <".$customer_email_setting_form.">";
     $headers[] = "Reply-To:".$header." <".$customer_email_setting_form.">";  
+    $attachments = [];
     
     if($message && $to && $subject) {
         $email = new LeadFormEmail();
         $email->send(
             array($to),
             $message,
-            $subject
+            $subject, 
+            $attachments
         );
     }
 
@@ -1545,6 +1544,7 @@ function lfb_send_data_wa($form_id,$form_data,$lead_id,$form_product,$form_affil
         $shortcode_lead_name = '[lead-name]';
         $shortcode_lead_email = '[lead-email]';
         $shortcode_lead_phone = '[lead-phone]';
+        $shortcode_lead_panggilan = '[lead-panggilan]';
         $shortcode_affiliate_name = '[affiliate-name]';
         $shortcode_affiliate_phone = '[affiliate-phone]';
         $shortcode_affiliate_email = '[affiliate-email]';
@@ -1592,7 +1592,9 @@ function lfb_send_data_wa($form_id,$form_data,$lead_id,$form_product,$form_affil
             } elseif($type === 'name') { 
                 $lead_name = $form_data['name_'.$field_id];
             } elseif ( $type === 'phonenumber' ) {
-                $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                $lead_phone = phone_number_format($form_data['phonenumber_'.$field_id]);
+            } elseif ( $type === 'radiopanggilan' ) {
+                $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
             }
 
         }
@@ -1603,6 +1605,7 @@ function lfb_send_data_wa($form_id,$form_data,$lead_id,$form_product,$form_affil
         $user_message = str_replace($shortcode_lead_name, $lead_name, $user_message);
         $user_message = str_replace($shortcode_lead_email, $lead_email, $user_message);
         $user_message = str_replace($shortcode_lead_phone, $lead_phone, $user_message);
+        $user_message = str_replace($shortcode_lead_panggilan, $lead_phone, $user_message);
         $user_message = str_replace($shortcode_affiliate_name, $affiliate_name, $user_message);
         $user_message = str_replace($shortcode_affiliate_email, $affiliate_email, $user_message);
         $user_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $user_message);
@@ -1648,6 +1651,7 @@ function lfb_send_data_sms($form_id,$form_data,$lead_id,$form_product,$form_affi
         $shortcode_lead_name = '[lead-name]';
         $shortcode_lead_email = '[lead-email]';
         $shortcode_lead_phone = '[lead-phone]';
+        $shortcode_lead_panggilan = '[lead-panggilan]';
         $shortcode_affiliate_name = '[affiliate-name]';
         $shortcode_affiliate_phone = '[affiliate-phone]';
         $shortcode_affiliate_email = '[affiliate-email]';
@@ -1695,7 +1699,9 @@ function lfb_send_data_sms($form_id,$form_data,$lead_id,$form_product,$form_affi
             } elseif($type === 'name') { 
                 $lead_name = $form_data['name_'.$field_id];
             } elseif ( $type === 'phonenumber' ) {
-                $lead_phone = '+62'.$form_data['phonenumber_'.$field_id];
+                $lead_phone = phone_number_format($form_data['phonenumber_'.$field_id]);
+            } elseif ( $type === 'radiopanggilan' ) {
+                $lead_panggilan = $form_data['radiopanggilan_'.$field_id];
             }
 
         }
@@ -1706,6 +1712,7 @@ function lfb_send_data_sms($form_id,$form_data,$lead_id,$form_product,$form_affi
         $user_message = str_replace($shortcode_lead_name, $lead_name, $user_message);
         $user_message = str_replace($shortcode_lead_email, $lead_email, $user_message);
         $user_message = str_replace($shortcode_lead_phone, $lead_phone, $user_message);
+        $user_message = str_replace($shortcode_lead_panggilan, $lead_panggilan, $user_message);
         $user_message = str_replace($shortcode_affiliate_name, $affiliate_name, $user_message);
         $user_message = str_replace($shortcode_affiliate_email, $affiliate_email, $user_message);
         $user_message = str_replace($shortcode_affiliate_phone, $affiliate_phone, $user_message);
@@ -1841,6 +1848,11 @@ function lfb_ProceedToCustomer(){
             // validate product
             $valid = apply_filters( 'sejoli/checkout/is-product-valid', $valid, $product, $post_data );
 
+            // get user data by checkout data
+            // if the value is in valid, then later need to register
+            // $user_data = apply_filters( 'sejoli/checkout/user-data', false, $post_data );
+            $user_data = false;
+
             // validate shipping
             $valid = apply_filters( 'sejoli/checkout/is-shipping-valid', $valid, $product, $post_data );
 
@@ -1849,6 +1861,14 @@ function lfb_ProceedToCustomer(){
 
             // validate variant
             $valid = apply_filters( 'sejoli/variant/are-variants-valid', $valid, $post_data );
+
+            $password_field = boolval(sejolisa_carbon_get_post_meta($product->ID, 'display_password_field'));
+
+            if ( !is_user_logged_in() && false !== $password_field && false === $user_data ) :
+                   
+                $valid = apply_filters( 'sejoli/checkout/is-user-data-valid', $valid, $post_data );
+                    
+            endif;
 
             // Processing checkout complete
             // Everything is valid
@@ -1870,7 +1890,6 @@ function lfb_ProceedToCustomer(){
                     'wallet'             => $post_data['wallet']
                 ];
 
-
                 //affiliate link simulation
                 if( defined( 'WP_CLI' ) && !empty( $post_data['affiliate_id'] ) ) :
 
@@ -1882,22 +1901,29 @@ function lfb_ProceedToCustomer(){
                 
                 endif;
 
-                // user is not registered
-                if( $product->type === "physical" ) :
+                do_action( 'sejoli/order/set-affiliate', $post_data );
 
-                    do_action('sejoli/user/register', $post_data);
-                    $user_data = sejolisa_get_user( $post_data['user_phone'] );
-
-                else:
-
-                    do_action('sejoli/user/register', $post_data);
-                    $user_data = sejolisa_get_user( $post_data['user_email'] );
-
+                if ($user_data && isset($user_data->ID)) :
+                    $order_data['user_id'] = $user_data->ID;
                 endif;
 
-                if($user_data){
-                    $order_data['user_id'] = $user_data->ID;
-                }
+                // user is not registered
+                if(false === $user_data) :
+                    if( $product->type === "physical" ) :
+                        do_action('sejoli/user/register', $post_data);
+                        $user_data = sejolisa_get_user($post_data['user_phone']); // user phone
+                        if ($user_data && isset($user_data->ID)) :
+                            $order_data['user_id'] = $user_data->ID;
+                        endif;
+                    else:
+                        do_action('sejoli/user/register', $post_data);
+                        $user_data = sejolisa_get_user($post_data['user_email']); // user email
+                        if ($user_data && isset($user_data->ID)) :
+                            $order_data['user_id'] = $user_data->ID;
+                        endif;
+                    endif;
+                endif;
+
                 $order_data['status'] = 'completed';
 
                 // Order type checking must be first before set grand total
@@ -1926,16 +1952,22 @@ function lfb_ProceedToCustomer(){
                     $order_data = $respond['order'];
 
                     do_action('sejoli/order/new', $order_data);
+                    do_action('sejoli/order/set-status/completed', $order_data);
+                    do_action('sejoli/order/update-status', [
+                        'ID'     => $respond['order']['ID'],
+                        'status' => 'completed'
+                    ]);
+
+                    // do_action( 'sejoli/order/create', $order_data );
 
                     $update_query = "update " . LFB_FORM_DATA_TBL . " set status='customer' where id='" . $leadID . "'";
                     $th_save_db = new LFB_SAVE_DB( $wpdb );
                     $update_leads = $th_save_db->lfb_update_form_data( $update_query );
 
                     echo lfb_customeremail_send( $form_data, $form_id, $lead_id, $product_id, $affiliate_id, $email );
-
                     echo lfb_send_data_wa( $form_id, $form_data, $lead_id, $product_id, $affiliate_id );
 
-                    echo lfb_send_data_sms( $form_id, $form_data, $lead_id, $product_id, $affiliate_id );
+                    // echo lfb_send_data_sms( $form_id, $form_data, $lead_id, $product_id, $affiliate_id );
 
                     return wp_send_json(true);
 
